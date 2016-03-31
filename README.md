@@ -37,4 +37,4 @@ Server : https://github.com/liyueyun-sdk/liyueyun-sdk-server<br>
 
 -
 ### License
-liyueyun-SDK-iOS is available under the MIT license. See the [LICENSE](https://github.com/liyueyun-sdk/liyueyun-sdk-ios/blob/master/LICENSE) file for more info.
+liyueyun-SDK-iOS is available under the MIT license. See the [LICENSE](https://github.com/qs3673132/yun2win-sdk-iOS/blob/master/LICENSE) file for more info.
