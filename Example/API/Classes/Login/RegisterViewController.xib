@@ -7,9 +7,9 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="RegisterViewController">
             <connections>
-                <outlet property="VerifyPsdTextField" destination="cWq-M4-5XL" id="YDi-9l-YPh"/>
-                <outlet property="accountTextField" destination="ZBs-dY-Nbq" id="agB-Q6-Ppa"/>
-                <outlet property="psdTextField" destination="ZmL-f4-oUp" id="sOo-LM-rxl"/>
+                <outlet property="accountTextField" destination="ZBs-dY-Nbq" id="2Fo-5d-7VP"/>
+                <outlet property="nickNameTextField" destination="ZmL-f4-oUp" id="OB3-W5-gTi"/>
+                <outlet property="psdTextField" destination="cWq-M4-5XL" id="uqB-Lb-EaY"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
         </placeholder>

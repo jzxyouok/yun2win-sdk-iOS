@@ -14,7 +14,8 @@
 #import "Y2WUsers.h"
 
 
-@interface LoginViewController ()<UITextFieldDelegate>
+@interface LoginViewController ()<UITextFieldDelegate,LoginViewControllerDelegate>
+
 @property (weak, nonatomic) IBOutlet UITextField *accountTextField;
 
 @property (weak, nonatomic) IBOutlet UITextField *psdTextField;
@@ -45,40 +46,41 @@
 - (IBAction)registration:(UIButton *)sender {
 
     RegisterViewController *re = [[RegisterViewController alloc]initWithNibName:@"RegisterViewController" bundle:nil];
+    re.delegate = self;
     [self.navigationController pushViewController:re animated:YES];
 }
 
 
-
 - (void)login
 {
-    NSString *account = self.accountTextField.text;
-    NSString *password = [self.psdTextField.text MD5Hash];
-    
-//    NSString *account = @"zhangsan";
-//    NSString *password = @"123456";
-    [[Y2WUsers getInstance].remote loginWithAccount:account
-                                          password:password
-                                           success:^(Y2WCurrentUser *currentUser) {
-                                               
-                                           } failure:^(NSError *error) {
-                                               
-                                           }];
 
+    [self loginWithAccount:self.accountTextField.text password:self.psdTextField.text];
+}
+
+
+- (void)loginWithAccount:(NSString *)account password:(NSString *)password {
+    
+    [[Y2WUsers getInstance].remote loginWithAccount:account
+                                           password:password
+                                            success:^(Y2WCurrentUser *currentUser) {
+                                                
+                                            } failure:^(NSError *error) {
+                                                
+                                            }];
+    
     
     [[Y2WUsers getInstance].remote loginWithAccount:account password:password success:^(Y2WCurrentUser *currentUser) {
         
-        MainViewController *main = [[MainViewController alloc]init];
-        main.currentUser = currentUser;
         
         [[Y2WUsers getInstance].getCurrentUser.remote syncIMTokenDidCompletion:^(NSError *error) {
             
         }];
         
+        MainViewController *main = [[MainViewController alloc]init];
         [UIApplication sharedApplication].keyWindow.rootViewController = main;
         
     } failure:^(NSError *error) {
-  
+        
         [UIAlertView showTitle:nil message:[[NSString alloc] initWithData:error.userInfo[AFNetworkingOperationFailingURLResponseDataErrorKey] encoding:NSUTF8StringEncoding]];
     }];
 }

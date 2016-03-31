@@ -7,9 +7,7 @@
 //
 
 #import "URL.h"
-
-NSString const *userUrl = @"http://112.74.210.208:8080/v1/users/";
-NSString const *baseURL = @"http://112.74.210.208:8080/v1/";
+#import "Y2WServiceConfig.h"
 
 @implementation URL
 
@@ -18,105 +16,109 @@ NSString const *baseURL = @"http://112.74.210.208:8080/v1/";
     return @"http://112.74.210.208/oauth/token";
 }
 
++ (NSString *)userUrl {
+    return [Y2WServiceConfig.baseUrl stringByAppendingString:@"users/"];
+}
+
 +(NSString *)registerUser
 {
-    return [userUrl stringByAppendingString:@"register"];
+    return [self.userUrl stringByAppendingString:@"register"];
 }
 
 +(NSString *)login
 {
-    return [userUrl stringByAppendingString:@"login"];
+    return [self.userUrl stringByAppendingString:@"login"];
 }
 
 +(NSString *)aboutUser:(NSString *)userId
 {
-    return [userUrl stringByAppendingFormat:@"%@",userId];
+    return [self.userUrl stringByAppendingFormat:@"%@",userId];
 }
 
 + (NSString *)acquireContacts
 {
-    return [userUrl stringByAppendingFormat:@"%@/contacts",[Y2WUsers getInstance].getCurrentUser.userId];
+    return [self.userUrl stringByAppendingFormat:@"%@/contacts",[Y2WUsers getInstance].getCurrentUser.userId];
 }
 
 + (NSString *)aboutContact:(NSString *)contactId
 {
-    return [userUrl stringByAppendingFormat:@"%@/contacts/%@",[Y2WUsers getInstance].getCurrentUser.userId,contactId];
+    return [self.userUrl stringByAppendingFormat:@"%@/contacts/%@",[Y2WUsers getInstance].getCurrentUser.userId,contactId];
 }
 
 + (NSString *)userConversations
 {
-    return [userUrl stringByAppendingFormat:@"%@/userConversations",[Y2WUsers getInstance].getCurrentUser.userId];
+    return [self.userUrl stringByAppendingFormat:@"%@/userConversations",[Y2WUsers getInstance].getCurrentUser.userId];
 }
 
 + (NSString *)singleUserConversation:(NSString *)userConversationId
 {
-    return [userUrl stringByAppendingFormat:@"%@/userConversations/%@",[Y2WUsers getInstance].getCurrentUser.userId,userConversationId];
+    return [self.userUrl stringByAppendingFormat:@"%@/userConversations/%@",[Y2WUsers getInstance].getCurrentUser.userId,userConversationId];
 }
 
 + (NSString *)sessions
 {
-    return [baseURL stringByAppendingString:@"sessions"];
+    return [Y2WServiceConfig.baseUrl stringByAppendingString:@"sessions"];
 }
 
 + (NSString *)p2pSessionWithUserA:(NSString *)userA andUserB:(NSString *)userB
 {
-    return [baseURL stringByAppendingFormat:@"sessions/p2p/%@/%@",userA,userB];
+    return [Y2WServiceConfig.baseUrl stringByAppendingFormat:@"sessions/p2p/%@/%@",userA,userB];
 }
 
 + (NSString *)aboutSession:(NSString *)sessionId
 {
-    return [baseURL stringByAppendingFormat:@"sessions/%@",sessionId];
+    return [Y2WServiceConfig.baseUrl stringByAppendingFormat:@"sessions/%@",sessionId];
 }
 
 + (NSString *)sessionMembers:(NSString *)sessionId
 {
-    return [baseURL stringByAppendingFormat:@"sessions/%@/members",sessionId];
+    return [Y2WServiceConfig.baseUrl stringByAppendingFormat:@"sessions/%@/members",sessionId];
 }
 
 + (NSString *)singleSessionMember:(NSString *)memberId Session:(NSString *)sessionId
 {
-    return [baseURL stringByAppendingFormat:@"sessions/%@/members/%@",sessionId,memberId];
+    return [Y2WServiceConfig.baseUrl stringByAppendingFormat:@"sessions/%@/members/%@",sessionId,memberId];
 }
 
 + (NSString *)acquireMessages:(NSString *)sessionId
 {
-    return [baseURL stringByAppendingFormat:@"sessions/%@/messages",sessionId];
+    return [Y2WServiceConfig.baseUrl stringByAppendingFormat:@"sessions/%@/messages",sessionId];
 }
 
 + (NSString *)acquireHistoryMessage:(NSString *)sessionId
 {
-    return [baseURL stringByAppendingFormat:@"sessions/%@/messages/history",sessionId];
+    return [Y2WServiceConfig.baseUrl stringByAppendingFormat:@"sessions/%@/messages/history",sessionId];
 }
 
 +(NSString *)aboutMessage:(NSString *)messageId Session:(NSString *)sessionId
 {
-    return [baseURL stringByAppendingFormat:@"sessions/%@/messages/%@",sessionId,messageId];
+    return [Y2WServiceConfig.baseUrl stringByAppendingFormat:@"sessions/%@/messages/%@",sessionId,messageId];
 }
 
 + (NSString *)attachments
 {
-    return [baseURL stringByAppendingString:@"attachments"];
+    return [Y2WServiceConfig.baseUrl stringByAppendingString:@"attachments"];
 }
 
 + (NSString *)attachments:(NSString *)attachmentId
 {
-    return [baseURL stringByAppendingFormat:@"attachments/%@",attachmentId];
+    return [Y2WServiceConfig.baseUrl stringByAppendingFormat:@"attachments/%@",attachmentId];
 }
 
 + (NSString *)attachmentsOfContent:(NSString *)attachmentId
 {
-    return [baseURL stringByAppendingFormat:@"attachments/%@/content",attachmentId];
+    return [Y2WServiceConfig.baseUrl stringByAppendingFormat:@"attachments/%@/content",attachmentId];
 }
 
 
 
 + (NSString *)attachmentsWithContent:(NSString *)content {
-    return [baseURL stringByAppendingFormat:@"%@?access_token=%@",content,[[Y2WUsers getInstance].getCurrentUser token]];
+    return [Y2WServiceConfig.baseUrl stringByAppendingFormat:@"%@?access_token=%@",content,[[Y2WUsers getInstance].getCurrentUser token]];
 }
 
 
 + (NSString *)getUsers {
-    return [baseURL stringByAppendingFormat:@"users"];
+    return [Y2WServiceConfig.baseUrl stringByAppendingFormat:@"users"];
 }
 
 @end

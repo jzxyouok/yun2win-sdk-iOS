@@ -11,8 +11,6 @@
 
 @interface MainViewController : UITabBarController
 
-@property (nonatomic, retain) Y2WCurrentUser *currentUser;
-
 + (instancetype)instance;
 
 @end
