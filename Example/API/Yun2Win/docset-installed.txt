@@ -1,0 +1,4 @@
+Documentation set was installed to Xcode!
+
+Path: /Users/zivvv/Library/Developer/Shared/Documentation/DocSets/cn.com.y2w.IMClient.docset
+Time: 2016-01-23 02:33:00 +0000
