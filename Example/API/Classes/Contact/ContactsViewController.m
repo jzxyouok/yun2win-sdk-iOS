@@ -355,6 +355,7 @@
     if (!_tableView) {
         _tableView = [[UITableView alloc] initWithFrame:self.view.bounds style:UITableViewStylePlain];
         _tableView.backgroundColor = [UIColor whiteColor];
+        _tableView.keyboardDismissMode = UIScrollViewKeyboardDismissModeOnDrag;
         _tableView.sectionIndexColor = [ThemeManager sharedManager].currentColor;
         _tableView.sectionIndexBackgroundColor = [UIColor whiteColor];
         _tableView.sectionIndexTrackingBackgroundColor = [UIColor colorWithHexString:@"E3EFEF"];
