@@ -1,4 +1,4 @@
-[![LOGO](http://8225117.s21i-8.faiusr.com/4/ABUIABAEGAAg94-atgUou_TH-gIwoAE4Mg.png)](http://www.yun2win.com)
+[![LOGO](http://8225117.s21i-8.faiusr.com/4/ABUIABAEGAAg5o3ztwUoivKDrgQwuAE4Mg.png)](http://www.yun2win.com)
 # yun2win-sdk-iOS V_0.0.1
 
 ### 编译环境
