@@ -106,7 +106,7 @@
 - (void)reloadData {
     NSMutableArray *sectons = [NSMutableArray array];
     
-    Y2WCurrentUser *user = [MainViewController instance].currentUser;
+    Y2WCurrentUser *user = [Y2WUsers getInstance].getCurrentUser;
     
     SettingTableViewCellModel *userInfo = [[SettingTableViewCellModel alloc] init];
     userInfo.title = user.name;

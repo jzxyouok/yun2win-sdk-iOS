@@ -39,6 +39,7 @@
 
 - (void)relodData:(SettingTableViewCellModel *)data tableView:(UITableView *)tableView {
     [super relodData:data tableView:tableView];
+    
     self.imageView.backgroundColor = [UIColor colorWithUID:data.uid];
     [self.imageView setImageWithURL:[NSURL URLWithString:data.avatarUrl] placeholderImage:data.image];
 }

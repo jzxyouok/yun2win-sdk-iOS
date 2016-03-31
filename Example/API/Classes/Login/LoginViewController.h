@@ -8,6 +8,13 @@
 
 #import <UIKit/UIKit.h>
 
+@protocol LoginViewControllerDelegate <NSObject>
+
+- (void)loginWithAccount:(NSString *)account password:(NSString *)password;
+
+@end
+
+
 @interface LoginViewController : UIViewController
 
 @end

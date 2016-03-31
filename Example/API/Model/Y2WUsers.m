@@ -91,8 +91,8 @@ NSString *const CURRENT_USER_KEY = @"currentUser";
 
 - (void)registerWithAccount:(NSString *)account password:(NSString *)password name:(NSString *)name success:(void (^)(void))success failure:(void (^)(NSError *))failure
 {
-    [HttpRequest POSTWithURL:[URL registerUser] parameters:@{@"email":account,@"password":[password MD5Hash]} success:^(id data) {
-        NSLog(@"%@",data);
+    [HttpRequest POSTWithURL:[URL registerUser] parameters:@{@"email":account,@"name":name,@"password":[password MD5Hash]} success:^(id data) {
+
         if (success) {
             success();
         }
@@ -104,7 +104,7 @@ NSString *const CURRENT_USER_KEY = @"currentUser";
                  success:(void (^)(Y2WCurrentUser *))success
                  failure:(void (^)(NSError *))failure {
     
-    [HttpRequest POSTWithURL:[URL login] parameters:@{@"email":account,@"password":password} success:^(id data) {
+    [HttpRequest POSTWithURL:[URL login] parameters:@{@"email":account,@"password":[password MD5Hash]} success:^(id data) {
         // 临时存储方式
         [[NSUserDefaults standardUserDefaults] setObject:data forKey:CURRENT_USER_KEY];
         [[NSUserDefaults standardUserDefaults] synchronize];
