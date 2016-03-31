@@ -30,11 +30,11 @@
 -
 ### 链接
 官方网站 : http://www.yun2win.com<br>
-安卓 : https://github.com/liyueyun-sdk/liyueyun-sdk-android<br>
-iOS : https://github.com/liyueyun-sdk/liyueyun-sdk-iOS<br>
-Web : https://github.com/liyueyun-sdk/liyueyun-sdk-web<br>
-Server : https://github.com/liyueyun-sdk/liyueyun-sdk-server<br>
+安卓 : https://github.com/yun2win/yun2win-sdk-android<br>
+iOS : https://github.com/yun2win/yun2win-sdk-iOS<br>
+Web : https://github.com/yun2win/yun2win-sdk-web<br>
+Server : https://github.com/yun2win/yun2win-sdk-server<br>
 
 -
 ### License
-liyueyun-SDK-iOS is available under the MIT license. See the [LICENSE](https://github.com/qs3673132/yun2win-sdk-iOS/blob/master/LICENSE) file for more info.
+liyueyun-SDK-iOS is available under the MIT license. See the [LICENSE](https://github.com/yun2win/yun2win-sdk-iOS/blob/master/LICENSE) file for more info.
