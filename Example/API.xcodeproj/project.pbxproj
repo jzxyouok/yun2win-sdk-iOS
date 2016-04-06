@@ -17,6 +17,8 @@
 		523DD4991CACC553000588D7 /* Y2WServiceConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 523DD4981CACC553000588D7 /* Y2WServiceConfig.m */; };
 		523DD5BA1CAD0D39000588D7 /* Y2W_IM_SDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 523DD5B91CAD0D39000588D7 /* Y2W_IM_SDK.framework */; };
 		523DD5BC1CAD0D58000588D7 /* Y2W_IM_SDK.framework in Embed  Frameworks */ = {isa = PBXBuildFile; fileRef = 523DD5B91CAD0D39000588D7 /* Y2W_IM_SDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		523DD5CC1CAE8711000588D7 /* ConversationTableManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 523DD5CB1CAE8711000588D7 /* ConversationTableManager.m */; };
+		523DD5D31CB3679E000588D7 /* NSArray+QSExtension.m in Sources */ = {isa = PBXBuildFile; fileRef = 523DD5D21CB3679E000588D7 /* NSArray+QSExtension.m */; };
 		5259EC8C1C9FD64200AF99E8 /* SearchUserViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5259EC8A1C9FD64200AF99E8 /* SearchUserViewController.m */; };
 		5259EC8D1C9FD64200AF99E8 /* SearchUserViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5259EC8B1C9FD64200AF99E8 /* SearchUserViewController.xib */; };
 		5259EC911C9FE89100AF99E8 /* UserViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5259EC8F1C9FE89100AF99E8 /* UserViewController.m */; };
@@ -167,6 +169,11 @@
 		523DD4971CACC553000588D7 /* Y2WServiceConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Y2WServiceConfig.h; sourceTree = "<group>"; };
 		523DD4981CACC553000588D7 /* Y2WServiceConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Y2WServiceConfig.m; sourceTree = "<group>"; };
 		523DD5B91CAD0D39000588D7 /* Y2W_IM_SDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Y2W_IM_SDK.framework; sourceTree = "<group>"; };
+		523DD5CA1CAE8711000588D7 /* ConversationTableManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConversationTableManager.h; sourceTree = "<group>"; };
+		523DD5CB1CAE8711000588D7 /* ConversationTableManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ConversationTableManager.m; sourceTree = "<group>"; };
+		523DD5CD1CAE8988000588D7 /* TableViewIndexPathChangeDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TableViewIndexPathChangeDelegate.h; sourceTree = "<group>"; };
+		523DD5D11CB3679E000588D7 /* NSArray+QSExtension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSArray+QSExtension.h"; sourceTree = "<group>"; };
+		523DD5D21CB3679E000588D7 /* NSArray+QSExtension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSArray+QSExtension.m"; sourceTree = "<group>"; };
 		5259EC891C9FD64200AF99E8 /* SearchUserViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchUserViewController.h; sourceTree = "<group>"; };
 		5259EC8A1C9FD64200AF99E8 /* SearchUserViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SearchUserViewController.m; sourceTree = "<group>"; };
 		5259EC8B1C9FD64200AF99E8 /* SearchUserViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SearchUserViewController.xib; sourceTree = "<group>"; };
@@ -400,6 +407,16 @@
 			path = BubbleView;
 			sourceTree = "<group>";
 		};
+		523DD5C61CAE8662000588D7 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				523DD5CD1CAE8988000588D7 /* TableViewIndexPathChangeDelegate.h */,
+				523DD5CA1CAE8711000588D7 /* ConversationTableManager.h */,
+				523DD5CB1CAE8711000588D7 /* ConversationTableManager.m */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
 		5264A5391CA1373900266340 /* UserPicker */ = {
 			isa = PBXGroup;
 			children = (
@@ -559,6 +576,7 @@
 		52AF0D2B1C8EC862007BA25E /* ConversationList */ = {
 			isa = PBXGroup;
 			children = (
+				523DD5C61CAE8662000588D7 /* Model */,
 				52AF0D3B1C8EC9F3007BA25E /* View */,
 				52AF0D2C1C8EC862007BA25E /* ConversationListViewController.h */,
 				52AF0D2D1C8EC862007BA25E /* ConversationListViewController.m */,
@@ -684,6 +702,8 @@
 				52AF0D741C9000FA007BA25E /* NSData+NTES.m */,
 				52AF0D751C9000FA007BA25E /* NSDictionary+NTESJson.h */,
 				52AF0D761C9000FA007BA25E /* NSDictionary+NTESJson.m */,
+				523DD5D11CB3679E000588D7 /* NSArray+QSExtension.h */,
+				523DD5D21CB3679E000588D7 /* NSArray+QSExtension.m */,
 				526C03DB1C91824000D7924E /* NSString+Addition.h */,
 				526C03DC1C91824000D7924E /* NSString+Addition.m */,
 				52AF0D771C9000FA007BA25E /* NSString+NTES.h */,
@@ -1152,6 +1172,7 @@
 				52884B271C96C71400EAE74E /* MessageTextBubbleView.m in Sources */,
 				52884B1D1C968A8D00EAE74E /* MessageCell.m in Sources */,
 				B9444E461C85B09500D139E1 /* Y2WSession.m in Sources */,
+				523DD5D31CB3679E000588D7 /* NSArray+QSExtension.m in Sources */,
 				52AF0D8B1C9000FA007BA25E /* NSData+NTES.m in Sources */,
 				5264A53C1CA1373900266340 /* UserPickerViewController.m in Sources */,
 				52884BC51C9821C500EAE74E /* MoreItem.m in Sources */,
@@ -1194,6 +1215,7 @@
 				52AF0D6D1C8FF7A3007BA25E /* NTESAvatarImageView.m in Sources */,
 				B9444E3D1C85AF5A00D139E1 /* Y2WContacts.m in Sources */,
 				B9646A371CA5443F0008275F /* MainViewController.m in Sources */,
+				523DD5CC1CAE8711000588D7 /* ConversationTableManager.m in Sources */,
 				52AF0DF61C901F9C007BA25E /* UIColor+QSHex.m in Sources */,
 				526C03E41C92678000D7924E /* ThemeManager.m in Sources */,
 				596FA8E61C32344D00599FB1 /* AppDelegate.m in Sources */,

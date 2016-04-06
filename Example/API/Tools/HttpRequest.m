@@ -26,7 +26,28 @@
         id data = [self cleanNullWithResponseObject:responseObject];
         if (success) success(data);
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-        if (failure) failure(error.localizedDescription);
+        
+        NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse*)task.response;
+        
+        switch (httpResponse.statusCode) {
+            case 401:
+            {
+                NSLog(@"401-401-401-401-401-401-401-401-401-401-401-401-401-401-401-401");
+                [[Y2WUsers getInstance].getCurrentUser.remote syncTokenDidCompletion:^(NSError *tokenError) {
+                    if (tokenError) {
+                        if (failure) failure(tokenError);
+                        return;
+                    }
+                    
+                    [self POSTWithURL:url parameters:parameter success:success failure:failure];
+                }];
+            }
+                break;
+                
+            default:
+                if (failure) failure(error);
+                break;
+        }
     }];
     [manager operationQueue];
     
@@ -39,7 +60,7 @@
            failure:(void (^)(id))failure
 {
     AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
-    manager.completionQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0);
+//    manager.completionQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0);
     manager.securityPolicy.allowInvalidCertificates = YES;
     manager.securityPolicy = [AFSecurityPolicy policyWithPinningMode:AFSSLPinningModeNone];
     manager.requestSerializer = [AFJSONRequestSerializer serializer];
@@ -50,7 +71,26 @@
         id data = [self cleanNullWithResponseObject:responseObject];
         if (success) success(data);
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-        if (failure) failure(error.localizedDescription);
+        NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse*)task.response;
+        
+        switch (httpResponse.statusCode) {
+            case 401:
+            {
+                [[Y2WUsers getInstance].getCurrentUser.remote syncTokenDidCompletion:^(NSError *tokenError) {
+                    if (tokenError) {
+                        if (failure) failure(tokenError);
+                        return;
+                    }
+                    
+                    [self POSTWithURL:url parameters:parameter success:success failure:failure];
+                }];
+            }
+                break;
+                
+            default:
+                if (failure) failure(error);
+                break;
+        }
     }];
     [manager operationQueue];
 }
@@ -70,7 +110,26 @@
         id data = [self cleanNullWithResponseObject:responseObject];
         if (success) success(data);
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-        if (failure) failure(error);
+        NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse*)task.response;
+        
+        switch (httpResponse.statusCode) {
+            case 401:
+            {
+                [[Y2WUsers getInstance].getCurrentUser.remote syncTokenDidCompletion:^(NSError *tokenError) {
+                    if (tokenError) {
+                        if (failure) failure(tokenError);
+                        return;
+                    }
+                    
+                    [self POSTWithURL:url parameters:parameter success:success failure:failure];
+                }];
+            }
+                break;
+                
+            default:
+                if (failure) failure(error);
+                break;
+        }
     }];
     [manager operationQueue];
 }
@@ -82,7 +141,26 @@
         id data = [self cleanNullWithResponseObject:responseObject];
         if (success) success(data);
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-        if (failure) failure(error);
+        NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse*)task.response;
+        
+        switch (httpResponse.statusCode) {
+            case 401:
+            {
+                [[Y2WUsers getInstance].getCurrentUser.remote syncTokenDidCompletion:^(NSError *tokenError) {
+                    if (tokenError) {
+                        if (failure) failure(tokenError);
+                        return;
+                    }
+                    
+                    [self POSTWithURL:url parameters:parameter success:success failure:failure];
+                }];
+            }
+                break;
+                
+            default:
+                if (failure) failure(error);
+                break;
+        }
     }];
     [manager operationQueue];
 }
@@ -102,7 +180,26 @@
         id data = [self cleanNullWithResponseObject:responseObject];
         if (success) success(data);
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-        if (failure) failure(error);
+        NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse*)task.response;
+        
+        switch (httpResponse.statusCode) {
+            case 401:
+            {
+                [[Y2WUsers getInstance].getCurrentUser.remote syncTokenDidCompletion:^(NSError *tokenError) {
+                    if (tokenError) {
+                        if (failure) failure(tokenError);
+                        return;
+                    }
+                    
+                    [self POSTWithURL:url parameters:parameter success:success failure:failure];
+                }];
+            }
+                break;
+                
+            default:
+                if (failure) failure(error);
+                break;
+        }
     }];
     [manager operationQueue];
 }
@@ -119,7 +216,26 @@
         id data = [self cleanNullWithResponseObject:responseObject];
         if (success) success(data);
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-        if (failure) failure(error);
+        NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse*)task.response;
+        
+        switch (httpResponse.statusCode) {
+            case 401:
+            {
+                [[Y2WUsers getInstance].getCurrentUser.remote syncTokenDidCompletion:^(NSError *tokenError) {
+                    if (tokenError) {
+                        if (failure) failure(tokenError);
+                        return;
+                    }
+                    
+                    [self POSTWithURL:url parameters:parameter success:success failure:failure];
+                }];
+            }
+                break;
+                
+            default:
+                if (failure) failure(error);
+                break;
+        }
     }];
     [manager operationQueue];
 }

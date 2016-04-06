@@ -60,15 +60,6 @@
 
 - (void)loginWithAccount:(NSString *)account password:(NSString *)password {
     
-    [[Y2WUsers getInstance].remote loginWithAccount:account
-                                           password:password
-                                            success:^(Y2WCurrentUser *currentUser) {
-                                                
-                                            } failure:^(NSError *error) {
-                                                
-                                            }];
-    
-    
     [[Y2WUsers getInstance].remote loginWithAccount:account password:password success:^(Y2WCurrentUser *currentUser) {
         
         

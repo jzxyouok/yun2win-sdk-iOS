@@ -38,6 +38,11 @@
 @property (nonatomic, strong) NSString *imToken;
 
 /**
+ *  密码MD5hash值
+ */
+@property (nonatomic, strong) NSString *passwordHash;
+
+/**
  *  绑定联系人集合管理器
  */
 @property (nonatomic, strong) Y2WContacts *contacts;
@@ -89,9 +94,12 @@
 - (instancetype)initWithCurrentUser:(Y2WCurrentUser *)currentUser;
 
 /**
+ *  同步Token
+ */
+- (void)syncTokenDidCompletion:(void (^)(NSError *error))block;
+
+/**
  *  同步IMToken
- *
- *  @param user 当前生命周期所维持的当前登录用户
  */
 - (void)syncIMTokenDidCompletion:(void (^)(NSError *error))block;
 

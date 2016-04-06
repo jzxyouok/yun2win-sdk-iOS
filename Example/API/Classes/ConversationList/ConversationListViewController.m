@@ -1,4 +1,4 @@
-//
+    //
 //  ConversationListViewController.m
 //  API
 //
@@ -11,30 +11,25 @@
 #import "Y2WUserConversations.h"
 #import "ConversationListCell.h"
 #import "MainViewController.h"
+#import "ConversationTableManager.h"
 
-@interface ConversationListViewController () <UITableViewDataSource,UITableViewDelegate,Y2WUserConversationsDelegate>
+@interface ConversationListViewController () <UITableViewDataSource,UITableViewDelegate,TableViewIndexPathChangeDelegate>
 
-@property (nonatomic, retain) Y2WUserConversations *userConversations;
+@property (nonatomic, retain) ConversationTableManager *tableManager;
 
 @property (nonatomic, retain) UITableView *tableView;
 
-@property (nonatomic, strong) NSArray *datas;
+//@property (nonatomic, strong) NSMutableArray *datas;
 
 @end
 
 @implementation ConversationListViewController
 
-- (void)dealloc {
-    [self.userConversations removeDelegate:self];
-}
-
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self setUpNavItem];
     [self.view addSubview:self.tableView];
-    
-    [self reloadData];
-    [self.userConversations addDelegate:self];
+    [self tableManager];
 }
 
 - (void)viewDidLayoutSubviews {
@@ -57,15 +52,15 @@
 #pragma mark - ———— UITableViewDataSource ———— -
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return self.datas.count;
+    return self.tableManager.conversationDatas.count;
 }
 
 - (UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
     ConversationListCell * cell = [tableView dequeueReusableCellWithIdentifier:NSStringFromClass([ConversationListCell class])];
   
-    cell.conversation = self.datas[indexPath.row];
-    
+    cell.conversation = self.tableManager.conversationDatas[indexPath.row];
+
     return cell;
 }
 
@@ -75,7 +70,7 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    Y2WUserConversation *conversation = self.datas[indexPath.row];
+    Y2WUserConversation *conversation = self.tableManager.conversationDatas[indexPath.row];
     [self pushToSessionWithConversation:conversation];
 }
 
@@ -90,11 +85,11 @@
         
         [self.navigationItem startAnimating];
 
-        Y2WUserConversation *conversation = self.datas[indexPath.row];
+        Y2WUserConversation *conversation = self.tableManager.conversationDatas[indexPath.row];
         [conversation.userConversations.remote deleteUserConversation:conversation success:^{
             
             [self.navigationItem stopAnimating];
-            [UIAlertView showTitle:nil message:@"删除成功"];
+//            [UIAlertView showTitle:nil message:@"删除成功"];
             
         } failure:^(NSError *error) {
             
@@ -109,29 +104,45 @@
 
 
 
+
+
 #pragma mark - ———— Y2WUserConversationsDelegate ———— -
 
-- (void)userConversationsWillChangeContent:(Y2WUserConversations *)userConversations {
+- (void)tableViewIndexPathWillChangeContent:(id)manager {
+    [self.tableView beginUpdates];
+}
+
+- (void)tableViewIndexPathManager:(id)manager
+                      atIndexPath:(NSIndexPath *)indexPath
+                     newIndexPath:(NSIndexPath *)newIndexPath
+                    forChangeType:(TableViewIndexPathChangeType)type {
+    NSLog(@"\n-----\n%@\n%@\n%@\n-----",@(type),indexPath,newIndexPath);
+    switch(type) {
+            
+        case TableViewIndexPathChangeInsert:
+            [_tableView insertRowsAtIndexPaths:@[newIndexPath] withRowAnimation:UITableViewRowAnimationRight];
+            break;
+            
+        case TableViewIndexPathChangeDelete:
+            [_tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationLeft];
+            break;
+            
+        case TableViewIndexPathChangeUpdate:
+            [_tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+            break;
+            
+        case TableViewIndexPathChangeMove:
+            [_tableView moveRowAtIndexPath:indexPath toIndexPath:newIndexPath];
+            break;
+    }    
+}
+
+
+- (void)tableViewIndexPathDidChangeContent:(id)manager {
+    [self.tableView endUpdates];
     
+    self.tableView.backgroundView.hidden = self.tableManager.conversationDatas.count;
 }
-
-- (void)userConversations:(Y2WUserConversations *)userConversations onAddUserConversation:(Y2WUserConversation *)userConversation {
-}
-
-- (void)userConversations:(Y2WUserConversations *)userConversations onDeleteUserConversation:(Y2WUserConversation *)userConversation {
-    
-}
-
-- (void)userConversations:(Y2WUserConversations *)userConversations onUpdateUserConversation:(Y2WUserConversation *)userConversation {
-    
-}
-
-- (void)userConversationsDidChangeContent:(Y2WUserConversations *)userConversations {
-    NSLog(@"adfadsfadsf");
-    [self reloadData];
-}
-
-
 
 
 
@@ -146,7 +157,7 @@
         [self.navigationItem stopAnimating];
         
         if (error) {
-            [UIAlertView showTitle:nil message:error.description];
+            [UIAlertView showTitle:nil message:[[NSString alloc] initWithData:error.userInfo[AFNetworkingOperationFailingURLResponseDataErrorKey] encoding:NSUTF8StringEncoding]];
             return;
         }
         
@@ -158,28 +169,16 @@
 
 
 
-- (void)reloadData {
-    
-    dispatch_async(dispatch_get_main_queue(), ^{
-        
-        self.datas = [self.userConversations getUserConversations];
-        self.datas = [self.datas sortedArrayUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"updatedAt" ascending:NO]]];
-        
-        [self.tableView reloadData];
-        self.tableView.backgroundView.hidden = self.datas.count;
-    });
-}
-
 
 
 #pragma mark - ———— getter ———— -
 
-- (Y2WUserConversations *)userConversations {
-    
-    if (!_userConversations) {
-        _userConversations = [Y2WUsers getInstance].getCurrentUser.userConversations;
+- (ConversationTableManager *)tableManager {
+    if (!_tableManager) {
+        _tableManager = [[ConversationTableManager alloc] init];
+        _tableManager.delegate = self;
     }
-    return _userConversations;
+    return _tableManager;
 }
 
 - (UITableView *)tableView {

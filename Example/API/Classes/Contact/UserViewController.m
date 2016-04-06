@@ -71,7 +71,7 @@
         
     } failure:^(NSError *error) {
         
-        [UIAlertView showTitle:nil message:error.description];
+        [UIAlertView showTitle:nil message:[[NSString alloc] initWithData:error.userInfo[AFNetworkingOperationFailingURLResponseDataErrorKey] encoding:NSUTF8StringEncoding]];
     }];
 }
 

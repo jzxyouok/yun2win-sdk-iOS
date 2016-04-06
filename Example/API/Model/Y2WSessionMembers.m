@@ -238,6 +238,7 @@
     [HttpRequest POSTWithURL:[URL sessionMembers:self.members.session.sessionId] parameters:parameters success:^(id data) {
         // 同步用户会话
         [self.members.session.sessions.user.userConversations.remote sync];
+
         // 同步消息
         [self.members.session.messages.remote sync];
         // 同步成员

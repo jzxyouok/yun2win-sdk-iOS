@@ -14,6 +14,7 @@
 #import "UIScrollView+Extension.h"
 #import "NSString+Addition.h"
 #import "NSDictionary+Json.h"
+#import "NSArray+QSExtension.h"
 #import "UIViewController+Navigation.h"
 #import "UINavigationItem+Loading.h"
 

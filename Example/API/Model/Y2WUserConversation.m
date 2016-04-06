@@ -37,6 +37,7 @@
 
 - (void)updateWithUserConversation:(Y2WUserConversation *)conversation {
     _userConversationId = conversation.userConversationId;
+    _lastMessage        = conversation.lastMessage;
     _name               = conversation.name;
     _type               = conversation.type;
     _avatarUrl          = conversation.avatarUrl;
@@ -97,6 +98,7 @@
 
 - (void)getSessionDidCompletion:(void (^)(Y2WSession *, NSError *))block {
     if (!block) return;
+    if (!self.userConversations.user) return block(nil,[NSError errorWithDomain:@"用户会话" code:0 userInfo:@{@"错误":@{AFNetworkingOperationFailingURLResponseDataErrorKey:@"用户换了"}}]);
     
     [self.userConversations.user.sessions getSessionWithTargetId:self.targetId type:self.type success:^(Y2WSession *session) {
         block(session,nil);
@@ -116,5 +118,14 @@
     
 }
 
+
+
+
+
+
+- (BOOL)isEqual:(id)object {
+    if (![object isKindOfClass:[Y2WUserConversation class]]) return NO;
+    return [self.userConversationId isEqual:[(Y2WUserConversation *)object userConversationId]];
+}
 
 @end

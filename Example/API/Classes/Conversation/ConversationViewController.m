@@ -68,6 +68,7 @@ Y2WMessagesDelegate
     
     [self.session.messages addDelegate:self];
     [self.session.messages loadMessageWithPage:nil];
+    [self.session.sessions.user.userConversations.remote sync];
 }
 
 - (void)viewDidLayoutSubviews {
@@ -216,7 +217,7 @@ Y2WMessagesDelegate
     NSLog(@"%s",__FUNCTION__);
 
     if (error) {
-        NSLog(@"%@",error);
+        [UIAlertView showTitle:nil message:[[NSString alloc] initWithData:error.userInfo[AFNetworkingOperationFailingURLResponseDataErrorKey] encoding:NSUTF8StringEncoding]];
         return;
     }
     

@@ -51,6 +51,19 @@
     return self;
 }
 
+- (void)syncTokenDidCompletion:(void (^)(NSError *))block {
+    
+    [HttpRequest POSTWithURL:[URL login] parameters:@{@"email":self.currentUser.account,@"password":self.currentUser.passwordHash} success:^(id data) {
+        
+        self.currentUser.token = data[@"token"];
+
+        if (block) block(nil);
+        
+    } failure:block];
+}
+
+
+
 - (void)syncIMTokenDidCompletion:(void (^)(NSError *))block
 {
     [HttpRequest POSTNoHeaderWithURL:[URL getImToken] parameters:@{@"grant_type":@"client_credentials",@"client_id":self.currentUser.appKey,@"client_secret":self.currentUser.secret} success:^(id data) {

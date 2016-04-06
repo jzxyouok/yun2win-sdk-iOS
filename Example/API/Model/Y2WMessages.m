@@ -151,6 +151,7 @@ static dispatch_queue_t message_callback_queue() {
         
         [weakSelf.remote storeMessages:message success:^(Y2WMessage *message) {
             
+            [weakSelf.session.sessions.user.userConversations.remote sync];
             [weakSelf.remote sync];
             
         } failure:^(NSError *error) {
@@ -531,9 +532,7 @@ static dispatch_queue_t message_callback_queue() {
 
         if (success) success(message);
         
-    } failure:^(id msg) {
-        if (failure) failure([NSError errorWithDomain:msg code:0 userInfo:nil]);
-    }];
+    } failure:failure];
 }
 
 
