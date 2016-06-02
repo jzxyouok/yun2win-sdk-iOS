@@ -57,6 +57,44 @@
 - (void)registerWithToken:(NSString *)token UID:(NSString *)uid Appkey:(NSString *)appkey;
 ```
 
+* 与yun2win推送服务器建立连接
+
+```objective-c
+/**
+ *  与yun2win服务器建立连接
+ */
+- (void)connect;
+
+/**
+ *  与yun2win服务器重新建立连接
+ */
+- (void)reconnect; 
+```
+
+* 推送消息
+
+```objective-c
+/**
+ *  推送消息
+ *
+ *  @param session 会话
+ *  @param message 推送消息体
+ */
+- (void)sendMessageWithSession:(id<IMSessionProtocol>)session Message:(id<IMMessageProtocol>)message;
+```
+
+* 推送更新会话消息
+
+```objective-c
+/**
+ *  推送更新会话消息
+ *
+ *  @param session 对象IMSession
+ *  @param message 对象IMMessage
+ */
+- (void)updateSessionWithSession:(id<IMSessionProtocol>)session Message:(id<IMMessageProtocol>)message;
+```
+
 
 -
 ### 链接
