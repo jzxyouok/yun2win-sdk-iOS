@@ -27,11 +27,12 @@
 │   │   └── Y2W_IM_SDK.framework :yun2win即时通讯SDK
 └── Pods 依赖管理工具
 ```
+-
 ### Y2W_IM_SDK使用说明
 * 到项目中
 
 
-```
+
 -
 ### 链接
 官方网站 : http://www.yun2win.com<br>
