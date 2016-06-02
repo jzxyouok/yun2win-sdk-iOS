@@ -10,18 +10,21 @@
 ```
 ┌── API
 │   ├── Common
-│   │   ├── Config：全局配置
-│   │   ├── Util：常用工具
-│   │   ├── Category：扩展方法
-│   ├── Yun2Win：SDK
-│   ├── Model：SDK相关实体和方法
-│   ├── APITests：单元测试
-│   ├── Classes：Demo界面
-│   │   ├── Login：登陆
-│   │   ├── Setting：设置
-│   │   ├── ConversationList：会话列表
-│   │   ├── Conversation：会话
-│   │   └── Contact：控制器，对应app中的各个页面
+│   │   ├── Config :全局配置
+│   │   ├── Util :常用工具
+│   │   ├── Category :扩展方法
+│   ├── Yun2Win :SDK
+│   ├── Model :SDK相关实体和方法
+│   ├── APITests :单元测试
+│   ├── Classes :Demo界面
+│   │   ├── Login :登陆
+│   │   ├── Setting :设置
+│   │   ├── ConversationList :会话列表
+│   │   ├── Conversation :会话
+│   │   └── Contact :控制器，对应app中的各个页面
+│   ├── Frameworks
+│   │   ├── Y2W_RTC_SDK.framework :yun2win音视频SDK
+│   │   └── Y2W_IM_SDK.framework :yun2win即时通讯SDK
 └── Pods 依赖管理工具
 ```
 
