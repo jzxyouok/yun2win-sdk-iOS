@@ -34,9 +34,15 @@
 
 #### 引用头文件
 在需要使用Y2W_IM_SDK的代码中引用头文件。 
-` ``
+```objective-c
 #import <Y2W_IM_SDK/Y2W_IM_SDK.h>
-` ``
+```
+在需要使用Y2W_RTC_SDK的代码中引用头文件。
+```objective-c
+#import <Y2W_RTC_SDK/Y2WRTCChannel.h>
+#import <Y2W_RTC_SDK/Y2WRTCVideoView.h>
+#import <Y2W_RTC_SDK/Y2WRTCMember.h>
+```
 
 
 -
