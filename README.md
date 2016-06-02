@@ -104,15 +104,14 @@
   * 调用leave方法离开频道
 
 * Y2WRTCManager发起、加入音视频频道
-  * 属性
+ 属性
 
 ```objective-c
 @property (nonatomic, copy) NSString *channelId;    // 频道ID，发起方会自动获取，加入时需要填入发起方获取的ID
 @property (nonatomic, copy) NSString *memberId;     // 频道连接中的成员ID
 @property (nonatomic, copy) NSString *token;        // 用户token
 ```
-
-  * 方法
+ 方法
 
 ```objective-c
 /**
@@ -152,14 +151,14 @@ manager.token = token;
 ```
 
 * Y2WRTCChannel管理频道
-  * 属性
+ 属性
 
 ```objective-c
 @property (nonatomic, copy) NSString *channelId;                           // 频道ID
 @property (nonatomic, retain, readonly) NSArray<Y2WRTCMember *> *members;  // 此频道当前的所有成员
 @property (nonatomic, assign) id<Y2WRTCChannelDelegate> delegate;          // 委托对象
 ```
-  * 方法
+ 方法
 
 ```objective-c
 -------------------------------- 音频功能 --------------------------------
@@ -247,7 +246,7 @@ manager.token = token;
 ```
 
 * Y2WRTCMember成员对象,管理成员的状态并提供视频数据
- * 属性
+ 属性
 
 ```objective-c
 @property (nonatomic, copy) NSString *uid;          // 用户ID
@@ -259,7 +258,7 @@ manager.token = token;
 ```
 
 * Y2WRTCChannelDelegate用于频道内事件的回调
- * 方法
+ 方法
 
 ```objective-c
 /**
