@@ -44,6 +44,19 @@
 #import <Y2W_RTC_SDK/Y2WRTCMember.h>
 ```
 
+#### 使用Y2W_IM_SDK
+* 初始化Y2W_IM_SDK对象实例 
+
+```objective-c
++ (instancetype)shareY2WIMClient;
+```
+
+* 设置获取到的Token、UID和Appkey
+
+```objective-c
+- (void)registerWithToken:(NSString *)token UID:(NSString *)uid Appkey:(NSString *)appkey;
+```
+
 
 -
 ### 链接
