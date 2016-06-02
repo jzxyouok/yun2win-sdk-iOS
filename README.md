@@ -97,17 +97,15 @@
 
 #### 使用Y2W_RTC_SDK音视频SDK
 ##### 使用流程
-  * 发起方使用Y2WRTCManager对象的createChannel方法获取到Y2WRTCChannel对象
-  * 接收方使用Y2WRTCManager对象的getChannel方法获取Y2WRTCChannel对象
-  * 给Y2WRTCChannel添加委托对象，并实现Y2WRTCChannelDelegate协议方法
-  * 然后调用join方法加入频道
-  * 调用leave方法离开频道
+ 1.发起方使用Y2WRTCManager对象的createChannel方法获取到Y2WRTCChannel对象
+ 2.接收方使用Y2WRTCManager对象的getChannel方法获取Y2WRTCChannel对象
+ 3.给Y2WRTCChannel添加委托对象，并实现Y2WRTCChannelDelegate协议方法
+ 4.然后调用join方法加入频道
+ 5.调用leave方法离开频道
 
-* Y2WRTCManager发起、加入音视频频道
-
+#####Y2WRTCManager发起、加入音视频频道
+* 属性
 ```objective-c
-属性
-
 @property (nonatomic, copy) NSString *channelId;    // 频道ID，发起方会自动获取，加入时需要填入发起方获取的ID
 @property (nonatomic, copy) NSString *memberId;     // 频道连接中的成员ID
 @property (nonatomic, copy) NSString *token;        // 用户token
