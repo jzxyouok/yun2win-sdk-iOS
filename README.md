@@ -97,11 +97,11 @@
 
 #### 使用Y2W_RTC_SDK音视频SDK
 ##### 使用流程
- 1.发起方使用Y2WRTCManager对象的createChannel方法获取到Y2WRTCChannel对象
- 2.接收方使用Y2WRTCManager对象的getChannel方法获取Y2WRTCChannel对象
- 3.给Y2WRTCChannel添加委托对象，并实现Y2WRTCChannelDelegate协议方法
- 4.然后调用join方法加入频道
- 5.调用leave方法离开频道
+ 1.发起方使用Y2WRTCManager对象的createChannel方法获取到Y2WRTCChannel对象<br>
+ 2.接收方使用Y2WRTCManager对象的getChannel方法获取Y2WRTCChannel对象<br>
+ 3.给Y2WRTCChannel添加委托对象，并实现Y2WRTCChannelDelegate协议方法<br>
+ 4.然后调用join方法加入频道<br>
+ 5.调用leave方法离开频道<br>
 
 #####Y2WRTCManager发起、加入音视频频道
 * 属性
