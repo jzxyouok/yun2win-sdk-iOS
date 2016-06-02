@@ -95,6 +95,156 @@
 - (void)updateSessionWithSession:(id<IMSessionProtocol>)session Message:(id<IMMessageProtocol>)message;
 ```
 
+#### 使用Y2W_RTC_SDK音视频SDK
+* 使用流程
+  * 发起方使用Y2WRTCManager对象的createChannel方法获取到Y2WRTCChannel对象
+  * 接收方使用Y2WRTCManager对象的getChannel方法获取Y2WRTCChannel对象
+  * 给Y2WRTCChannel添加委托对象，并实现Y2WRTCChannelDelegate协议方法
+  * 然后调用join方法加入频道
+  * 调用leave方法离开频道
+
+* Y2WRTCManager发起、加入音视频频道
+  * 属性
+
+```objective-c
+@property (nonatomic, copy) NSString *channelId;    // 频道ID，发起方会自动获取，加入时需要填入发起方获取的ID
+@property (nonatomic, copy) NSString *memberId;     // 频道连接中的成员ID
+@property (nonatomic, copy) NSString *token;        // 用户token
+```
+
+  * 方法
+
+```objective-c
+/**
+ *  发起音视频
+ */
+Y2WRTCManager *manager = [[Y2WRTCManager alloc] init];
+manager.memberId = uid;
+manager.token = token;
+[manager createChannel:^(NSError *error, Y2WRTCChannel *channel) {
+
+    if (error) {
+        // 发起失败，返回错误
+        return;
+    }
+
+    // 把channel.channelId转发给需要接听的用户
+    // 使用channel对象管理连接
+}];
+
+/**
+ *  发起音视频
+ *  @discuss 加入方法必须填入需要加入的channelId 
+ */                        
+Y2WRTCManager *manager = [[Y2WRTCManager alloc] init];
+manager.channelId = channelId;
+manager.memberId = uid;
+manager.token = token;
+[manager getChannel:^(NSError *error, Y2WRTCChannel *channel) {
+
+    if (error) {
+        // 加入失败，返回错误
+        return;
+    }
+
+    // 使用channel对象管理连接
+}];
+```
+
+* Y2WRTCChannel管理频道
+  * 属性
+
+```objective-c
+@property (nonatomic, copy) NSString *channelId;                           // 频道ID
+@property (nonatomic, retain, readonly) NSArray<Y2WRTCMember *> *members;  // 此频道当前的所有成员
+@property (nonatomic, assign) id<Y2WRTCChannelDelegate> delegate;          // 委托对象
+```
+  * 方法
+
+```objective-c
+-------------------------------- 音频功能 --------------------------------
+/**
+ *  开启音频连接
+ */
+- (void)openAudio;
+
+/**
+ *  关闭音频功能（关闭后无法发送和接受音频）
+ */
+- (void)closeAudio;
+
+
+/**
+ *  是否开启扬声器
+ *
+ *  @param speaker bool
+ */
+- (void)setSpeaker:(BOOL)speaker;
+
+/**
+ *  当前是否使用的扬声器
+ *
+ *  @return bool
+ */
+- (BOOL)speakerEnabled;
+
+
+/**
+ *  是否设置麦克风静音
+ *
+ *  @param mute bool
+ */
+- (void)setMicMute:(BOOL)mute;
+
+/**
+ *  麦克风是否静音状态
+ *
+ *  @return bool
+ */
+- (BOOL)micMuteEnabled;
+
+-------------------------------- 视频功能 --------------------------------
+/**
+ *  开启视频功能
+ */
+- (void)openVideo;
+
+/**
+ *  关闭视频功能（关闭后无法发送和接受视频）
+ */
+- (void)closeVideo;
+
+
+/**
+ *  切换前后摄像头
+ *
+ *  @param use YES为使用后置摄像头
+ */
+- (void)useBackCamera:(BOOL)use;
+
+/**
+ *  当前是否使用的后置摄像头
+ *
+ *  @return YES为后置摄像头，NO为前置摄像头
+ */
+- (BOOL)isUseBackCamera;
+
+
+/**
+ *  关闭自己的摄像头画面
+ *
+ *  @param mute bool
+ */
+- (void)setVideoMute:(BOOL)mute;
+
+/**
+ *  自己的摄像头是否关闭状态
+ *
+ *  @return bool
+ */
+- (BOOL)videoMuteEnabled;
+
+```
 
 -
 ### 链接
