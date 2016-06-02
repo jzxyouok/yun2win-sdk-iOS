@@ -28,9 +28,15 @@
 └── Pods 依赖管理工具
 ```
 -
-### Y2W_IM_SDK使用说明
-* 到项目中
+### SDK使用说明
+#### 添加项目文件
+直接把SDK拷贝到项目中，选择项目TARGETS，点击"Build Phases"选项，点击"+"号添加"Copy Files"，点击"Copy Files"中"+"号选项添加SDK。
 
+#### 引用头文件
+在需要使用Y2W_IM_SDK的代码中引用头文件。 
+```
+#import <Y2W_IM_SDK/Y2W_IM_SDK.h>
+```
 
 
 -
