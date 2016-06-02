@@ -246,6 +246,107 @@ manager.token = token;
 
 ```
 
+* Y2WRTCMember成员对象,管理成员的状态并提供视频数据
+ * 属性
+
+```objective-c
+@property (nonatomic, copy) NSString *uid;          // 用户ID
+@property (nonatomic, retain) RTCVideoTrack *track; // 视频数据流
+@property (nonatomic, assign) BOOL audioOpened;     // 是否开启了音频连接
+@property (nonatomic, assign) BOOL audioMuted;      // 是否开启了静音（关闭麦克风）
+@property (nonatomic, assign) BOOL videoOpened;     // 是否开启了视频连接
+@property (nonatomic, assign) BOOL videoMuted;      // 是否关闭了摄像头
+```
+
+* Y2WRTCChannelDelegate用于频道内事件的回调
+ * 方法
+
+```objective-c
+/**
+ *  有成员加入此频道
+ *
+ *  @param channel 频道对象
+ *  @param member  成员对象
+ */
+- (void)channel:(Y2WRTCChannel *)channel didJoinMember:(Y2WRTCMember *)member;
+
+/**
+ *  有成员离开此频道
+ *
+ *  @param channel 频道对象
+ *  @param member  成员对象
+ */
+- (void)channel:(Y2WRTCChannel *)channel didLeaveMember:(Y2WRTCMember *)member;
+
+
+
+/**
+ *  有成员开启了音频
+ *
+ *  @param channel 频道对象
+ *  @param member  成员对象
+ */
+- (void)channel:(Y2WRTCChannel *)channel didOpenAudioOfMember:(Y2WRTCMember *)member;
+
+/**
+ *  有成员关闭了音频
+ *
+ *  @param channel 频道对象
+ *  @param member  成员对象
+ */
+- (void)channel:(Y2WRTCChannel *)channel didCloseAudioOfMember:(Y2WRTCMember *)member;
+
+/**
+ *  有成员关闭或开启了麦克风
+ *
+ *  @param channel 频道对象
+ *  @param member  成员对象
+ */
+- (void)channel:(Y2WRTCChannel *)channel didSwitchMuteAudioOfMember:(Y2WRTCMember *)member;
+
+/**
+ *  音频连接出现错误
+ *
+ *  @param channel 频道对象
+ *  @param error   错误对象
+ */
+- (void)channel:(Y2WRTCChannel *)channel onAudioError:(NSError *)error;
+
+
+
+/**
+ *  有成员开启了视频
+ *
+ *  @param channel 频道对象
+ *  @param member  成员对象
+ */
+- (void)channel:(Y2WRTCChannel *)channel didOpenVideoOfMember:(Y2WRTCMember *)member;
+
+/**
+ *  有成员关闭了视频
+ *
+ *  @param channel 频道对象
+ *  @param member  成员对象
+ */
+- (void)channel:(Y2WRTCChannel *)channel didCloseVideoOfMember:(Y2WRTCMember *)member;
+
+/**
+ *  有成员关闭或开启了摄像头
+ *
+ *  @param channel 频道对象
+ *  @param member  成员对象
+ */
+- (void)channel:(Y2WRTCChannel *)channel didChangeVideoMuteFromMember:(Y2WRTCMember *)member;
+
+/**
+ *  视频连接出现错误
+ *
+ *  @param channel 频道对象
+ *  @param error   错误对象
+ */
+- (void)channel:(Y2WRTCChannel *)channel onVideoError:(NSError *)error;
+```
+
 -
 ### 链接
 官方网站 : http://www.yun2win.com<br>
