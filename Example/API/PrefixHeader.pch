@@ -1,0 +1,31 @@
+//
+//  PrefixHeader.pch
+//  API
+//
+//  Created by ShingHo on 16/1/27.
+//  Copyright © 2016年 SayGeronimo. All rights reserved.
+//
+
+#ifndef PrefixHeader_pch
+#define PrefixHeader_pch
+
+#import "StatusType.h"
+#import "HttpRequest.h"
+#import "Import.h"
+#import "URL.h"
+#import "Y2WUsers.h"
+
+#import "UserBase.h"
+#import "ContactBase.h"
+#import "UserConversationBase.h"
+
+#import "ThemeManager.h"
+#import "CategoryHeader.h"
+
+#import "AFNetworking.h"
+#import "UIKit+AFNetworking.h"
+#import "Masonry.h"
+#import "DateTools.h"
+#import "Realm/Realm.h"
+
+#endif /* PrefixHeader_pch */
