@@ -24,6 +24,14 @@
 #import "RTCVideoDelegate.h"
 
 
+
+typedef NS_ENUM(NSInteger, RTCCodecType) {
+    RTCCodecTypeVP8 = 0,
+    RTCCodecTypeVP9
+};
+
+
+
 @protocol RTCVideoInterface <NSObject>
 
 @property (nonatomic, copy) NSString *stunServerAddr;
@@ -32,6 +40,7 @@
 @property (nonatomic, copy) NSString *turnServerPort;
 @property (nonatomic, copy) NSString *turnUserName;
 @property (nonatomic, copy) NSString *turnPassword;
+@property (nonatomic, assign) RTCCodecType codecType;
 
 
 @property (nonatomic, assign) id<RTCVideoDelegate> delegate;
