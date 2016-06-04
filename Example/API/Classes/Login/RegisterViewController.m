@@ -50,7 +50,10 @@
                                               password:self.psdTextField.text
                                                   name:self.nickNameTextField.text
                                                success:^{
+                                                   
                                                    [UIAlertView showTitle:nil message:@"注册成功"];
+                                                   
+                                                   [self.navigationController popToRootViewControllerAnimated:YES];
 
                                                    if ([self.delegate respondsToSelector:@selector(loginWithAccount:password:)]) {
                                                        [self.delegate loginWithAccount:self.accountTextField.text

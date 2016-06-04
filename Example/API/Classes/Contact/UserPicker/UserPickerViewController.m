@@ -9,7 +9,8 @@
 #import "UserPickerViewController.h"
 #import "MemberModelCell.h"
 #import "MemberGroupsModel.h"
-
+#import "SessionMemberPickerConfig.h"
+#import "SessionMemberModel.h"
 @interface UserPickerViewController ()<UITableViewDataSource,UITableViewDelegate>
 
 @property (nonatomic, retain) NSObject<UserPickerConfig> *config;
@@ -44,7 +45,16 @@
     [self setUpNavItem];
     [self.view addSubview:self.tableView];
     
-    [self makeContactsData];
+    switch ([self.config type]) {
+        case UserPickerTypeContact:
+            [self makeContactsData];
+            break;
+        case UserPickerTypeSessionMember:
+            [self makeSessionMembersData];
+            break;
+        default:
+            break;
+    }
 }
 
 - (void)viewDidLayoutSubviews {
@@ -80,7 +90,26 @@
     });
 }
 
-
+- (void)makeSessionMembersData
+{
+    self.members = [[MemberGroupsModel alloc] init];
+    
+    SessionMemberPickerConfig *config = (SessionMemberPickerConfig *)self.config;
+    
+    NSArray *datas = [config.session.members getMembers];
+    
+    for (Y2WSessionMember *member in datas) {
+        if(![self isInFilterForUID:member.userId] && ![member.sessionMemberId isEqualToString:[Y2WUsers getInstance].getCurrentUser.userId]) {
+            SessionMemberModel *model = [[SessionMemberModel alloc]initWithSessionMember:member];
+            [self.members addContact:model];
+        }
+    }
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.tableView reloadData];
+        self.tableView.backgroundView.hidden = self.members.groupModels.count;
+    });
+}
 
 #pragma mark - ———— Response ———— -
 

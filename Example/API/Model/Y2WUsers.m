@@ -42,12 +42,7 @@ NSString *const CURRENT_USER_KEY = @"currentUser";
 
 - (Y2WCurrentUser *)getCurrentUser {
 
-    if (!_currentUser) {
-#warning 每次都取，可考虑过token过期的问题？ 风险2
-        NSDictionary *dict = [[NSUserDefaults standardUserDefaults] objectForKey:CURRENT_USER_KEY];
-        if (dict) _currentUser = [[Y2WCurrentUser alloc]initWithValue:dict];
-    }
-    return _currentUser;
+    return self.currentUser;
 }
 
 - (void)addUser:(Y2WUser *)user {
@@ -105,16 +100,20 @@ NSString *const CURRENT_USER_KEY = @"currentUser";
                  failure:(void (^)(NSError *))failure {
     
     [HttpRequest POSTWithURL:[URL login] parameters:@{@"email":account,@"password":[password MD5Hash]} success:^(id data) {
-        // 临时存储方式
-        [[NSUserDefaults standardUserDefaults] setObject:data forKey:CURRENT_USER_KEY];
-        [[NSUserDefaults standardUserDefaults] synchronize];
-        self.users.currentUser = nil;
+
+        Y2WCurrentUser *currentUser = [[Y2WCurrentUser alloc] initWithValue:data];
+        currentUser.passwordHash = [password MD5Hash];
+        self.users.currentUser = currentUser;
         
+        UserBase *userbase = [[UserBase alloc]initWithValue:data];
+        
+        RLMRealm *realm = [RLMRealm defaultRealm];
+        [realm beginWriteTransaction];
+        [realm addOrUpdateObject:userbase];
+        [realm commitWriteTransaction];
         
         Y2WUser *user = [[Y2WUser alloc] initWithValue:data];
         [[Y2WUsers getInstance] addUser:user];
-        
-        Y2WCurrentUser *currentUser = [[Y2WUsers getInstance] getCurrentUser];
         
         // 启动一次同步
         [currentUser.userConversations.remote sync];
@@ -123,7 +122,11 @@ NSString *const CURRENT_USER_KEY = @"currentUser";
 
         if (success) success(currentUser);
 
-    } failure:failure];
+    } failure:^(NSError *error) {
+        if (failure) {
+            failure(error);
+        }
+    }];
 }
 
 - (void)searchUserWithKey:(NSString *)key success:(void (^)(NSArray *users))success failure:(void (^)(NSError *error))failure {

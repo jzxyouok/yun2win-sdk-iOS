@@ -14,14 +14,18 @@
 #import "MemberModelCell.h"
 #import "Y2WContact.h"
 #import "MemberGroupsModel.h"
+#import "SearchResultsViewController.h"
 
-@interface ContactsViewController ()<UITableViewDataSource,UITableViewDelegate,Y2WContactsDelegate>
+@interface ContactsViewController ()
+<UITableViewDataSource,
+UITableViewDelegate,
+Y2WContactsDelegate>
 
 @property (nonatomic, retain) Y2WContacts *contacts;
 
 @property (nonatomic, retain) MemberGroupsModel *model;
 
-@property (nonatomic, retain) UISearchBar *searchBar;
+@property (nonatomic, strong) UISearchController *searchController;
 
 @property (nonatomic, retain) UITableView *tableView;
 
@@ -169,12 +173,6 @@
     }];
     return @[action];
 }
-
-
-
-
-
-
 
 
 #pragma mark - ———— Response ———— -
@@ -340,14 +338,18 @@
     return _model;
 }
 
-- (UISearchBar *)searchBar {
-    
-    if (!_searchBar) {
-        _searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0, 0, self.view.width, 40)];
-        _searchBar.barTintColor = [UIColor whiteColor];
-        _searchBar.tintColor = [UIColor redColor];
+- (UISearchController *)searchController
+{
+    if (!_searchController) {
+        SearchResultsViewController *resultsController = [[SearchResultsViewController alloc]init];
+        resultsController.contacts = self.contacts;
+        _searchController = [[UISearchController alloc]initWithSearchResultsController:resultsController];
+        _searchController.searchResultsUpdater = resultsController;
+        _searchController.searchBar.frame = CGRectMake(0, 0, self.view.width, 40);
+        _searchController.searchBar.barTintColor = [UIColor colorWithHexString:@"E3EFEF"];
+        _searchController.searchBar.searchBarStyle = UISearchBarStyleDefault;
     }
-    return _searchBar;
+    return _searchController;
 }
 
 - (UITableView *)tableView {
@@ -359,7 +361,7 @@
         _tableView.sectionIndexColor = [ThemeManager sharedManager].currentColor;
         _tableView.sectionIndexBackgroundColor = [UIColor whiteColor];
         _tableView.sectionIndexTrackingBackgroundColor = [UIColor colorWithHexString:@"E3EFEF"];
-        _tableView.tableHeaderView = self.searchBar;
+        _tableView.tableHeaderView = self.searchController.searchBar;
         _tableView.tableFooterView = [[UIView alloc] init];
         _tableView.sectionHeaderHeight = 16;
         _tableView.delegate = self;

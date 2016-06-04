@@ -20,6 +20,7 @@
 
 - (void)inputView:(InputView *)inputView onSendText:(NSString *)text;
 
+- (void)inputView:(InputView *)inputView onSendVoice:(NSString *)voicePath time:(NSInteger)timer;
 @end
 
 @protocol InputViewMoreDelegate <NSObject>

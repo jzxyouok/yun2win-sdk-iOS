@@ -9,6 +9,11 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
+		<key>DateTools.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>Kiwi.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -37,7 +42,12 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
-		<key>3B161E45CE7D1B378BBD8B5A19AFFBD5</key>
+		<key>31FF44B5E2FF8CF00090950A8B67AFF6</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>3795D368D28AE9DCB1570BC0A10DA847</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -52,7 +62,7 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>7B1456FB3041633AC48365C1E20C7DCA</key>
+		<key>57F037042E2298241BC69E82B7F6104B</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -62,7 +72,7 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>DA002C3E315D9DB744169BB3A36DDA62</key>
+		<key>D7216A85E10559250C7D51F97FD75A4F</key>
 		<dict>
 			<key>primary</key>
 			<true/>

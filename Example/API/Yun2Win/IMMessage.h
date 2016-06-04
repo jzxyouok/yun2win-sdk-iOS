@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <Y2W_IM_SDK/IMClientProtocol.h>
+#import <Y2W_IM_SDK/Y2W_IM_SDK.h>
 
 @interface IMMessage : NSObject<IMMessageProtocol>
 

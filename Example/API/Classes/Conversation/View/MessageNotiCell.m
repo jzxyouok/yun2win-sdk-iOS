@@ -9,6 +9,7 @@
 #import "MessageNotiCell.h"
 
 @implementation MessageNotiCell
+@synthesize messageDelegate = _messageDelegate;
 
 - (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
     

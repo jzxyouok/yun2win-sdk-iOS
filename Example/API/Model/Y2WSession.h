@@ -89,7 +89,7 @@
 /**
  *  更新session
  *
- *  @param session <#session description#>
+ *  @param session 
  */
 - (void)updateWithSession:(Y2WSession *)session;
 

@@ -83,4 +83,10 @@
  */
 - (void)getSessionDidCompletion:(void(^)(NSError *error, Y2WSession *session))block;
 
+
+/**
+ *  转换成REST接口需要的结构,方便请求时调用
+ */
+- (NSDictionary *)toParameters;
+
 @end

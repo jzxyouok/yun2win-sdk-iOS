@@ -8,6 +8,7 @@
 
 #import "Y2WBridge.h"
 #import "Y2WSession.h"
+#import "ReceiveCommunicationManage.h"
 
 @interface Y2WBridge ()<IMClientReceiveMessageDelegate>
 
@@ -23,7 +24,7 @@
 
 @implementation Y2WBridge
 
-- (instancetype)initWithAppKey:(NSString *)appkey Token:(NSString *)token UserId:(NSString *)userId OnConnectionStatusChanged:(id<OnConnectionStatusChanged>)onConnectionStatusChanged OnMessage:(OnMessage *)message
+- (instancetype)initWithAppKey:(NSString *)appkey Token:(NSString *)token UserId:(NSString *)userId OnConnectionStatusChanged:(id<IMClientOnConnectionStatusChanged>)onConnectionStatusChanged OnMessage:(OnMessage *)message
 {
     if ([super init]) {
         _appKey = appkey;
@@ -41,6 +42,8 @@
     if ([super init]) {
         self.dispath_send_queue = dispatch_queue_create("dispath_send_queue", DISPATCH_QUEUE_SERIAL);
         self.dispath_receive_queue = dispatch_queue_create("dispath_receive_queue", DISPATCH_QUEUE_SERIAL);
+        self.imClient = [IMClient shareY2WIMClient];
+        self.imClient.receiptDelegate = self;
     }
     return self;
 }
@@ -72,7 +75,7 @@
     NSDictionary *syncTypeDict = @{@"syncs":content};
 //    IMMessage *imMessage = [[IMMessage alloc]initWithCommand:@"sendMessage" Mts:imSession.mts Message:syncTypeDict];
     IMMessage *imMessage = [[IMMessage alloc]initWithMts:imSession.mts Message:syncTypeDict];
-    NSLog(@"send-----%@",imMessage.y2wMessageId);
+//    NSLog(@"send-----%@",imMessage.y2wMessageId);
 
     [self sendMessageInSession:imSession Message:imMessage];
     
@@ -90,7 +93,7 @@
     }
 //    IMMessage *imMessage = [[IMMessage alloc]initWithCommand:@"updateSession" Mts:imSession.mts Message:content];
     IMMessage *imMessage = [[IMMessage alloc]initWithMts:imSession.mts Message:content];
-    NSLog(@"update-----%@",imMessage.y2wMessageId);
+//    NSLog(@"update-----%@",imMessage.y2wMessageId);
 
     [self sendMessageInSession:imSession Message:imMessage];
 }
@@ -271,6 +274,9 @@
                 [[NSNotificationCenter defaultCenter]postNotificationName:Y2WMessageDidChangeNotification object:message_syncs userInfo:nil];
                 [[NSNotificationCenter defaultCenter]postNotificationName:Y2WUserConversationDidChangeNotification object:nil userInfo:nil];
             }
+            if (tempDic[@"content"]) {
+                [[ReceiveCommunicationManage showReceiveCommManage] receiveCommunicationMessage:tempDic];
+            }
         }
     }
 }
@@ -301,14 +307,14 @@
     return _sendMessageList;
 }
 
-- (IMClient *)imClient
-{
-    if (!_imClient) {
-        _imClient = [IMClient shareY2WIMClient];
-        _imClient.receiptDelegate = self;
-    }
-    return _imClient;
-}
+//- (IMClient *)imClient
+//{
+//    if (!_imClient) {
+//        _imClient = [IMClient shareY2WIMClient];
+//        _imClient.receiptDelegate = self;
+//    }
+//    return _imClient;
+//}
 
 @end
 
@@ -322,3 +328,7 @@ NSString *const Y2WMessageDidChangeNotification = @"Y2WMessageDidChangeNotificat
  */
 NSString *const Y2WUserConversationDidChangeNotification = @"Y2WUserConversationDidChangeNotification";
 
+/**
+ *  音视频消息
+ */
+NSString *const Y2WCommunicationMessageNotification = @"Y2WCommunicationMessageNotification";

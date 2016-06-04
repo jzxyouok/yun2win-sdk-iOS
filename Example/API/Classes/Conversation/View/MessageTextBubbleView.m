@@ -32,8 +32,12 @@
     
     [self setTitleEdgeInsets:_model.contentViewInsets];
     [self.titleLabel setFont:[UIFont systemFontOfSize:_model.cellConfig.textFontSize]];
-    [self setTitle:data.message.content[@"text"] forState:UIControlStateNormal];
+//    [self setTitle:data.message.content[@"text"] forState:UIControlStateNormal];
+
     
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self setAttributedTitle:[data.message.content[@"text"] stringForAttributedString] forState:UIControlStateNormal];
+    });
     
     [self setBackgroundImage:[self chatBubbleImageForState:UIControlStateNormal outgoing:data.isMe] forState:UIControlStateNormal];
     [self setBackgroundImage:[self chatBubbleImageForState:UIControlStateHighlighted outgoing:data.isMe] forState:UIControlStateHighlighted];
@@ -95,5 +99,6 @@
     }
     return nil;
 }
+
 
 @end

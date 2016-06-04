@@ -16,7 +16,7 @@
 @synthesize rowHeight = _rowHeight;
 @synthesize sortKey = _sortKey;
 @synthesize groupTitle = _groupTitle;
-
+@synthesize label = _label;
 
 - (instancetype)initWithContact:(Y2WContact *)contact {
     if (self = [super init]) {

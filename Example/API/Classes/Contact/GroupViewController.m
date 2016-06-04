@@ -8,6 +8,7 @@
 
 #import "GroupViewController.h"
 #import "SessionMembersViewController.h"
+#import "SessionsInfoChangedViewController.h"
 #import "SettingTableViewUserCell.h"
 #import "SettingTableViewCellModel.h"
 
@@ -71,6 +72,20 @@
 - (void)clickSessionMembers {
     SessionMembersViewController *sessionMembersVC = [[SessionMembersViewController alloc] initWithSessionMembers:self.session.members];
     [self pushViewController:sessionMembersVC];
+}
+
+- (void)clickSessionsName
+{
+    NSLog(@"sessionName");
+    SessionsInfoChangedViewController *infoChanged = [[SessionsInfoChangedViewController alloc]initWithUserSession:self.session changedType:@"1"];
+    [self pushViewController:infoChanged];
+}
+
+- (void)clickSessionsDescription
+{
+    NSLog(@"SessionsDescription");
+    SessionsInfoChangedViewController *infoChanged = [[SessionsInfoChangedViewController alloc]init];
+    [self pushViewController:infoChanged];
 }
 
 - (IBAction)quitSession:(id)sender {
@@ -175,6 +190,7 @@
     changePsw.title = @"群名称";
     changePsw.detailTitle = self.session.name;
     changePsw.cellClass = [SettingTableViewCell class];
+    changePsw.cellAction = @selector(clickSessionsName);
     changePsw.rowHeight = 50;
     changePsw.showAccessory = YES;
     [sectons addObject:@[changePsw]];
@@ -182,6 +198,7 @@
     SettingTableViewCellModel *about = [[SettingTableViewCellModel alloc] init];
     about.title = @"群简介";
     about.cellClass = [SettingTableViewCell class];
+    about.cellAction = @selector(clickSessionsDescription);
     about.rowHeight = 50;
     about.showAccessory = YES;
     [sectons addObject:@[about]];

@@ -51,12 +51,25 @@
     return self;
 }
 
+- (void)syncTokenDidCompletion:(void (^)(NSError *))block {
+    
+    [HttpRequest POSTWithURL:[URL login] parameters:@{@"email":self.currentUser.account,@"password":self.currentUser.passwordHash} success:^(id data) {
+        
+        self.currentUser.token = data[@"token"];
+
+        if (block) block(nil);
+        
+    } failure:block];
+}
+
+
+
 - (void)syncIMTokenDidCompletion:(void (^)(NSError *))block
 {
     [HttpRequest POSTNoHeaderWithURL:[URL getImToken] parameters:@{@"grant_type":@"client_credentials",@"client_id":self.currentUser.appKey,@"client_secret":self.currentUser.secret} success:^(id data) {
         self.currentUser.imToken = data[@"access_token"];
         
-        [[IMClient shareY2WIMClient] registerWithToken:self.currentUser.imToken UID:self.currentUser.userId];
+        [[IMClient shareY2WIMClient] registerWithToken:self.currentUser.imToken UID:self.currentUser.userId Appkey:self.currentUser.appKey];
 #warning IMClient要取消单态，一个CurrentUser一个IMClient, 多用户间才不会出错。
     } failure:block];
 }

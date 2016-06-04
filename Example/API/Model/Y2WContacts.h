@@ -8,7 +8,6 @@
 
 #import <Foundation/Foundation.h>
 #import "Y2WContactsDelegate.h"
-#import "Y2WDefinition.h"
 #import "Y2WContact.h"
 @class Y2WCurrentUser;
 @class Y2WContactsRemote;
@@ -57,7 +56,7 @@
  */
 - (Y2WContact *)getContactWithUID:(NSString *)uid;
 
-
+- (NSArray *)getContactWithKey:(NSString *)key;
 
 /**
  *  获取当前登陆用户的所有联系人

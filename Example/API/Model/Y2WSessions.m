@@ -49,8 +49,6 @@
     } failure:failure];
 }
 
-
-
 #pragma mark - ———— 私有 ———— -
 
 - (void)addSession:(Y2WSession *)session {
@@ -165,6 +163,23 @@
             if (success) success(weakSession);
         } failure:failure];
     } failure:failure];
+}
+
+- (void)updateWithName:(NSString *)name type:(NSString *)type secureType:(NSString *)secureType avatarUrl:(NSString *)avatarUrl session:(Y2WSession *)session success:(void (^)(Y2WSession *))success failure:(void (^)(NSError *))failure
+{
+    NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
+    parameters[@"name"] = name ?: @"群";
+    parameters[@"nameChanged"] = name?@"true":@"false";
+    parameters[@"type"] = type?:@"group";
+    parameters[@"secureType"] = secureType?:@"public";
+    parameters[@"avatarUrl"] = avatarUrl?: @"1";
+    
+    [HttpRequest PUTWithURL:[URL aboutSession:session.sessionId] parameters:parameters success:^(id data) {
+        Y2WSession *session = [[Y2WSession alloc] initWithSessions:self.sessions dict:data];
+        [self.sessions addSession:session];
+    } failure:^(NSError *error) {
+        NSLog(@"%@",error);
+    }];
 }
 
 @end

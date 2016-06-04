@@ -1,0 +1,4 @@
+Documentation set was installed to Xcode!
+
+Path: /Users/ShingHo/Library/Developer/Shared/Documentation/DocSets/com.yun2win.yun2windemo.yun2winDemo.docset
+Time: 2016-04-01 02:47:08 +0000

@@ -95,5 +95,14 @@
  */
 - (void)updateSessionMember:(Y2WSessionMember *)member;
 
+
+
+#pragma mark - ———— 构造方法 ———— -
+
+/**
+ *  转换成REST接口需要的结构,方便请求时调用
+ */
+- (NSDictionary *)toParameters;
+
 @end
 

@@ -27,9 +27,9 @@
 #pragma mark - ———— 排序 ———— -
 
 - (void)sort {
-    [self.contacts sortUsingComparator:^NSComparisonResult(NSObject<SortGroupInterface> *obj1, NSObject<SortGroupInterface> *obj2) {
-        return [obj1.sortKey compare:obj2.sortKey];
-    }];
+
+    NSSortDescriptor *sort2 = [NSSortDescriptor sortDescriptorWithKey:@"sortKey" ascending:YES];
+    [self.contacts sortUsingDescriptors:@[sort2]];
 }
 
 

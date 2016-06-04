@@ -82,4 +82,12 @@
             success:(void(^)(Y2WSession *session))success
             failure:(void(^)(NSError *error))failure;
 
+
+- (void)updateWithName:(NSString *)name
+                  type:(NSString *)type
+            secureType:(NSString *)secureType
+             avatarUrl:(NSString *)avatarUrl
+               session:(Y2WSession *)session
+               success:(void(^)(Y2WSession *session))success
+               failure:(void(^)(NSError *error))failure;
 @end

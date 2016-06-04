@@ -12,8 +12,7 @@
 #import "Y2WUser.h"
 #import "Y2WCurrentUser.h"
 #import "Y2WUsers.h"
-
-
+#import "EmojiManage.h"
 @interface LoginViewController ()<UITextFieldDelegate,LoginViewControllerDelegate>
 
 @property (weak, nonatomic) IBOutlet UITextField *accountTextField;
@@ -38,9 +37,9 @@
     self.psdTextField.delegate = self;
     [self.loginButton addTarget:self action:@selector(login) forControlEvents:UIControlEventTouchUpInside];
     
-    self.accountTextField.text = @"qisong";
-    self.psdTextField.text = @"123456";
-    [self login];
+    self.accountTextField.text = @"z";
+    self.psdTextField.text = @"z";
+//    [self login];
 }
 
 - (IBAction)registration:(UIButton *)sender {
@@ -53,21 +52,11 @@
 
 - (void)login
 {
-
     [self loginWithAccount:self.accountTextField.text password:self.psdTextField.text];
 }
 
 
 - (void)loginWithAccount:(NSString *)account password:(NSString *)password {
-    
-    [[Y2WUsers getInstance].remote loginWithAccount:account
-                                           password:password
-                                            success:^(Y2WCurrentUser *currentUser) {
-                                                
-                                            } failure:^(NSError *error) {
-                                                
-                                            }];
-    
     
     [[Y2WUsers getInstance].remote loginWithAccount:account password:password success:^(Y2WCurrentUser *currentUser) {
         
@@ -75,6 +64,7 @@
         [[Y2WUsers getInstance].getCurrentUser.remote syncIMTokenDidCompletion:^(NSError *error) {
             
         }];
+        [[EmojiManage shareEmoji] syncEmoji];
         
         MainViewController *main = [[MainViewController alloc]init];
         [UIApplication sharedApplication].keyWindow.rootViewController = main;

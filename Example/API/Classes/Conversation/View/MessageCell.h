@@ -10,14 +10,9 @@
 #import "MessageBubbleInterface.h"
 #import "TimeStampLabel.h"
 #import "MessageModel.h"
-
+#import "MessageCellDelegate.h"
 
 @class MessageCell;
-@protocol MessageCellDelegate <NSObject>
-
-//- (void)messageCell:()
-
-@end
 
 @interface MessageCell : UITableViewCell<MessageCellModelInterface>
 
@@ -25,9 +20,11 @@
 @property (nonatomic, retain) UIImageView *headImageView;                         // 头像
 @property (nonatomic, retain) UILabel *nameLabel;                                 // 姓名（群显示 个人不显示）
 @property (nonatomic, retain) UIView<MessageBubbleInterface> *bubbleView;         // 内容区域
-@property (nonatomic, retain) UIActivityIndicatorView *indicator;  // 发送loading
+@property (nonatomic, retain) UIActivityIndicatorView *indicator;                 // 发送loading
 @property (nonatomic, retain) UIButton *retryButton;                              // 重试
+@property (nonatomic, strong) UIProgressView *progressView;                       // 进度条
+@property (nonatomic, strong) UILabel *progressNumbLabel;                         // 进度条数字显示
 
-//@property (nonatomic, weak)   id<NIMMessageCellDelegate> messageDelegate;
+@property (nonatomic, weak)   id<MessageCellDelegate> messageDelegate;
 
 @end

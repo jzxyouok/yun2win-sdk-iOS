@@ -6,4 +6,4 @@ end
 pod 'AFNetworking', '~> 3.0.4'
 pod 'Masonry'
 pod 'DateTools'
-
+pod 'Realm'

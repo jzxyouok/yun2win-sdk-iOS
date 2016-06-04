@@ -16,7 +16,7 @@
 @synthesize rowHeight = _rowHeight;
 @synthesize sortKey = _sortKey;
 @synthesize groupTitle = _groupTitle;
-
+@synthesize label = _label;
 
 
 - (instancetype)initWithSessionMember:(Y2WSessionMember *)sessionMember {
@@ -29,7 +29,18 @@
         _sortKey = sessionMember.name;
         _groupTitle = [[[sessionMember.pinyin firstObject] first] uppercaseString];
         _sessionMember = sessionMember;
+        
+        if ([sessionMember.role isEqualToString:@"master"]) {
+            _label = @"群主";
+            _groupTitle = @"*";
+            _sortKey = [@" " stringByAppendingString:sessionMember.name];
+
+        }else if ([sessionMember.role isEqualToString:@"admin"]) {
+            _label = @"管理员";
+            _groupTitle = @"*";
+        }
     }
     return self;
 }
+
 @end

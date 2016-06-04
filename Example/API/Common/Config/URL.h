@@ -12,6 +12,10 @@
 
 + (NSString *)getImToken;
 
++ (NSString *)domain;
+
++ (NSString *)baseURL;
+
 + (NSString *)registerUser;
 
 + (NSString *)login;
@@ -82,6 +86,7 @@
  */
 + (NSString *)attachmentsOfContent:(NSString *)attachmentId;
 
++ (NSString *)attachmentsOfContentWithNoHeader:(NSString *)attachmentId;
 
 /**
  *  获取消息体中的数据流
@@ -98,6 +103,22 @@
  *  @return url字符串
  */
 + (NSString *)getUsers;
+
+/**
+ *  应用的表情集
+ *
+ *  @return
+ */
++ (NSString *)emojis;
+
+/**
+ *  应用的某个表情
+ *
+ *  @param emojiId 表情Id
+ *
+ *  @return 
+ */
++ (NSString *)emojis:(NSString *)emojiId;
 
 @end
 

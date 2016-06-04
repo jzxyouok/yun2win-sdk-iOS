@@ -8,8 +8,9 @@
 
 #import <UIKit/UIKit.h>
 #import "Y2WUserConversation.h"
+#import "MessageCellDelegate.h"
 
-@interface ConversationViewController : UIViewController
+@interface ConversationViewController : UIViewController<Y2WMessagesDelegate>
 
 - (instancetype)initWithSession:(Y2WSession *)session;
 

@@ -8,14 +8,15 @@
 
 #import <Foundation/Foundation.h>
 #import "AFNetworking.h"
-//#import "AFHTTPSessionManager.h"
-//#import "AFURLRequestSerialization.h"
+#import "FileAppend.h"
+
+typedef void (^ProgressBlock) (CGFloat fractionCompleted);
 
 @interface HttpRequest : NSObject
 
-+ (void)GETWithURL:(NSString *)url parameters:(NSDictionary *)parameter success:(void(^)(id data))success failure:(void(^)(id msg))failure;
++ (void)GETWithURL:(NSString *)url parameters:(NSDictionary *)parameter success:(void(^)(id data))success failure:(void(^)(NSError *error))failure;
 
-+ (void)GETWithURL:(NSString *)url timeStamp:(NSString *)timeStamp parameters:(NSDictionary *)parameter success:(void (^)(id data))success failure:(void (^)(id msg))failure;
++ (void)GETWithURL:(NSString *)url timeStamp:(NSString *)timeStamp parameters:(NSDictionary *)parameter success:(void (^)(id data))success failure:(void (^)(NSError *error))failure;
 
 + (void)POSTWithURL:(NSString *)url parameters:(NSDictionary *)parameter success:(void(^)(id data))success failure:(void(^)(NSError *error))failure;
 
@@ -25,7 +26,18 @@
 
 + (void)DELETEWithURL:(NSString *)url parameters:(NSDictionary *)parameter success:(void(^)(id data))success failure:(void(^)(NSError *error))failure;
 
-+ (void)UPLOADWithURL:(NSString *)url parameters:(NSDictionary *)parameter success:(void(^)(id data))success failure:(void(^)(NSError *error))failure;
++ (void)UPLOADWithURL:(NSString *)url
+           parameters:(NSDictionary *)parameter
+          fileAppend:(FileAppend *)fileAppend
+              progress:(ProgressBlock)progress
+              success:(void(^)(id data))success
+              failure:(void(^)(NSError *error))failure;
+
++ (void)DOWNLOADWithURL:(NSString *)url
+             parameters:(NSDictionary *)parameter
+               progress:(ProgressBlock)progress
+                success:(void(^)(NSURL *path))success
+                failure:(void(^)(NSError *error))failure;
 @end
 
 @interface HttpRequest (Category)

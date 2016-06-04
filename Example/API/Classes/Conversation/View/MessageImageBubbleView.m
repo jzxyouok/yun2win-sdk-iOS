@@ -7,7 +7,7 @@
 //
 
 #import "MessageImageBubbleView.h"
-
+#import "Y2WImageMessage.h"
 @interface MessageImageBubbleView ()
 @property (nonatomic, retain) MessageModel *model;
 @end
@@ -26,10 +26,9 @@
 
 - (void)refreshData:(MessageModel *)data {
     _model = data;
-    
-    [self setImageForState:UIControlStateNormal withURL:[NSURL URLWithString:[_model.message.content[@"thumbnail"] attachmentUrl]] placeholderImage:[UIImage imageNamed:@"输入框-图片"]];
-    
-    NSLog(@"%@",[URL attachmentsWithContent:[_model.message.content[@"thumbnail"] attachmentUrl]]);
+    Y2WBaseMessage *temp_message = _model.message;
+    Y2WImageMessage *message = (Y2WImageMessage *)temp_message;
+    [self setImageForState:UIControlStateNormal withURL:[NSURL URLWithString:message.thumImageUrl] placeholderImage:[UIImage imageNamed:@"输入框-图片"]];
 }
 
 @end

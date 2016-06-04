@@ -84,6 +84,12 @@
 
 - (void)sort {
     [self.groupModels sortUsingComparator:^NSComparisonResult(NSObject<SortGroupInterface> *obj1, NSObject<SortGroupInterface> *obj2) {
+        if ([obj1.groupTitle isEqualToString:@"*"]) {
+            return NSOrderedAscending;
+        }
+        if ([obj2.groupTitle isEqualToString:@"*"]) {
+            return NSOrderedDescending;
+        }
         if ([obj1.groupTitle isEqualToString:@"#"]) {
             return NSOrderedDescending;
         }
@@ -93,6 +99,9 @@
         return [obj1.groupTitle compare:obj2.groupTitle];
     }];
 }
+
+
+
 
 
 - (NSArray *)titles {

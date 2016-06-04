@@ -118,6 +118,13 @@
     //    return nil;
 }
 
+- (NSArray *)getContactWithKey:(NSString *)key
+{
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"name CONTAINS[cd] %@ OR userId CONTAINS[cd] %@",key,key];
+    NSArray *contacts = [[self getContacts] filteredArrayUsingPredicate:predicate];
+    return contacts;
+}
+
 - (NSArray *)getContacts
 {
     if (self.contactList.count)
@@ -191,6 +198,12 @@
 
             
             for (NSDictionary *dic in arr) {
+                ContactBase *contactbase = [[ContactBase alloc]initWithValue:dic];
+                RLMRealm *realm = [RLMRealm defaultRealm];
+                [realm beginWriteTransaction];
+                [realm addOrUpdateObject:contactbase];
+                [realm commitWriteTransaction];
+                
                 Y2WContact *contact = [[Y2WContact alloc]initWithValue:dic];
                 contact.contacts = self.contacts;
                 

@@ -41,31 +41,34 @@
         updateUserConversations:(NSArray *)updateUserConversations
            didCompleteWithError:(NSError *)error {
     
-    if ([self.delegates respondsToSelector:@selector(userConversationsWillChangeContent:)]) {
-        [self.delegates userConversationsWillChangeContent:self];
-    }
-    
-    if ([self.delegates respondsToSelector:@selector(userConversations:onAddUserConversation:)]) {
-        for (Y2WUserConversation *userConversation in addUserConversations) {
-            [self.delegates userConversations:self onAddUserConversation:userConversation];
+    dispatch_barrier_async(dispatch_queue_create("啊", DISPATCH_QUEUE_SERIAL), ^{
+
+        if ([self.delegates respondsToSelector:@selector(userConversationsWillChangeContent:)]) {
+            [self.delegates userConversationsWillChangeContent:self];
         }
-    }
-    
-    if ([self.delegates respondsToSelector:@selector(userConversations:onDeleteUserConversation:)]) {
-        for (Y2WUserConversation *userConversation in deleteUserConversations) {
-            [self.delegates userConversations:self onDeleteUserConversation:userConversation];
+        
+        if ([self.delegates respondsToSelector:@selector(userConversations:onAddUserConversation:)]) {
+            for (Y2WUserConversation *userConversation in addUserConversations) {
+                [self.delegates userConversations:self onAddUserConversation:userConversation];
+            }
         }
-    }
-    
-    if ([self.delegates respondsToSelector:@selector(userConversations:onUpdateUserConversation:)]) {
-        for (Y2WUserConversation *userConversation in updateUserConversations) {
-            [self.delegates userConversations:self onUpdateUserConversation:userConversation];
+        
+        if ([self.delegates respondsToSelector:@selector(userConversations:onUpdateUserConversation:)]) {
+            for (Y2WUserConversation *userConversation in updateUserConversations) {
+                [self.delegates userConversations:self onUpdateUserConversation:userConversation];
+            }
         }
-    }
+        
+        if ([self.delegates respondsToSelector:@selector(userConversations:onDeleteUserConversation:)]) {
+            for (Y2WUserConversation *userConversation in deleteUserConversations) {
+                [self.delegates userConversations:self onDeleteUserConversation:userConversation];
+            }
+        }
     
-    if ([self.delegates respondsToSelector:@selector(userConversationsDidChangeContent:)]) {
-        [self.delegates userConversationsDidChangeContent:self];
-    }
+        if ([self.delegates respondsToSelector:@selector(userConversationsDidChangeContent:)]) {
+            [self.delegates userConversationsDidChangeContent:self];
+        }
+    });
 }
 
 
@@ -127,6 +130,13 @@
     return nil;
 }
 
+- (NSString *)updatedAt {
+    if (!_updatedAt) {
+        _updatedAt = @"1990-01-01T00:00:00";
+    }
+    return _updatedAt;
+}
+
 @end
 
 
@@ -156,36 +166,21 @@
     return self;
 }
 
-- (void)sync
-{
-    //    NSString *conTimeStamp = [[NSUserDefaults standardUserDefaults]objectForKey:[@"userConversayionTimeStamp" stringByAppendingFormat:@"%@",USERID]];
-    NSString *conTimeStamp;
-    //若无更新时间戳时
-    if (!conTimeStamp.length) {
-        NSString *timeStamp = @"1990-01-01T00:00:00";
-        [self syncUserConversationsAtTimeStamp:timeStamp];
-    }
-    else
-    {
-        [self syncUserConversationsAtTimeStamp:conTimeStamp];
-    }
-}
+- (void)sync {
 
-- (void)syncUserConversationsAtTimeStamp:(NSString *)timeStamp
-{
-    [HttpRequest GETWithURL:[URL userConversations] timeStamp:timeStamp parameters:@{@"limit":@"100"} success:^(id data) {
+    [HttpRequest GETWithURL:[URL userConversations] timeStamp:self.userConversations.updatedAt parameters:@{@"limit":@"100"} success:^(id data) {
         
         NSInteger count = [data[@"total_count"] integerValue];
         if (count) {
-            NSArray *arr = data[@"entries"];
-            NSString *nowTimeStamp = arr[arr.count-1][@"updatedAt"];
+            NSMutableArray *entries = [data[@"entries"] mutableCopy];
+            [entries sortUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"updatedAt" ascending:YES]]];
             
             NSMutableArray *addUserConversations = [NSMutableArray array];
             NSMutableArray *deleteUserConversations = [NSMutableArray array];
             NSMutableArray *updateUserConversations = [NSMutableArray array];
             
             
-            for (NSDictionary *dic in arr) {
+            for (NSDictionary *dic in entries) {
                 Y2WUserConversation *userConversation = [[Y2WUserConversation alloc] initWithDict:dic userConversations:self.userConversations];
                 
                 
@@ -194,34 +189,43 @@
                     [self.userConversations removeUserConversation:userConversation];
                     
                 }else {
+                    UserConversationBase *userConversationbase = [[UserConversationBase alloc]initWithValue:dic];
+                    RLMRealm *realm = [RLMRealm defaultRealm];
+                    [realm beginWriteTransaction];
+                    [realm addOrUpdateObject:userConversationbase];
+                    [realm commitWriteTransaction];
+                    
                     Y2WUserConversation *oldUserConversation = [self.userConversations getUserConversation:userConversation.userConversationId];
                     
                     if (oldUserConversation) {
                         [updateUserConversations addObject:userConversation];
+                        [oldUserConversation updateWithUserConversation:userConversation];
                         
                     }else {
                         [addUserConversations addObject:userConversation];
+                        [self.userConversations addUserConversation:userConversation];
                     }
-                    [self.userConversations addUserConversation:userConversation];
                 }
             }
             
-            [[NSUserDefaults standardUserDefaults]setObject:nowTimeStamp forKey:[@"userConversayionTimeStamp" stringByAppendingFormat:@"%@",USERID]];
+            // 更新时间戳
+            self.userConversations.updatedAt = entries.lastObject[@"updatedAt"];
             
             // 通知userConversations变化结果
             if ([self.userConversations respondsToSelector:@selector(userConversationsRemote:addUserConversations:deleteUserConversations:updateUserConversations:didCompleteWithError:)]) {
-
+                
                 [self.userConversations userConversationsRemote:self
                                            addUserConversations:addUserConversations
                                         deleteUserConversations:deleteUserConversations
                                         updateUserConversations:updateUserConversations
                                            didCompleteWithError:nil];
             }
-            if (count <= arr.count){
+            
+            if (count <= entries.count){
                 
             }
             else{
-                [self syncUserConversationsAtTimeStamp:nowTimeStamp];
+                [self sync];
             }
         }
         
@@ -236,6 +240,17 @@
                        failure:(void (^)(NSError *))failure {
     
     [HttpRequest DELETEWithURL:[URL singleUserConversation:userConversation.userConversationId] parameters:nil success:^(id data) {
+        [self sync];
+        if (success) success();
+    } failure:failure];
+}
+
+- (void)updateUserConversation:(Y2WUserConversation *)userConversation
+                       success:(void (^)(void))success
+                       failure:(void (^)(NSError *))failure {
+    
+    NSDictionary *parameters = [userConversation toParameters];
+    [HttpRequest PUTWithURL:[URL singleUserConversation:userConversation.userConversationId] parameters:parameters success:^(id data) {
         [self sync];
         if (success) success();
     } failure:failure];

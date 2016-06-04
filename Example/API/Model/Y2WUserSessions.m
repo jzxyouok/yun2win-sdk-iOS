@@ -8,6 +8,7 @@
 
 #import "Y2WUserSessions.h"
 #import "MulticastDelegate.h"
+#import "Y2WServiceConfig.h"
 
 @interface Y2WUserSessions ()
 
@@ -16,10 +17,7 @@
  */
 @property (nonatomic, retain) MulticastDelegate<Y2WUserSessionsDelegate> *delegates;
 
-/**
- *  所有联系人临时储存方式
- */
-@property (nonatomic, strong) NSMutableArray *contactList;
+@property (nonatomic, strong) NSMutableArray *userSessionsList;
 
 @end
 
@@ -119,6 +117,11 @@
 
 - (void)sync {
     
+    [HttpRequest GETWithURL:[Y2WServiceConfig.baseUrl stringByAppendingFormat:@""] parameters:@{} success:^(id data) {
+        
+    } failure:^(id msg) {
+        
+    }];
 }
 
 
@@ -128,7 +131,15 @@
                success:(void (^)(void))success
                failure:(void (^)(NSError *error))failure {
     
-    
+//    [HttpRequest POSTWithURL:[URL acquireContacts]
+//                  parameters:@{@"userId":contact.userId,@"name":contact.name}
+//                     success:^(id data) {
+//                         
+//                         // 添加成功启动同步
+//                         [self sync];
+//                         if (success) success();
+//                         
+//                     } failure:failure];
 }
 
 

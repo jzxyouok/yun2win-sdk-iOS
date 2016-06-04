@@ -12,14 +12,19 @@
 #import "MemberGroupsModel.h"
 #import "MemberModelCell.h"
 #import "SessionMemberModel.h"
+#import "SearchResultsViewController.h"
 
-@interface SessionMembersViewController ()<UITableViewDataSource,UITableViewDelegate>
+@interface SessionMembersViewController ()<UITableViewDataSource,UITableViewDelegate,Y2WSessionMembersDelegate>
 
-@property (nonatomic, retain) Y2WSessionMembers *sessionMembers;
+@property (nonatomic, weak) Y2WSessionMembers *sessionMembers;
+
+@property (nonatomic, weak) Y2WSessionMember *currrentMember;
 
 @property (nonatomic, retain) UITableView *tableView;
 
 @property (nonatomic, retain) MemberGroupsModel *members;
+
+@property (nonatomic, strong) UISearchController *searchController;
 
 @end
 
@@ -27,7 +32,7 @@
 
 - (void)dealloc {
 
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [self.sessionMembers removeDelegate:self];
 }
 
 - (instancetype)initWithSessionMembers:(Y2WSessionMembers *)sessionMembers {
@@ -42,9 +47,7 @@
     [self setUpNavItem];
     [self.view addSubview:self.tableView];
     
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadData) name:Y2WSessionMemberDidChangeNotification object:nil];
-    
+    [self.sessionMembers addDelegate:self];
     [self reloadData];
 }
 
@@ -151,6 +154,34 @@
 
 
 
+
+
+#pragma mark - ———— Y2WSessionMembersDelegate ———— -
+
+- (void)sessionMembersWillChangeContent:(Y2WSessionMembers *)sessionMembers {
+    
+}
+
+- (void)sessionMembers:(Y2WSessionMembers *)sessionMembers onAddSessionMember:(Y2WSessionMember *)sessionMember {
+    
+}
+
+- (void)sessionMembers:(Y2WSessionMembers *)sessionMembers onDeleteSessionMember:(Y2WSessionMember *)sessionMember {
+    
+}
+
+- (void)sessionMembers:(Y2WSessionMembers *)sessionMembers onUpdateSessionMember:(Y2WSessionMember *)sessionMember {
+    
+}
+
+- (void)sessionMembersDidChangeContent:(Y2WSessionMembers *)sessionMembers {
+    [self reloadData];
+}
+
+
+
+
+
 #pragma mark - ———— UITableViewDataSource ———— -
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
@@ -208,46 +239,133 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
-//    NSObject<MemberModelInterface> *model = [self.members groupModelForRowAtSection:indexPath.section].contacts[indexPath.row];
     
-    
-//    [[Y2WUsers getInstance].getCurrentUser.sessions getSessionWithTargetId:model.uid type:@"p2p" success:^(Y2WSession *session) {
-//        
-//        ConversationViewController *conversationVC = [[ConversationViewController alloc] initWithSession:session];
-//        [self pushViewController:conversationVC];
-//        
-//    } failure:^(NSError *error) {
-//        [UIAlertView showTitle:@"错误" message:error.description];
-//    }];
 }
 
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {}
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
     NSObject<MemberModelInterface> *model = [self.members groupModelForRowAtSection:indexPath.section].contacts[indexPath.row];
-    if ([model.uid.uppercaseString isEqualToString:[Y2WUsers getInstance].getCurrentUser.userId]) return NO;
-    return YES;
+    if ([model isKindOfClass:[SessionMemberModel class]]) {
+        Y2WSessionMember *member = [(SessionMemberModel *)model sessionMember];
+        return [self canDeleteMember:member] || [self canSetMasterToMember:member] || [self canSetManagerToMember:member];
+    }
+    return NO;
 }
 
 - (NSArray<UITableViewRowAction *> *)tableView:(UITableView *)tableView editActionsForRowAtIndexPath:(NSIndexPath *)indexPath {
+  
+    NSObject<MemberModelInterface> *model = [self.members groupModelForRowAtSection:indexPath.section].contacts[indexPath.row];
     
-    UITableViewRowAction *action = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleDefault title:@"删除" handler:^(UITableViewRowAction * _Nonnull action, NSIndexPath * _Nonnull indexPath) {
-        NSObject<MemberModelInterface> *model = [self.members groupModelForRowAtSection:indexPath.section].contacts[indexPath.row];
-
-        if ([model isKindOfClass:[SessionMemberModel class]]) {
-            Y2WSessionMember *member = [(SessionMemberModel *)model sessionMember];
-
-            [self.navigationItem startAnimating];
-            [self.sessionMembers.remote deleteSessionMember:member success:^{
-                [self.navigationItem stopAnimating];
-                
-            } failure:^(NSError *error) {
-                [self.navigationItem stopAnimating];
-                [UIAlertView showTitle:nil message:[[NSString alloc] initWithData:error.userInfo[AFNetworkingOperationFailingURLResponseDataErrorKey] encoding:NSUTF8StringEncoding]];
-            }];
+    if ([model isKindOfClass:[SessionMemberModel class]]) {
+        
+        Y2WSessionMember *member = [(SessionMemberModel *)model sessionMember];
+        
+        NSMutableArray *actions = [NSMutableArray array];
+        
+        if ([self canDeleteMember:member]) {
+            [actions addObject:[self deleteActionWithSessionMember:member]];
         }
+        if ([self canSetMasterToMember:member]) {
+            [actions addObject:[self setMasterActionWithSessionMember:member]];
+        }
+        if ([self canSetManagerToMember:member]) {
+            [actions addObject:[self setManagerActionWithSessionMember:member]];
+        }
+
+        return actions;
+    }
+    return nil;
+}
+
+
+
+#pragma mark - ———— Helper ———— -
+
+- (UITableViewRowAction *)deleteActionWithSessionMember:(Y2WSessionMember *)member {
+    
+    return [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleDefault title:@"删除" handler:^(UITableViewRowAction * _Nonnull action, NSIndexPath * _Nonnull indexPath) {
+       
+        [self.navigationItem startAnimating];
+        [self.sessionMembers.remote deleteSessionMember:member success:^{
+            [self.navigationItem stopAnimating];
+            
+        } failure:^(NSError *error) {
+            [self.navigationItem stopAnimating];
+            [UIAlertView showTitle:nil message:[[NSString alloc] initWithData:error.userInfo[AFNetworkingOperationFailingURLResponseDataErrorKey] encoding:NSUTF8StringEncoding]];
+        }];
     }];
-    return @[action];
+}
+
+- (UITableViewRowAction *)setMasterActionWithSessionMember:(Y2WSessionMember *)member {
+    
+    return [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleDefault title:@"转让群主" handler:^(UITableViewRowAction * _Nonnull action, NSIndexPath * _Nonnull indexPath) {
+       
+        member.role = @"master";
+        [self updateSessionMember:member];
+        
+        self.currrentMember.role = @"admin";
+        [self updateSessionMember:self.currrentMember];
+    }];
+}
+
+- (UITableViewRowAction *)setManagerActionWithSessionMember:(Y2WSessionMember *)member {
+    
+    BOOL isManager = [member.role isEqualToString:@"admin"];
+    NSString *title = isManager ? @"撤销管理员":@"设置管理员";
+    return [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleDefault title:title handler:^(UITableViewRowAction * _Nonnull action, NSIndexPath * _Nonnull indexPath) {
+        
+        member.role = isManager ? @"user" : @"admin";
+        [self updateSessionMember:member];
+    }];
+}
+
+
+
+- (void)updateSessionMember:(Y2WSessionMember *)member {
+    
+    [self.navigationItem startAnimating];
+    [self.sessionMembers.remote updateSessionMember:member success:^{
+        [self.navigationItem stopAnimating];
+        
+    } failure:^(NSError *error) {
+        [self.navigationItem stopAnimating];
+        [UIAlertView showTitle:nil message:[[NSString alloc] initWithData:error.userInfo[AFNetworkingOperationFailingURLResponseDataErrorKey] encoding:NSUTF8StringEncoding]];
+    }];
+}
+
+
+
+// 是否能删除此成员
+- (BOOL)canDeleteMember:(Y2WSessionMember *)member {
+    if ([self.currrentMember.userId isEqualToString:member.userId]) {
+        return NO;
+    }else if ([self.currrentMember.role isEqualToString:@"master"]) {
+        return YES;
+    } if ([self.currrentMember.role isEqualToString:@"admin"]) {
+        return [member.role isEqualToString:@"user"];
+    }
+    return NO;
+}
+
+// 是否能设置此成员为群主
+- (BOOL)canSetMasterToMember:(Y2WSessionMember *)member {
+    if ([self.currrentMember.userId isEqualToString:member.userId]) {
+        return NO;
+    }else if ([self.currrentMember.role isEqualToString:@"master"]) {
+        return YES;
+    }
+    return NO;
+}
+
+// 是否能设置此成员为管理员
+- (BOOL)canSetManagerToMember:(Y2WSessionMember *)member {
+    if ([self.currrentMember.userId isEqualToString:member.userId]) {
+        return NO;
+    }else if ([self.currrentMember.role isEqualToString:@"master"]) {
+        return YES;
+    }
+    return NO;
 }
 
 
@@ -258,6 +376,27 @@
 
 #pragma mark - ———— getter ———— -
 
+- (Y2WSessionMember *)currrentMember {
+    if (!_currrentMember) {
+        _currrentMember = [self.sessionMembers getMemberWithUserId:[Y2WUsers getInstance].getCurrentUser.userId];
+    }
+    return _currrentMember;
+}
+
+- (UISearchController *)searchController
+{
+    if (!_searchController) {
+        SearchResultsViewController *resultsController = [[SearchResultsViewController alloc]init];
+        resultsController.sessionMembers = self.sessionMembers;
+        _searchController = [[UISearchController alloc]initWithSearchResultsController:resultsController];
+        _searchController.searchResultsUpdater = resultsController;
+        _searchController.searchBar.frame = CGRectMake(0, 0, self.view.width, 40);
+        _searchController.searchBar.barTintColor = [UIColor colorWithHexString:@"E3EFEF"];
+        _searchController.searchBar.searchBarStyle = UISearchBarStyleDefault;
+    }
+    return _searchController;
+}
+
 - (UITableView *)tableView {
     
     if (!_tableView) {
@@ -266,6 +405,7 @@
         _tableView.sectionIndexColor = [ThemeManager sharedManager].currentColor;
         _tableView.sectionIndexBackgroundColor = [UIColor whiteColor];
         _tableView.sectionIndexTrackingBackgroundColor = [UIColor colorWithHexString:@"E3EFEF"];
+        _tableView.tableHeaderView = self.searchController.searchBar;
         _tableView.tableFooterView = [[UIView alloc] init];
         _tableView.sectionHeaderHeight = 16;
         _tableView.delegate = self;
