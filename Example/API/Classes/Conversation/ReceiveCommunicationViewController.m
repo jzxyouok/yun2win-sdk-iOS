@@ -115,7 +115,6 @@
 {
     if (sender.tag == 101) {
         //挂断
-<<<<<<< HEAD
 //        Y2WRTCManager *manager = [[Y2WRTCManager alloc] init];
 //        NSLog(@"%@",self.model);
 //        manager.channelId = self.model.channelId;
@@ -127,37 +126,19 @@
 //        }];
         [self dismissViewControllerAnimated:YES completion:nil];
 
-=======
-        Y2WRTCManager *manager = [[Y2WRTCManager alloc] init];
-        manager.channelId = self.model.channelId;
-        manager.memberId = [Y2WUsers getInstance].getCurrentUser.userId; //uid
-        manager.token = [Y2WUsers getInstance].getCurrentUser.imToken; //token
-        [manager getChannel:^(NSError *error, Y2WRTCChannel *channel) {
-            [channel leave];
-            [self dismissViewControllerAnimated:YES completion:nil];
-
-        }];
-        
->>>>>>> 7b7020d0bed3227d23c9982a2a76306bb10dc107
     }
     if (sender.tag == 102) {
         //接听
         Y2WRTCManager *manager = [[Y2WRTCManager alloc] init];
-<<<<<<< HEAD
         NSLog(@"%@",self.model);
-=======
->>>>>>> 7b7020d0bed3227d23c9982a2a76306bb10dc107
         manager.channelId = self.model.channelId;
         manager.memberId = [Y2WUsers getInstance].getCurrentUser.userId; //uid
         manager.token = [Y2WUsers getInstance].getCurrentUser.imToken; //token
         [manager getChannel:^(NSError *error, Y2WRTCChannel *channel) {
             
             if (error) {
-<<<<<<< HEAD
                 [UIAlertView showTitle:manager.channelId ?: @"" message:error.description];
 
-=======
->>>>>>> 7b7020d0bed3227d23c9982a2a76306bb10dc107
                 // 加入失败，返回错误
                 return;
             }

@@ -52,7 +52,6 @@ GroupVideoChatSideBarDelegate>
     return YES;
 }
 
-<<<<<<< HEAD
 - (instancetype)initWithChannel:(Y2WRTCChannel *)channel SessionId:(NSString *)sessionId
 {
     if (self = [super init]) {
@@ -62,8 +61,6 @@ GroupVideoChatSideBarDelegate>
     return self;
 }
 
-=======
->>>>>>> 7b7020d0bed3227d23c9982a2a76306bb10dc107
 - (instancetype)initWithChannel:(Y2WRTCChannel *)channel SessionId:(NSString *)sessionId commType:(CommType)commtype
 {
     if (self = [super init]) {
@@ -90,12 +87,9 @@ GroupVideoChatSideBarDelegate>
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-<<<<<<< HEAD
     [[NSNotificationCenter defaultCenter] addObserverForName:@"日志" object:nil queue:nil usingBlock:^(NSNotification * _Nonnull note) {
         NSLog(@"%@",note.object);
     }];
-=======
->>>>>>> 7b7020d0bed3227d23c9982a2a76306bb10dc107
     UIImageView *imageView = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"音视频_背景图"]];
     imageView.frame = self.view.bounds;
     imageView.userInteractionEnabled = YES;
@@ -104,13 +98,8 @@ GroupVideoChatSideBarDelegate>
     [self.view addSubview:self.collectionView];
     [self.view addSubview:self.menuButton];
     [self.view addSubview:self.sideBar];
-<<<<<<< HEAD
     
     
-=======
-
-  
->>>>>>> 7b7020d0bed3227d23c9982a2a76306bb10dc107
     self.channel.delegate = self;
     [self.channel join];
     [self.channel openAudio];
@@ -135,7 +124,6 @@ GroupVideoChatSideBarDelegate>
     if (_session) {
         NSMutableArray *tempArray = [NSMutableArray array];
         
-<<<<<<< HEAD
         for (Y2WRTCMember *member in self.channel.getMembers) {
             if (!member.screenOpened) continue;
             
@@ -155,15 +143,6 @@ GroupVideoChatSideBarDelegate>
             [tempArray addObject:model];
         }
         
-=======
-        for (Y2WRTCMember *member in self.channel.getMembers) {            GroupVideoCommunicationMemberViewCellModel *model = [[GroupVideoCommunicationMemberViewCellModel alloc]init];
-                model.member = member;
-                Y2WSessionMember *sessionMember = [self.session.members getMemberWithUserId:member.uid];
-                model.sessionMember = sessionMember;
-                [tempArray addObject:model];
-        }
-
->>>>>>> 7b7020d0bed3227d23c9982a2a76306bb10dc107
         self.models = tempArray;
         
         GroupVideoCommunicationMemberViewCellModel *model = self.models.firstObject;
@@ -217,7 +196,6 @@ GroupVideoChatSideBarDelegate>
 }
 
 - (void)channel:(Y2WRTCChannel *)channel didCloseVideoOfMember:(Y2WRTCMember *)member {
-<<<<<<< HEAD
     [self reloadData];
     self.mainVideoView.hidden = YES;
 }
@@ -232,18 +210,6 @@ GroupVideoChatSideBarDelegate>
 
 - (void)channel:(Y2WRTCChannel *)channel didCloseScreenOfMember:(Y2WRTCMember *)member {
     [self reloadData];
-=======
-        [self reloadData];
-    self.mainVideoView.hidden = YES;
-}
-
-- (void)channel:(Y2WRTCChannel *)channel didSwitchVideoMuteOfMember:(Y2WRTCMember *)member {
-    
-}
-
-- (void)channel:(Y2WRTCChannel *)channel onVideoError:(NSError *)error {
-    
->>>>>>> 7b7020d0bed3227d23c9982a2a76306bb10dc107
 }
 
 
@@ -251,7 +217,6 @@ GroupVideoChatSideBarDelegate>
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
     [collectionView deselectItemAtIndexPath:indexPath animated:YES];
-<<<<<<< HEAD
     self.mainVideoView.hidden = YES;
     GroupVideoCommunicationMemberViewCellModel *model = self.models[indexPath.row];
     if (model.isScreen) {
@@ -262,12 +227,6 @@ GroupVideoChatSideBarDelegate>
         if(model.member.videoOpened) self.mainVideoView.hidden = NO;
         self.mainVideoView.videoTrack = model.member.videoTrack;
     }
-=======
-    self.mainVideoView.hidden = NO;
-    GroupVideoCommunicationMemberViewCellModel *model = self.models[indexPath.row];
-    if(!model.member.videoOpened) self.mainVideoView.hidden = YES;
-    self.mainVideoView.videoTrack = model.member.videoTrack;
->>>>>>> 7b7020d0bed3227d23c9982a2a76306bb10dc107
 }
 
 #pragma mark - UICollectionViewDataSource
@@ -369,11 +328,7 @@ GroupVideoChatSideBarDelegate>
         _collectionView.width = self.view.width - 20;
         _collectionView.height = 110;
         _collectionView.top = self.view.height - _collectionView.height - 10;
-<<<<<<< HEAD
         
-=======
-
->>>>>>> 7b7020d0bed3227d23c9982a2a76306bb10dc107
         _collectionView.delegate = self;
         _collectionView.dataSource = self;
         _collectionView.showsHorizontalScrollIndicator = NO;
@@ -419,10 +374,6 @@ GroupVideoChatSideBarDelegate>
         muteItem.selectedTitle = @"关闭静音";
         muteItem.image = [UIImage imageNamed:@"音视频_语音_默认"];
         muteItem.highlightedImage = [UIImage imageNamed:@"音视频_语音_点击"];
-<<<<<<< HEAD
-=======
-        muteItem.selected = YES;
->>>>>>> 7b7020d0bed3227d23c9982a2a76306bb10dc107
         muteItem.itemType = Item_mute;
         
         GroupVideoChatSideBarItem *speakerItem = [[GroupVideoChatSideBarItem alloc] init];
@@ -430,10 +381,6 @@ GroupVideoChatSideBarDelegate>
         speakerItem.selectedTitle = @"关闭免提";
         speakerItem.image = [UIImage imageNamed:@"音视频_免提_默认"];
         speakerItem.highlightedImage = [UIImage imageNamed:@"音视频_免提_点击"];
-<<<<<<< HEAD
-=======
-        speakerItem.selected = YES;
->>>>>>> 7b7020d0bed3227d23c9982a2a76306bb10dc107
         speakerItem.itemType = Item_speaker;
         
         GroupVideoChatSideBarItem *videoItem = [[GroupVideoChatSideBarItem alloc] init];
@@ -453,11 +400,7 @@ GroupVideoChatSideBarDelegate>
         GroupVideoChatSideBarItem *addMemberItem = [[GroupVideoChatSideBarItem alloc] init];
         addMemberItem.title = @"添加成员";
         addMemberItem.image = [UIImage imageNamed:@"音视频_添加成员_默认"];
-<<<<<<< HEAD
         addMemberItem.itemType = Item_addMember;
-=======
-         addMemberItem.itemType = Item_addMember;
->>>>>>> 7b7020d0bed3227d23c9982a2a76306bb10dc107
         
         _sideBar.items = @[hangupItem,muteItem,speakerItem,videoItem,backCameraItem,addMemberItem];
     }

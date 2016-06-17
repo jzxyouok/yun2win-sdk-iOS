@@ -53,14 +53,11 @@
 @property (nonatomic, copy) NSString *updatedAt;
 
 /**
-<<<<<<< HEAD
  *  用户会话未读消息数
  */
 //@property (nonatomic, assign) NSUInteger unRead;
 
 /**
-=======
->>>>>>> 7b7020d0bed3227d23c9982a2a76306bb10dc107
  *  如果为YES, 表示服务器已删除了此实体，同步时请在客户端也删除
  */
 @property (nonatomic, assign) BOOL isDelete;

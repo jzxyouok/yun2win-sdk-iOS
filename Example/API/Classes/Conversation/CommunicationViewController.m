@@ -204,10 +204,7 @@ static BOOL isMe = NO;
 
 - (void)channel:(Y2WRTCChannel *)channel didJoinMember:(Y2WRTCMember *)member {
     [self refreshView];
-<<<<<<< HEAD
      NSLog(@"%@",member);
-=======
->>>>>>> 7b7020d0bed3227d23c9982a2a76306bb10dc107
 }
 
 - (void)channel:(Y2WRTCChannel *)channel didLeaveMember:(Y2WRTCMember *)member {
@@ -216,11 +213,7 @@ static BOOL isMe = NO;
 }
 
 - (void)channel:(Y2WRTCChannel *)channel didOpenAudioOfMember:(Y2WRTCMember *)member {
-<<<<<<< HEAD
     NSLog(@"%@",member);
-=======
-    
->>>>>>> 7b7020d0bed3227d23c9982a2a76306bb10dc107
 }
 
 - (void)channel:(Y2WRTCChannel *)channel didCloseAudioOfMember:(Y2WRTCMember *)member {
@@ -244,10 +237,7 @@ static BOOL isMe = NO;
     self.mainVideoView.hidden = NO;
     
     self.commView.videoChangedButton.selected = YES;
-<<<<<<< HEAD
     NSLog(@"%@",member);
-=======
->>>>>>> 7b7020d0bed3227d23c9982a2a76306bb10dc107
 }
 
 - (void)channel:(Y2WRTCChannel *)channel didCloseVideoOfMember:(Y2WRTCMember *)member {

@@ -7,7 +7,6 @@
          BreakpointExtensionID = "Xcode.Breakpoint.ExceptionBreakpoint">
          <BreakpointContent
             shouldBeEnabled = "No"
-<<<<<<< HEAD
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             scope = "0"
@@ -18,8 +17,6 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             shouldBeEnabled = "No"
-=======
->>>>>>> 7b7020d0bed3227d23c9982a2a76306bb10dc107
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "API/Common/Category/NSString+Attributed.m"
