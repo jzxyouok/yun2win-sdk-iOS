@@ -7,15 +7,13 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <Y2W_IM_SDK/IMClient.h>
-#import <Y2W_IM_SDK/OnConnectionStatusChanged.h>
+#import <Y2W_IM_SDK/Y2W_IM_SDK.h>
 #import "IMSession.h"
 #import "IMMessage.h"
-
 @class Y2WSession;
 
 @class OnMessage;
-@interface Y2WBridge : NSObject<OnConnectionStatusChanged>
+@interface Y2WBridge : NSObject<IMClientOnConnectionStatusChanged>
 
 @property (nonatomic, copy) NSString *appKey;
 
@@ -23,11 +21,11 @@
 
 @property (nonatomic, copy) NSString *userId;
 
-@property (nonatomic, weak) id<OnConnectionStatusChanged> statusChanged;
+@property (nonatomic, weak) id<IMClientOnConnectionStatusChanged> statusChanged;
 
 @property (nonatomic, strong) OnMessage *message;
 
-- (instancetype)initWithAppKey:(NSString *)appkey Token:(NSString *)token UserId:(NSString *)userId OnConnectionStatusChanged:(id<OnConnectionStatusChanged>)onConnectionStatusChanged OnMessage:(OnMessage *)message;
+- (instancetype)initWithAppKey:(NSString *)appkey Token:(NSString *)token UserId:(NSString *)userId OnConnectionStatusChanged:(id<IMClientOnConnectionStatusChanged>)onConnectionStatusChanged OnMessage:(OnMessage *)message;
 
 
 - (void)connectBeforeCheck:(Y2WBridge *)opts;
@@ -58,3 +56,8 @@ FOUNDATION_EXPORT NSString *const Y2WMessageDidChangeNotification;
  *  用户会话变更通知
  */
 FOUNDATION_EXPORT NSString *const Y2WUserConversationDidChangeNotification;
+
+/**
+ *  音视频消息
+ */
+FOUNDATION_EXPORT NSString *const Y2WCommunicationMessageNotification;

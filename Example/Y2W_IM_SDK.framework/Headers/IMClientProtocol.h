@@ -8,10 +8,6 @@
 
 #import <Foundation/Foundation.h>
 
-@protocol IMClientProtocol <NSObject>
-
-@end
-
 @protocol IMSessionProtocol <NSObject>
 
 @property (nonatomic, copy) NSString *imSessionId;

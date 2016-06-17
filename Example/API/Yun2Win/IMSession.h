@@ -7,10 +7,9 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <Y2W_IM_SDK/IMClientProtocol.h>
+#import <Y2W_IM_SDK/Y2W_IM_SDK.h>
 
 @class Y2WSession;
-
 @interface IMSession : NSObject<IMSessionProtocol>
 
 //@property (nonatomic, copy) NSString *imSessionId;
