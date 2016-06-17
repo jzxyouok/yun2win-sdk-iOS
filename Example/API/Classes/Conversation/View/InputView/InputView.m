@@ -7,8 +7,20 @@
 //
 
 #import "InputView.h"
+#import "Mp3Recorder.h"
+#import "UUProgressHUD.h"
 
-@interface InputView ()<UITextViewDelegate>
+//typedef NS_ENUM(NSInteger, IntputType){
+//    IntputTextView = 1,
+//    IntputVoiceRecord = 2
+//};
+
+@interface InputView ()<UITextViewDelegate,AGEmojiKeyboardViewDelegate>
+{
+    Mp3Recorder *MP3;
+    NSInteger playTime;
+    NSTimer *playTimer;
+}
 
 @end
 @implementation InputView {
@@ -23,8 +35,13 @@
 - (instancetype)initWithFrame:(CGRect)frame {
     
     if (self = [super initWithFrame:frame]) {
+        MP3 = [[Mp3Recorder alloc]initWithDelegate:self];
+
+        [self addSubview:self.switchInputBtn];
+        [self addSubview:self.voiceRecordBtn];
         [self addSubview:self.textView];
         [self addSubview:self.moreBtn];
+        [self addSubview:self.emojiBtn];
         
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillChangeFrame:) name:UIKeyboardWillChangeFrameNotification object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
@@ -39,20 +56,24 @@
     [super layoutSubviews];
     self.width = self.superview.width;
     self.moreBtn.right = self.width;
+    self.emojiBtn.right = self.moreBtn.left +10;
+    self.switchInputBtn.left = 5;
     [self layoutTextView];
+    [self layoutVoiceRecordBtn];
     
     self.bottom = self.superview.height - keyBoardHeight;
 }
 
 
 - (void)layoutTextView {
-    if (!self.needShowTextView) {
-        self.textView.hidden = YES;
-        return;
-    }
-    
-    self.textView.width = self.moreBtn.left - self.textView.left;
-    self.textView.left = self.textView.top = 5;
+//    if (!self.needShowTextView) {
+//        self.textView.hidden = YES;
+//        return;
+//    }
+    self.textView.hidden = ![self needShowTextView];
+    self.textView.left = self.switchInputBtn.right;
+    self.textView.width = self.emojiBtn.left - self.textView.left;
+    self.textView.top = 5;
     self.textView.height = self.height - 10;
 
 //    self.textView.height = [self.textView sizeThatFits:CGSizeMake(self.textView.width, 100)].height;
@@ -60,15 +81,25 @@
 //    height = self.textView.height + 10;
 }
 
+- (void)layoutVoiceRecordBtn
+{
+//    if (self.needShowTextView) {
+//        self.voiceRecordBtn.hidden = YES;
+//        return;
+//    }
+    self.voiceRecordBtn.hidden = [self needShowTextView];
+    self.voiceRecordBtn.left = self.switchInputBtn.right;
+    self.voiceRecordBtn.width = self.emojiBtn.left - self.voiceRecordBtn.right;
+    self.voiceRecordBtn.top = 5;
+    self.voiceRecordBtn.height = self.height - 10;
+}
 
 
 #pragma mark - ———— Helper ———— -
 
 - (BOOL)needShowTextView {
-    return YES;
+    return !self.switchInputBtn.selected;
 }
-
-
 
 #pragma mark - ———— UITextViewDelegate ———— -
 
@@ -90,8 +121,26 @@
     return NO;
 }
 
+#pragma mark - ———— AGEmojiKeyboardViewDelegate ———— -
+- (void)emojiKeyBoardView:(AGEmojiKeyboardView *)emojiKeyBoardView didUseEmoji:(NSString *)emoji
+{
+    self.textView.text = [NSString stringWithFormat:@"%@%@",self.textView.text,emoji];
+}
 
+- (void)emojiKeyBoardViewDidPressBackSpace:(AGEmojiKeyboardView *)emojiKeyBoardView
+{
+    [self.textView deleteBackward];
+}
 
+- (void)emojiKeyBoardViewDidPressSenderBtn:(AGEmojiKeyboardView *)emojiKeyBoardView
+{
+    if ([self.ActionDelegate respondsToSelector:@selector(inputView:onSendText:)]) {
+        [self.ActionDelegate inputView:self onSendText:self.textView.text];
+        
+        self.textView.text = @"";
+        [self.textView deleteBackward];
+    }
+}
 
 #pragma mark - ———— UIKeyboardNotification ———— -
 
@@ -175,6 +224,17 @@
 
 
 #pragma mark - ———— Response ———— -
+- (void)showVoiceRecord:(UIButton *)button
+{
+    button.selected = !button.isSelected;
+    self.voiceRecordBtn.hidden = !button.selected;
+    [self setNeedsLayout];
+    if (button.selected) {
+        [self.textView resignFirstResponder];
+    }else{
+        [self.textView becomeFirstResponder];
+    }
+}
 
 - (void)showMoreInput:(UIButton *)button {
     button.selected = !button.isSelected;
@@ -184,8 +244,64 @@
     [self.textView becomeFirstResponder];
 }
 
+- (void)showEmojiInput:(UIButton *)button
+{
+    button.selected = !button.isSelected;
+    
+    self.textView.inputView = button.isSelected ? self.emojiKeyboardView : nil;
+    [self.textView reloadInputViews];
+    [self.textView becomeFirstResponder];
+}
 
+#pragma mark - ———— RecordVoice ———— -
+- (void)beginRecordVoice:(UIButton *)button
+{
+    [MP3 startRecord];
+    playTime = 0;
+    playTimer = [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(countVoiceTime) userInfo:nil repeats:YES];
+    [UUProgressHUD show];
+}
 
+- (void)endRecordVoice:(UIButton *)button
+{
+    if (playTimer) {
+        if ([self.ActionDelegate respondsToSelector:@selector(inputView:onSendVoice:time:)]) {
+            [self.ActionDelegate inputView:self onSendVoice:[MP3 stopRecord] time:playTime];
+        }
+        [playTimer invalidate];
+        playTimer = nil;
+    }
+    [UUProgressHUD dismissWithSuccess:@"录音成功"];
+
+}
+
+- (void)cancelRecordVoice:(UIButton *)button
+{
+    if (playTimer) {
+        [MP3 stopRecord];
+        [playTimer invalidate];
+        playTimer = nil;
+    }
+    [UUProgressHUD dismissWithError:@"取消成功"];
+}
+
+- (void)RemindDragExit:(UIButton *)button
+{
+    [UUProgressHUD changeSubTitle:@"松开取消发送"];
+}
+
+- (void)RemindDragEnter:(UIButton *)button
+{
+    [UUProgressHUD changeSubTitle:@"松开发送"];
+}
+
+- (void)countVoiceTime
+{
+    playTime ++;
+    if (playTime>=60) {
+        [self endRecordVoice:nil];
+    }
+}
 
 #pragma mark - ———— setter ———— -
 
@@ -209,6 +325,46 @@
     return _textView;
 }
 
+- (UIButton *)voiceRecordBtn
+{
+    if (!_voiceRecordBtn) {
+        _voiceRecordBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        _voiceRecordBtn.layer.cornerRadius = 5;
+        
+        _voiceRecordBtn.layer.borderColor = [UIColor colorWithHexString:@"5a5a5a5"].CGColor;
+        _voiceRecordBtn.layer.borderWidth = 0.5;
+        _voiceRecordBtn.titleLabel.font = [UIFont systemFontOfSize:15];
+        
+        [_voiceRecordBtn setBackgroundImage:[UIImage imageWithUIColor:[UIColor colorWithHexString:@"c3eae7"]] forState:UIControlStateHighlighted];
+        [_voiceRecordBtn setTitleColor:[UIColor colorWithHexString:@"353535"] forState:UIControlStateNormal];
+        [_voiceRecordBtn setTitleColor:[UIColor colorWithHexString:@"353535"] forState:UIControlStateHighlighted];
+        [_voiceRecordBtn setTitle:@"按住 说话" forState:UIControlStateNormal];
+        [_voiceRecordBtn setTitle:@"松开 结束" forState:UIControlStateHighlighted];
+    
+        [_voiceRecordBtn addTarget:self action:@selector(beginRecordVoice:) forControlEvents:UIControlEventTouchDown];
+        [_voiceRecordBtn addTarget:self action:@selector(endRecordVoice:) forControlEvents:UIControlEventTouchUpInside];
+        [_voiceRecordBtn addTarget:self action:@selector(cancelRecordVoice:) forControlEvents:UIControlEventTouchUpOutside];
+        [_voiceRecordBtn addTarget:self action:@selector(cancelRecordVoice:) forControlEvents:UIControlEventTouchCancel];
+        [_voiceRecordBtn addTarget:self action:@selector(RemindDragExit:) forControlEvents:UIControlEventTouchDragExit];
+        [_voiceRecordBtn addTarget:self action:@selector(RemindDragEnter:) forControlEvents:UIControlEventTouchDragEnter];
+        
+        
+    }
+    return _voiceRecordBtn;
+}
+
+- (UIButton *)switchInputBtn
+{
+    if (!_switchInputBtn) {
+        _switchInputBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_switchInputBtn setImage:[UIImage imageNamed:@"输入框-语音输入"] forState:UIControlStateNormal];
+        [_switchInputBtn setImage:[UIImage imageNamed:@"输入框-文字输入"] forState:UIControlStateSelected];
+        [_switchInputBtn addTarget:self action:@selector(showVoiceRecord:) forControlEvents:1<<6];
+        _switchInputBtn.width = _switchInputBtn.height = self.height;
+    }
+    return _switchInputBtn;
+}
+
 - (UIButton *)moreBtn {
     if (!_moreBtn) {
         _moreBtn = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -220,11 +376,61 @@
     return _moreBtn;
 }
 
+- (UIButton *)emojiBtn
+{
+    if (!_emojiBtn) {
+        _emojiBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_emojiBtn setImage:[UIImage imageNamed:@"输入框-表情输入-默认"] forState:UIControlStateNormal];
+        [_emojiBtn setImage:[UIImage imageNamed:@"输入框-表情输入-按下"] forState:UIControlStateSelected];
+        [_emojiBtn addTarget:self action:@selector(showEmojiInput:) forControlEvents:1<<6];
+        _emojiBtn.width = _emojiBtn.height = self.height;
+    }
+    return _emojiBtn;
+}
+
 - (MoreInputView *)moreInputView {
     if (!_moreInputView) {
         _moreInputView = [[MoreInputView alloc] initWithFrame:CGRectMake(0, 0, self.width, 195)];
     }
     return _moreInputView;
 }
+
+- (EmojiInputView *)emojiInputView
+{
+    if (!_emojiInputView) {
+        _emojiInputView = [[EmojiInputView alloc] initWithFrame:CGRectMake(0, 0, self.width, 195)];
+    }
+    return _emojiInputView;
+}
+
+- (AGEmojiKeyboardView *)emojiKeyboardView
+{
+    if (!_emojiKeyboardView) {
+        _emojiKeyboardView = [[AGEmojiKeyboardView alloc] initWithFrame:CGRectMake(0, 0, self.width, 195) dataSource:self];
+        _emojiKeyboardView.autoresizingMask = UIViewAutoresizingFlexibleHeight;
+        _emojiKeyboardView.delegate = self;
+        self.textView.inputView = _emojiKeyboardView;
+    }
+    return _emojiKeyboardView;
+}
+
+- (UIImage *)emojiKeyboardView:(AGEmojiKeyboardView *)emojiKeyboardView imageForSelectedCategory:(AGEmojiKeyboardViewCategoryImage)category {
+    UIImage *img = [UIImage imageNamed:@"voice_green_play_0"];
+    [img imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+    return img;
+}
+
+- (UIImage *)emojiKeyboardView:(AGEmojiKeyboardView *)emojiKeyboardView imageForNonSelectedCategory:(AGEmojiKeyboardViewCategoryImage)category {
+    UIImage *img = [UIImage imageNamed:@"voice_green_play_0"];
+    [img imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+    return img;
+}
+
+- (UIImage *)backSpaceButtonImageForEmojiKeyboardView:(AGEmojiKeyboardView *)emojiKeyboardView {
+    UIImage *img = [UIImage imageNamed:@"voice_green_play_0"];
+    [img imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+    return img;
+}
+
 
 @end

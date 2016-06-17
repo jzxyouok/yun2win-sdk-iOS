@@ -32,18 +32,18 @@
 
 - (void)setMainViewController
 {
-    NSString *account = [[NSUserDefaults standardUserDefaults] objectForKey:@"account"];
-    NSString *token = [[NSUserDefaults standardUserDefaults] objectForKey:@"token1"];
-    if ([account length] && [token length]) {
-        MainViewController *main = [[MainViewController alloc]init];
-        self.window.rootViewController = main;
-    }
-    else
-    {
+//    NSString *account = [[NSUserDefaults standardUserDefaults] objectForKey:@"account"];
+//    NSString *token = [[NSUserDefaults standardUserDefaults] objectForKey:@"token1"];
+//    if ([account length] && [token length]) {
+//        MainViewController *main = [[MainViewController alloc]init];
+//        self.window.rootViewController = main;
+//    }
+//    else
+//    {
         LoginViewController *login = [[LoginViewController alloc]init];
         UINavigationController *nav = [[UINavigationController alloc]initWithRootViewController:login];
         self.window.rootViewController = nav;
-    }
+//    }
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application {

@@ -167,7 +167,7 @@
 }
 
 - (void)sync {
-    NSLog(@"Y2WUserConversationDidChangeNotificationY2WUserConversationDidChangeNotificationY2WUserConversationDidChangeNotificationY2WUserConversationDidChangeNotificationY2WUserConversationDidChangeNotificationY2WUserConversationDidChangeNotificationY2WUserConversationDidChangeNotificationY2WUserConversationDidChangeNotificationY2WUserConversationDidChangeNotificationY2WUserConversationDidChangeNotificationY2WUserConversationDidChangeNotification");
+
     [HttpRequest GETWithURL:[URL userConversations] timeStamp:self.userConversations.updatedAt parameters:@{@"limit":@"100"} success:^(id data) {
         
         NSInteger count = [data[@"total_count"] integerValue];
@@ -189,6 +189,12 @@
                     [self.userConversations removeUserConversation:userConversation];
                     
                 }else {
+                    UserConversationBase *userConversationbase = [[UserConversationBase alloc]initWithValue:dic];
+                    RLMRealm *realm = [RLMRealm defaultRealm];
+                    [realm beginWriteTransaction];
+                    [realm addOrUpdateObject:userConversationbase];
+                    [realm commitWriteTransaction];
+                    
                     Y2WUserConversation *oldUserConversation = [self.userConversations getUserConversation:userConversation.userConversationId];
                     
                     if (oldUserConversation) {
@@ -234,6 +240,17 @@
                        failure:(void (^)(NSError *))failure {
     
     [HttpRequest DELETEWithURL:[URL singleUserConversation:userConversation.userConversationId] parameters:nil success:^(id data) {
+        [self sync];
+        if (success) success();
+    } failure:failure];
+}
+
+- (void)updateUserConversation:(Y2WUserConversation *)userConversation
+                       success:(void (^)(void))success
+                       failure:(void (^)(NSError *))failure {
+    
+    NSDictionary *parameters = [userConversation toParameters];
+    [HttpRequest PUTWithURL:[URL singleUserConversation:userConversation.userConversationId] parameters:parameters success:^(id data) {
         [self sync];
         if (success) success();
     } failure:failure];

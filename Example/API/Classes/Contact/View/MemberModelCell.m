@@ -18,6 +18,7 @@
         
         [self.contentView addSubview:self.avatarImageView];
         [self.contentView addSubview:self.titleLabel];
+        [self.contentView addSubview:self.label];
     }
     return self;
 }
@@ -31,6 +32,10 @@
     
     self.titleLabel.height = self.height;
     self.titleLabel.left = 56;
+    
+    [self.label sizeToFit];
+    self.label.right = self.width - 20;
+    self.label.centerY = self.height/2;
 }
 
 
@@ -42,6 +47,8 @@
     [self.avatarImageView setImageForState:UIControlStateNormal withURL:[NSURL URLWithString:_model.imageUrl] placeholderImage:_model.image];
 
     self.titleLabel.text = _model.name;
+    self.label.text = _model.label;
+    NSLog(@"%@",_model.label);
 }
 
 
@@ -69,6 +76,15 @@
         _titleLabel.font = [UIFont systemFontOfSize:16];
     }
     return _titleLabel;
+}
+
+- (UILabel *)label {
+    if (!_label) {
+        _label = [[UILabel alloc] init];
+        _label.textColor = [UIColor colorWithHexString:@"CCCCCC"];
+        _label.font = [UIFont systemFontOfSize:12];
+    }
+    return _label;
 }
 
 @end

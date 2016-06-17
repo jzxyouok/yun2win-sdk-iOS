@@ -10,7 +10,15 @@
 
 #import "StatusDefine.h"
 #import "IMClientProtocol.h"
-#import "OnConnectionStatusChanged.h"
+
+@protocol IMClientOnConnectionStatusChanged <NSObject>
+
+- (void)onConnectionStatusChangedWithConnectionStatus:(ConnectionStatus)connectionStatus;
+
+- (void)onConnectionStatusChangedWithConnectionStatus:(ConnectionStatus)connectionStatus
+                                     connectionReturn:(ConnectionReturnCode)connectionReturnCode;
+
+@end
 
 @protocol IMClientReceiveMessageDelegate <NSObject>
 
@@ -25,7 +33,16 @@
 
 @interface IMClient : NSObject
 
+/**
+ *  连接协议
+ */
+@property (nonatomic, weak) id<IMClientOnConnectionStatusChanged> onConnectionDelegate;
+
+/**
+ *  接受消息协议
+ */
 @property (nonatomic, weak) id<IMClientReceiveMessageDelegate> receiptDelegate;
+
 
 /**
  *  获取yun2winIMSDK的核心类
@@ -37,10 +54,11 @@
 /**
  *  初始化TOKEN和UID
  *
- *  @param token 从平台获取token
- *  @param uid 从平台获取appkey
+ *  @param token    从平台获取token
+ *  @param uid      从平台获取uid
+ *  @param appkey   从平台获取appkey
  */
-- (void)registerWithToken:(NSString *)token UID:(NSString *)uid;
+- (void)registerWithToken:(NSString *)token UID:(NSString *)uid Appkey:(NSString *)appkey;
 
 /**
  *  APNs(尚未实现)
@@ -80,9 +98,6 @@
  */
 - (void)updateSessionWithSession:(id<IMSessionProtocol>)session Message:(id<IMMessageProtocol>)message;
 
-#pragma mark - 公众服务
-
-#pragma mark - 推送业务数据统计
 
 #pragma mark - 工具类方法
 /**

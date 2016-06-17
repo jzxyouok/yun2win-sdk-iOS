@@ -105,6 +105,13 @@ NSString *const CURRENT_USER_KEY = @"currentUser";
         currentUser.passwordHash = [password MD5Hash];
         self.users.currentUser = currentUser;
         
+        UserBase *userbase = [[UserBase alloc]initWithValue:data];
+        
+        RLMRealm *realm = [RLMRealm defaultRealm];
+        [realm beginWriteTransaction];
+        [realm addOrUpdateObject:userbase];
+        [realm commitWriteTransaction];
+        
         Y2WUser *user = [[Y2WUser alloc] initWithValue:data];
         [[Y2WUsers getInstance] addUser:user];
         
@@ -115,7 +122,11 @@ NSString *const CURRENT_USER_KEY = @"currentUser";
 
         if (success) success(currentUser);
 
-    } failure:failure];
+    } failure:^(NSError *error) {
+        if (failure) {
+            failure(error);
+        }
+    }];
 }
 
 - (void)searchUserWithKey:(NSString *)key success:(void (^)(NSArray *users))success failure:(void (^)(NSError *error))failure {

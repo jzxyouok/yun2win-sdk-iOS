@@ -12,14 +12,15 @@
 #import "ConversationListCell.h"
 #import "MainViewController.h"
 #import "ConversationTableManager.h"
+#import "SearchResultsViewController.h"
 
-@interface ConversationListViewController () <UITableViewDataSource,UITableViewDelegate,TableViewIndexPathChangeDelegate>
+@interface ConversationListViewController () <UITableViewDataSource,UITableViewDelegate,TableViewIndexPathChangeDelegate,UISearchBarDelegate>
 
 @property (nonatomic, retain) ConversationTableManager *tableManager;
 
 @property (nonatomic, retain) UITableView *tableView;
 
-//@property (nonatomic, strong) NSMutableArray *datas;
+@property (nonatomic, strong) UISearchController *searchController;
 
 @end
 
@@ -81,23 +82,11 @@
 }
 
 - (NSArray<UITableViewRowAction *> *)tableView:(UITableView *)tableView editActionsForRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableViewRowAction *deleteAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleDefault title:@"删除" handler:^(UITableViewRowAction * _Nonnull action, NSIndexPath * _Nonnull indexPath) {
-        
-        [self.navigationItem startAnimating];
+    Y2WUserConversation *conversation = self.tableManager.conversationDatas[indexPath.row];
 
-        Y2WUserConversation *conversation = self.tableManager.conversationDatas[indexPath.row];
-        [conversation.userConversations.remote deleteUserConversation:conversation success:^{
-            
-            [self.navigationItem stopAnimating];
-//            [UIAlertView showTitle:nil message:@"删除成功"];
-            
-        } failure:^(NSError *error) {
-            
-            [self.navigationItem stopAnimating];
-            [UIAlertView showTitle:nil message:[[NSString alloc] initWithData:error.userInfo[AFNetworkingOperationFailingURLResponseDataErrorKey] encoding:NSUTF8StringEncoding]];
-        }];
-    }];
-    return @[deleteAction];
+    UITableViewRowAction *deleteAction = [self deleteUserConversation];
+    UITableViewRowAction *topAction = [self setTopWithUserConversation:conversation];
+    return @[deleteAction,topAction];
 }
 
 
@@ -116,15 +105,15 @@
                       atIndexPath:(NSIndexPath *)indexPath
                      newIndexPath:(NSIndexPath *)newIndexPath
                     forChangeType:(TableViewIndexPathChangeType)type {
-    NSLog(@"\n-----\n%@\n%@\n%@\n-----",@(type),indexPath,newIndexPath);
+
     switch(type) {
             
         case TableViewIndexPathChangeInsert:
-            [_tableView insertRowsAtIndexPaths:@[newIndexPath] withRowAnimation:UITableViewRowAnimationRight];
+            [_tableView insertRowsAtIndexPaths:@[newIndexPath] withRowAnimation:UITableViewRowAnimationTop];
             break;
             
         case TableViewIndexPathChangeDelete:
-            [_tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationLeft];
+            [_tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationBottom];
             break;
             
         case TableViewIndexPathChangeUpdate:
@@ -166,6 +155,48 @@
     }];
 }
 
+- (UITableViewRowAction *)deleteUserConversation {
+    return [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleDefault title:@"删除" handler:^(UITableViewRowAction * _Nonnull action, NSIndexPath * _Nonnull indexPath) {
+        
+        [self.navigationItem startAnimating];
+        
+        Y2WUserConversation *conversation = self.tableManager.conversationDatas[indexPath.row];
+        [conversation.userConversations.remote deleteUserConversation:conversation success:^{
+            
+            [self.navigationItem stopAnimating];
+            
+        } failure:^(NSError *error) {
+            
+            [self.navigationItem stopAnimating];
+            [UIAlertView showTitle:nil message:[[NSString alloc] initWithData:error.userInfo[AFNetworkingOperationFailingURLResponseDataErrorKey] encoding:NSUTF8StringEncoding]];
+        }];
+    }];
+}
+
+- (UITableViewRowAction *)setTopWithUserConversation:(Y2WUserConversation *)conversation {
+    NSString *title = conversation.top ? @"取消置顶":@"置顶";
+
+    UITableViewRowAction *action = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleDefault title:title handler:^(UITableViewRowAction * _Nonnull action, NSIndexPath * _Nonnull indexPath) {
+        
+        [self.navigationItem startAnimating];
+        conversation.top = !conversation.top;
+
+        [conversation.userConversations.remote updateUserConversation:conversation success:^{
+            
+            [self.navigationItem stopAnimating];
+            
+        } failure:^(NSError *error) {
+            
+            [self.navigationItem stopAnimating];
+            [UIAlertView showTitle:nil message:[[NSString alloc] initWithData:error.userInfo[AFNetworkingOperationFailingURLResponseDataErrorKey] encoding:NSUTF8StringEncoding]];
+        }];
+    }];
+    
+    action.backgroundColor = [UIColor blueColor];
+    return action;
+}
+
+
 
 
 
@@ -181,10 +212,25 @@
     return _tableManager;
 }
 
+- (UISearchController *)searchController
+{
+    if (!_searchController) {
+        SearchResultsViewController *resultsController = [[SearchResultsViewController alloc]init];
+//        resultsController.contacts = self.contacts;
+        _searchController = [[UISearchController alloc]initWithSearchResultsController:resultsController];
+        _searchController.searchResultsUpdater = resultsController;
+        _searchController.searchBar.frame = CGRectMake(0, 0, self.view.width, 40);
+        _searchController.searchBar.barTintColor = [UIColor colorWithHexString:@"E3EFEF"];
+        _searchController.searchBar.searchBarStyle = UISearchBarStyleDefault;
+    }
+    return _searchController;
+}
+
 - (UITableView *)tableView {
     if (!_tableView) {
         _tableView = [[UITableView alloc] initWithFrame:self.view.bounds style:UITableViewStylePlain];
         _tableView.backgroundColor = [UIColor whiteColor];
+        _tableView.tableHeaderView = self.searchController.searchBar;
         _tableView.tableFooterView = [[UIView alloc] init];
         _tableView.rowHeight = 60;
         _tableView.delegate = self;

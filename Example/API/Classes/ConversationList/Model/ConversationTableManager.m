@@ -10,7 +10,7 @@
 
 @interface ConversationTableManager ()<Y2WUserConversationsDelegate>
 
-@property (nonatomic, retain) Y2WUserConversations *userConversations;
+@property (nonatomic, weak) Y2WUserConversations *userConversations;
 
 @property (nonatomic, retain) NSMutableArray *reloadDatas;
 
@@ -84,8 +84,8 @@
     [newConversationDatas sortUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"top" ascending:NO],
                                                  [NSSortDescriptor sortDescriptorWithKey:@"updatedAt" ascending:NO]]];
     
-    NSArray *insertIndexPaths = [self getInsertIndexPaths];
-    NSArray *deleteIndexPaths = [self getDeleteIndexPaths];
+    NSMutableArray *insertIndexPaths = [[self getInsertIndexPaths] mutableCopy];
+    NSMutableArray *deleteIndexPaths = [[self getDeleteIndexPaths] mutableCopy];
     NSArray *reloadIndexPaths = [self getReloadIndexPaths];
     
     
@@ -99,7 +99,16 @@
         NSIndexPath *oldIndexPath = oldIndexPaths[conversation.userConversationId];
         NSIndexPath *newIndexPath = [NSIndexPath indexPathForRow:idx inSection:0];
 
-        if (oldIndexPath) newIndexPaths[conversation.userConversationId] = newIndexPath;
+        if (oldIndexPath) {
+            if (![oldIndexPath isEqual:newIndexPath]) {
+                [insertIndexPaths addObject:newIndexPath];
+                [deleteIndexPaths addObject:oldIndexPath];
+//                if ([oldIndexPath compare:newIndexPath] == NSOrderedDescending) {
+//                    newIndexPaths[conversation.userConversationId] = newIndexPath;
+//                    NSLog(@"\n-%@-\n%@\n%@",conversation.name,oldIndexPath,newIndexPath);
+//                }
+            }
+        }
     }];
     
     
@@ -108,45 +117,81 @@
     
     dispatch_async(dispatch_get_main_queue(), ^{
 
-        if ([self.delegate respondsToSelector:@selector(tableViewIndexPathWillChangeContent:)]) {
-            [self.delegate tableViewIndexPathWillChangeContent:self];
-        }
+//        if ([self.delegate respondsToSelector:@selector(tableViewIndexPathWillChangeContent:)]) {
+//            [self.delegate tableViewIndexPathWillChangeContent:self];
+//        }
+//        
+//        for (NSIndexPath *indexPath in insertIndexPaths) {
+//            if ([self.delegate respondsToSelector:@selector(tableViewIndexPathManager:atIndexPath:newIndexPath:forChangeType:)]) {
+//                [self.delegate tableViewIndexPathManager:self atIndexPath:nil newIndexPath:indexPath forChangeType:TableViewIndexPathChangeInsert];
+//            }
+//        }
+//        
+//        for (NSIndexPath *indexPath in deleteIndexPaths) {
+//            if ([self.delegate respondsToSelector:@selector(tableViewIndexPathManager:atIndexPath:newIndexPath:forChangeType:)]) {
+//                [self.delegate tableViewIndexPathManager:self atIndexPath:indexPath newIndexPath:nil forChangeType:TableViewIndexPathChangeDelete];
+//            }
+//        }
         
-        for (NSIndexPath *indexPath in insertIndexPaths) {
-            if ([self.delegate respondsToSelector:@selector(tableViewIndexPathManager:atIndexPath:newIndexPath:forChangeType:)]) {
-                [self.delegate tableViewIndexPathManager:self atIndexPath:nil newIndexPath:indexPath forChangeType:TableViewIndexPathChangeInsert];
-            }
-        }
+//        for (id obj in newConversationDatas) {
+//            NSIndexPath *oldIndexPath = oldIndexPaths[obj];
+//            NSIndexPath *newIndexPath = newIndexPaths[obj];
+//            if (newIndexPath) {
+//                if ([self.delegate respondsToSelector:@selector(tableViewIndexPathManager:atIndexPath:newIndexPath:forChangeType:)]) {
+//                    [self.delegate tableViewIndexPathManager:self atIndexPath:oldIndexPath newIndexPath:newIndexPath forChangeType:TableViewIndexPathChangeMove];
+//                }
+//            }
+//        }
         
-        for (NSIndexPath *indexPath in deleteIndexPaths) {
-            if ([self.delegate respondsToSelector:@selector(tableViewIndexPathManager:atIndexPath:newIndexPath:forChangeType:)]) {
-                [self.delegate tableViewIndexPathManager:self atIndexPath:indexPath newIndexPath:nil forChangeType:TableViewIndexPathChangeDelete];
-            }
-        }
+//        for (NSIndexPath *indexPath in reloadIndexPaths) {
+//            if ([self.delegate respondsToSelector:@selector(tableViewIndexPathManager:atIndexPath:newIndexPath:forChangeType:)]) {
+//                [self.delegate tableViewIndexPathManager:self atIndexPath:indexPath newIndexPath:nil forChangeType:TableViewIndexPathChangeUpdate];
+//            }
+//        }
+//        
+//        if ([self.delegate respondsToSelector:@selector(tableViewIndexPathDidChangeContent:)]) {
+//            [self.delegate tableViewIndexPathDidChangeContent:self];
+//        }
         
-        for (id obj in newConversationDatas) {
-            NSIndexPath *oldIndexPath = oldIndexPaths[obj];
-            NSIndexPath *newIndexPath = newIndexPaths[obj];
-            if (newIndexPath) {
+        
+        [self change:^{
+            for (NSIndexPath *indexPath in insertIndexPaths) {
                 if ([self.delegate respondsToSelector:@selector(tableViewIndexPathManager:atIndexPath:newIndexPath:forChangeType:)]) {
-                    [self.delegate tableViewIndexPathManager:self atIndexPath:oldIndexPath newIndexPath:newIndexPath forChangeType:TableViewIndexPathChangeMove];
+                    [self.delegate tableViewIndexPathManager:self atIndexPath:nil newIndexPath:indexPath forChangeType:TableViewIndexPathChangeInsert];
                 }
             }
-        }
-        
-        for (NSIndexPath *indexPath in reloadIndexPaths) {
-            if ([self.delegate respondsToSelector:@selector(tableViewIndexPathManager:atIndexPath:newIndexPath:forChangeType:)]) {
-                [self.delegate tableViewIndexPathManager:self atIndexPath:indexPath newIndexPath:nil forChangeType:TableViewIndexPathChangeUpdate];
+            
+            for (NSIndexPath *indexPath in deleteIndexPaths) {
+                if ([self.delegate respondsToSelector:@selector(tableViewIndexPathManager:atIndexPath:newIndexPath:forChangeType:)]) {
+                    [self.delegate tableViewIndexPathManager:self atIndexPath:indexPath newIndexPath:nil forChangeType:TableViewIndexPathChangeDelete];
+                }
             }
-        }
+        }];
         
-        if ([self.delegate respondsToSelector:@selector(tableViewIndexPathDidChangeContent:)]) {
-            [self.delegate tableViewIndexPathDidChangeContent:self];
-        }
+        [self change:^{
+            for (NSIndexPath *indexPath in reloadIndexPaths) {
+                if ([self.delegate respondsToSelector:@selector(tableViewIndexPathManager:atIndexPath:newIndexPath:forChangeType:)]) {
+                    [self.delegate tableViewIndexPathManager:self atIndexPath:indexPath newIndexPath:nil forChangeType:TableViewIndexPathChangeUpdate];
+                }
+            }
+        }];
     });
 }
 
 
+
+- (void)change:(void(^)(void))block {
+    
+    if ([self.delegate respondsToSelector:@selector(tableViewIndexPathWillChangeContent:)]) {
+        [self.delegate tableViewIndexPathWillChangeContent:self];
+    }
+    
+    block();
+    
+    if ([self.delegate respondsToSelector:@selector(tableViewIndexPathDidChangeContent:)]) {
+        [self.delegate tableViewIndexPathDidChangeContent:self];
+    }
+}
 
 
 

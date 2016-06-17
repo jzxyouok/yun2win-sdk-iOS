@@ -8,7 +8,6 @@
 
 #import <Foundation/Foundation.h>
 #import "Y2WUserConversationsDelegate.h"
-#import "Y2WDefinition.h"
 #import "Y2WUserConversation.h"
 @class Y2WCurrentUser;
 @class Y2WUserConversationsRemote;
@@ -74,8 +73,6 @@
 - (Y2WUserConversation *)getUserConversationWithTargetId:(NSString *)targetId
                                                     type:(NSString *)type;
 
-
-
 /**
  *  获取所有用户会话
  *
@@ -112,4 +109,16 @@
                        success:(void(^)(void))success
                        failure:(void(^)(NSError *error))failure;
 
+
+
+/**
+ *  更新一个用户会话
+ *
+ *  @param userConversation 需要更新的用户会话
+ *  @param success          请求成功的回调
+ *  @param failure          请求失败的回调
+ */
+- (void)updateUserConversation:(Y2WUserConversation *)userConversation
+                       success:(void (^)(void))success
+                       failure:(void (^)(NSError *))failure;
 @end

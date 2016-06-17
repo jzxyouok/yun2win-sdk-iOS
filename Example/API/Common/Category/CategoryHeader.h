@@ -17,5 +17,7 @@
 #import "NSArray+QSExtension.h"
 #import "UIViewController+Navigation.h"
 #import "UINavigationItem+Loading.h"
-
+#import "NSString+Path.h"
 #import "NSObject+SuppressPerformSelectorLeakWarning.h"
+#import "UIView+Assignment.h"
+#import "NSString+Attributed.h"

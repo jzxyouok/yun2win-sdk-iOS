@@ -12,7 +12,7 @@
 @implementation MessageModel
 @synthesize contentViewInsets = _contentViewInsets;
 
-- (instancetype)initWithMessage:(Y2WMessage *)message {
+- (instancetype)initWithMessage:(Y2WBaseMessage *)message {
     
     if (self = [self init]) {
         _message = message;
@@ -67,8 +67,36 @@
             
         }else if ([self.message.type isEqualToString:@"image"]) {
             NSDictionary *contentDict = self.message.content;
-            CGSize size = CGSizeMake([contentDict[@"width"] floatValue], [contentDict[@"height"] floatValue]);
+            CGFloat width = [contentDict[@"width"] floatValue] ?: 150;
+            CGFloat height = [contentDict[@"height"] floatValue] ?: 80;
+            CGSize size = CGSizeMake(width, height);
             contentSize = AVMakeRectWithAspectRatioInsideRect(size,CGRectMake(0, 0, 200, 200)).size;
+
+        }
+        else if ([self.message.type isEqualToString:@"location"]){
+            NSDictionary *contentDict = self.message.content;
+            CGFloat width = [contentDict[@"width"] floatValue] ?: 150;
+            CGFloat height = [contentDict[@"height"] floatValue] ?: 80;
+            CGSize size = CGSizeMake(width, height);
+            contentSize = AVMakeRectWithAspectRatioInsideRect(size,CGRectMake(0, 0, 200, 200)).size;
+        }
+        else if ([self.message.type isEqualToString:@"video"]){
+            NSDictionary *contentDict = self.message.content;
+            CGFloat width = [contentDict[@"width"] floatValue] ?: 150;
+            CGFloat height = [contentDict[@"height"] floatValue] ?: 80;
+            CGSize size = CGSizeMake(width, height);
+            contentSize = AVMakeRectWithAspectRatioInsideRect(size,CGRectMake(0, 0, 200, 200)).size;
+        }
+        else if ([self.message.type isEqualToString:@"audio"])
+        {
+            contentSize.width = 128;
+            contentSize.height = 36;
+        }
+        else if([self.message.type isEqualToString:@"file"])
+        {
+#warning FIle
+            contentSize.width = 250;
+            contentSize.height = 90;
         }
         
         
@@ -100,7 +128,11 @@
 
 - (NSString *)cellClassName {
     if ([self.message.type isEqualToString:@"text"] ||
-        [self.message.type isEqualToString:@"image"]) {
+        [self.message.type isEqualToString:@"image"] ||
+        [self.message.type isEqualToString:@"location"] ||
+        [self.message.type isEqualToString:@"video"] ||
+        [self.message.type isEqualToString:@"audio"] ||
+        [self.message.type isEqualToString:@"file"]) {
      
         return @"MessageCell";
     }
@@ -112,6 +144,13 @@
     
     if ([self.message.type isEqualToString:@"image"]) return @"MessageImageBubbleView";
 
+    if ([self.message.type isEqualToString:@"location"]) return @"MessageLocationBubbleView";
+
+    if ([self.message.type isEqualToString:@"video"]) return @"MessageVideoBubbleView";
+
+    if ([self.message.type isEqualToString:@"audio"]) return @"MessageAudioBubbleView";
+    
+    if ([self.message.type isEqualToString:@"file"])  return @"MessageFileBubbleView";
     return nil;
 }
 

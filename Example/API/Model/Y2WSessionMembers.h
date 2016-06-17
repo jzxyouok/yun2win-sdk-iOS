@@ -40,6 +40,26 @@
 
 - (instancetype)initWithSession:(Y2WSession *)session;
 
+
+
+/**
+ *  添加委托对象（此对象需要实现Y2WUserConversationsDelegate协议）
+ *
+ *  @param delegate 委托对象
+ */
+- (void)addDelegate:(id<Y2WSessionMembersDelegate>)delegate;
+
+
+
+/**
+ *  移除委托对象
+ *
+ *  @param delegate 委托对象
+ */
+- (void)removeDelegate:(id<Y2WSessionMembersDelegate>)delegate;
+
+
+
 /**
  *  获取对应的会话成员
  *
@@ -48,6 +68,8 @@
  *  @return 返回会话成员
  */
 - (Y2WSessionMember *)getMemberWithUserId:(NSString *)userId;
+
+- (NSArray *)getMembersWithKey:(NSString *)key;
 
 /**
  *  获取该会话中所有的会话成员
@@ -107,6 +129,18 @@
  *  @param failure 删除失败的回调
  */
 - (void)deleteSessionMember:(Y2WSessionMember *)member
+                    success:(void (^)(void))success
+                    failure:(void(^)(NSError *error))failure;
+
+
+/**
+ *  更新一个Session成员
+ *
+ *  @param member  要更新的成员对象
+ *  @param success 更新成功的回调
+ *  @param failure 更新失败的回调
+ */
+- (void)updateSessionMember:(Y2WSessionMember *)member
                     success:(void (^)(void))success
                     failure:(void(^)(NSError *error))failure;
 

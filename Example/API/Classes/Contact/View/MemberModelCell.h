@@ -15,6 +15,8 @@
 
 @property (nonatomic,strong) UILabel *titleLabel;
 
+@property (nonatomic,strong) UILabel *label;
+
 @property (nonatomic, retain) NSObject<MemberModelInterface> *model;
 
 @end

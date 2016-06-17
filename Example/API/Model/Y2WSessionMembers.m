@@ -99,6 +99,13 @@
     return nil;
 }
 
+- (NSArray *)getMembersWithKey:(NSString *)key
+{
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"name CONTAINS[cd] %@ OR userId CONTAINS[cd] %@",key,key];
+    NSArray *tempArr = [self.sessionMemberList filteredArrayUsingPredicate:predicate];
+    return tempArr;
+}
+
 - (NSArray *)getMembers
 {
     if (self.sessionMemberList.count) {
@@ -111,7 +118,7 @@
 {
     Y2WSessionMember *model = [self getMemberWithUserId:member.userId];
     if (model) [model updateSessionMember:member];
-    [self.sessionMemberList addObject:member];
+    else [self.sessionMemberList addObject:member];
 }
 
 - (void)removeSessionMember:(Y2WSessionMember *)member {
@@ -153,6 +160,7 @@
 
 - (void)sync
 {
+
 #warning 同步流程，每个member.user不是直接从服务器取得的，而是本地的。如果本地没有，根据目前取下来的member的userid,name，头像生成用户.
     /*
      同步机制流程
@@ -199,7 +207,7 @@
             }
             
             if ([self.members respondsToSelector:@selector(sessionMembersRemote:addSessionMembers:deleteSessionMembers:updateSessionMembers:didCompleteWithError:)]) {
-                
+
                 [self.members sessionMembersRemote:self addSessionMembers:addMembers
                               deleteSessionMembers:deleteMembers
                               updateSessionMembers:updateMembers
@@ -210,7 +218,6 @@
                 NSDictionary *tempDic_sessionMember = tempArr_sessionMembers.lastObject;
                 self.members.session.createMTS = tempDic_sessionMember[@"createdAt"];
                 self.members.session.updateMTS = tempDic_sessionMember[@"updatedAt"];
-                [[NSNotificationCenter defaultCenter]postNotificationName:Y2WSessionMemberDidChangeNotification object:nil userInfo:nil];
             }
             else
             {
@@ -299,6 +306,25 @@
                            [self sync];
                            
                            if (success) success();
+    } failure:failure];
+}
+
+- (void)updateSessionMember:(Y2WSessionMember *)member
+                    success:(void (^)(void))success
+                    failure:(void (^)(NSError *))failure {
+    
+    [HttpRequest PUTWithURL:[URL singleSessionMember:member.sessionMemberId
+                                             Session:self.members.session.sessionId]
+                 parameters:[member toParameters]
+                    success:^(id data) {
+                        // 同步用户会话
+                        [self.members.session.sessions.user.userConversations.remote sync];
+                        // 同步消息
+                        [self.members.session.messages.remote sync];
+                        // 同步成员
+                        [self sync];
+
+                        if (success) success();
     } failure:failure];
 }
 

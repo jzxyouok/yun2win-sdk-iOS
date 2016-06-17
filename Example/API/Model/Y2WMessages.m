@@ -10,6 +10,10 @@
 #import "Y2WSession.h"
 #import "MulticastDelegate.h"
 #import <objc/runtime.h>
+#import "Y2WTextMessage.h"
+#import "Y2WImageMessage.h"
+#import "FileAppend.h"
+#import <AVFoundation/AVFoundation.h>
 
 @interface Y2WMessages ()
 
@@ -78,11 +82,11 @@ static dispatch_queue_t message_callback_queue() {
 - (void)messagesRemote:(Y2WMessagesRemote *)remote syncMessages:(NSArray *)messages didCompleteWithError:(NSError *)error {
     __weak typeof(self)weakSelf = self;
 
-    for (Y2WMessage *message in messages) {
+    for (Y2WBaseMessage *message in messages) {
         
-        [self getMessageWithMessage:message didCompletionBlock:^(Y2WMessage *gMessage, NSError *error) {
+        [self getMessageWithMessage:message didCompletionBlock:^(Y2WBaseMessage *gMessage, NSError *error) {
             if (gMessage) {
-                [weakSelf updateMessage:message didCompletionBlock:^(Y2WMessage *uMessage, NSError *error) {
+                [weakSelf updateMessage:message didCompletionBlock:^(Y2WBaseMessage *uMessage, NSError *error) {
                     [weakSelf onUpdateMessage:message];
                 }];
                 
@@ -119,7 +123,7 @@ static dispatch_queue_t message_callback_queue() {
         needSync = YES;
     }
     
-    [self getBeforeMessagesFromMessage:[page.messageList firstObject] limit:10 didCompletionBlock:^(NSArray<Y2WMessage *> *messages, NSError *error) {
+    [self getBeforeMessagesFromMessage:[page.messageList firstObject] limit:10 didCompletionBlock:^(NSArray<Y2WBaseMessage *> *messages, NSError *error) {
         
         page.messageList = messages;
         
@@ -140,7 +144,7 @@ static dispatch_queue_t message_callback_queue() {
     }
 }
 
-- (void)sendMessage:(Y2WMessage *)message {
+- (void)sendMessage:(Y2WBaseMessage *)message {
     __weak typeof(self)weakSelf = self;
     [self addMessage:message didCompletionBlock:^(NSError *error) {
         if (error) {
@@ -148,25 +152,41 @@ static dispatch_queue_t message_callback_queue() {
         }else {
             [weakSelf willSendMessage:message];
         }
-        
-        [weakSelf.remote storeMessages:message success:^(Y2WMessage *message) {
-            
-            [weakSelf.session.sessions.user.userConversations.remote sync];
-            [weakSelf.remote sync];
-            
-        } failure:^(NSError *error) {
-            message.status = @"storefailed";
-            [weakSelf sendMessage:message didCompleteWithError:error];
-        }];
+        if ([weakSelf isUploadFile:message.type]) {
+            [weakSelf storeFileMessage:message success:^(Y2WBaseMessage *message) {
+                [weakSelf storeMessage:message];
+            }];
+        }
+        else{
+            [weakSelf storeMessage:message];
+        }
     }];
 }
 
-- (void)resendMessage:(Y2WMessage *)message {
+- (void)resendMessage:(Y2WBaseMessage *)message {
     [self sendMessage:message];
 }
 
 
+- (void)storeMessage:(Y2WBaseMessage *)message
+{
+    if ([message.type isEqualToString:@"singleavcall"] || [message.type isEqualToString:@"groupavcall"]) {
+        [self.remote storeAVCallMessage:message];
+    }
+    else
+    {
+        [self.remote storeMessages:message success:^(Y2WBaseMessage *message) {
+            
+            [self.session.sessions.user.userConversations.remote sync];
+            [self.remote sync];
+            
+        } failure:^(NSError *error) {
+            message.status = @"storefailed";
+            [self sendMessage:message didCompleteWithError:error];
+        }];
 
+    }
+}
 
 
 
@@ -181,7 +201,7 @@ static dispatch_queue_t message_callback_queue() {
     });
 }
 
-- (void)onReceiveMessage:(Y2WMessage *)message {
+- (void)onReceiveMessage:(Y2WBaseMessage *)message {
     
     dispatch_barrier_async(message_callback_queue(), ^{
         if ([self.delegates respondsToSelector:@selector(messages:onRecvMessage:)]) {
@@ -190,7 +210,7 @@ static dispatch_queue_t message_callback_queue() {
     });
 }
 
-- (void)willSendMessage:(Y2WMessage *)message {
+- (void)willSendMessage:(Y2WBaseMessage *)message {
     
     dispatch_barrier_async(message_callback_queue(), ^{
         if ([self.delegates respondsToSelector:@selector(messages:willSendMessage:)]) {
@@ -199,7 +219,7 @@ static dispatch_queue_t message_callback_queue() {
     });
 }
 
-- (void)sendMessage:(Y2WMessage *)message progress:(CGFloat)progress {
+- (void)sendMessage:(Y2WBaseMessage *)message progress:(CGFloat)progress {
     
     dispatch_barrier_async(message_callback_queue(), ^{
         if ([self.delegates respondsToSelector:@selector(messages:sendMessage:progress:)]) {
@@ -208,7 +228,7 @@ static dispatch_queue_t message_callback_queue() {
     });
 }
 
-- (void)sendMessage:(Y2WMessage *)message didCompleteWithError:(NSError *)error {
+- (void)sendMessage:(Y2WBaseMessage *)message didCompleteWithError:(NSError *)error {
     
     dispatch_barrier_async(message_callback_queue(), ^{
         if ([self.delegates respondsToSelector:@selector(messages:sendMessage:didCompleteWithError:)]) {
@@ -217,7 +237,7 @@ static dispatch_queue_t message_callback_queue() {
     });
 }
 
-- (void)onUpdateMessage:(Y2WMessage *)message {
+- (void)onUpdateMessage:(Y2WBaseMessage *)message {
     
     dispatch_barrier_async(message_callback_queue(), ^{
         if ([self.delegates respondsToSelector:@selector(messages:onUpdateMessage:)]) {
@@ -241,7 +261,7 @@ static dispatch_queue_t message_callback_queue() {
     return self.messageList.count;
 }
 
-- (void)addMessage:(Y2WMessage *)message didCompletionBlock:(void (^)(NSError *error))block {
+- (void)addMessage:(Y2WBaseMessage *)message didCompletionBlock:(void (^)(NSError *error))block {
 
     dispatch_barrier_async(message_readwrite_queue(), ^{
         if (!self.messageList) self.messageList = [NSMutableSet set];
@@ -251,9 +271,9 @@ static dispatch_queue_t message_callback_queue() {
     });
 }
 
-- (void)deleteMessage:(Y2WMessage *)message didCompletionBlock:(void (^)(Y2WMessage *dMessage, NSError *error))block {
+- (void)deleteMessage:(Y2WBaseMessage *)message didCompletionBlock:(void (^)(Y2WBaseMessage *dMessage, NSError *error))block {
     dispatch_barrier_async(message_readwrite_queue(), ^{
-        [self getMessageWithMessage:message didCompletionBlock:^(Y2WMessage *gMessage, NSError *error) {
+        [self getMessageWithMessage:message didCompletionBlock:^(Y2WBaseMessage *gMessage, NSError *error) {
             if (error && block) {
                 block(gMessage, error);
                 return;
@@ -266,9 +286,9 @@ static dispatch_queue_t message_callback_queue() {
     });
 }
 
-- (void)updateMessage:(Y2WMessage *)message didCompletionBlock:(void (^)(Y2WMessage *uMessage, NSError *error))block {
+- (void)updateMessage:(Y2WBaseMessage *)message didCompletionBlock:(void (^)(Y2WBaseMessage *uMessage, NSError *error))block {
     dispatch_barrier_async(message_readwrite_queue(), ^{
-        [self getMessageWithMessage:message didCompletionBlock:^(Y2WMessage *gMessage, NSError *error) {
+        [self getMessageWithMessage:message didCompletionBlock:^(Y2WBaseMessage *gMessage, NSError *error) {
             if (error && block) {
                 block(gMessage, error);
                 return;
@@ -281,7 +301,7 @@ static dispatch_queue_t message_callback_queue() {
     });
 }
 
-- (void)getMessageWithMessage:(Y2WMessage *)message didCompletionBlock:(void (^)(Y2WMessage *gMessage, NSError *error))block {
+- (void)getMessageWithMessage:(Y2WBaseMessage *)message didCompletionBlock:(void (^)(Y2WBaseMessage *gMessage, NSError *error))block {
   
     dispatch_barrier_async(message_readwrite_queue(), ^{
         NSPredicate *predicate = [NSPredicate predicateWithFormat:@"messageId LIKE[CD] %@",message.messageId];
@@ -298,7 +318,7 @@ static dispatch_queue_t message_callback_queue() {
  *
  *  @return 以创建时间升序排序的数组
  */
-- (void)getBeforeMessagesFromMessage:(Y2WMessage *)message limit:(NSUInteger)limit didCompletionBlock:(void (^)(NSArray<Y2WMessage *> *messages, NSError *error))block {
+- (void)getBeforeMessagesFromMessage:(Y2WBaseMessage *)message limit:(NSUInteger)limit didCompletionBlock:(void (^)(NSArray<Y2WBaseMessage *> *messages, NSError *error))block {
     
     dispatch_barrier_async(message_readwrite_queue(), ^{
 
@@ -319,7 +339,7 @@ static dispatch_queue_t message_callback_queue() {
  *
  *  @return 以创建时间升序排序的数组
  */
-- (NSArray *)getAfterMessagesFromMessage:(Y2WMessage *)message limit:(NSUInteger)limit {
+- (NSArray *)getAfterMessagesFromMessage:(Y2WBaseMessage *)message limit:(NSUInteger)limit {
 
     NSSet *messages = [self.messageList copy];
     if (message) {
@@ -335,7 +355,7 @@ static dispatch_queue_t message_callback_queue() {
  *
  *  @param block 结果回调
  */
-- (void)getLastMessageDidCompletionBlock:(void (^)(Y2WMessage *message, NSError *error))block {
+- (void)getLastMessageDidCompletionBlock:(void (^)(Y2WBaseMessage *message, NSError *error))block {
     dispatch_barrier_async(message_readwrite_queue(), ^{
         if (!self.messageList.count) {
             if (block) block(nil, nil);
@@ -348,15 +368,141 @@ static dispatch_queue_t message_callback_queue() {
     });
 }
 
+#pragma mark - ———— Helper ———— -
+- (BOOL)isUploadFile:(NSString *)type
+{
+    if ([type isEqualToString:@"text"] || [type isEqualToString:@"system"] ||[type isEqualToString:@"singleavcall"] ||[type isEqualToString:@"groupavcall"] ||[type isEqualToString:@"avcall"]) return NO;
+    else    return YES;
+}
+
+- (void)storeFileMessage:(Y2WBaseMessage *)message success:(void(^)(Y2WBaseMessage *message))success
+{
+    FileAppend *append;
+    FileAppend *thumAppend;
+    NSArray *appends;
+    if ([message.type isEqualToString:@"image"]) {
+        Y2WImageMessage *imgMessage = (Y2WImageMessage *)message;
+        append = [FileAppend fileAppendWithFilePath:imgMessage.imagePath name:@"file" fileName:[NSString stringWithFormat:@"IMG_%@.jpeg", @([NSDate timeIntervalSinceReferenceDate])] mimeType:@"image/png"];
+        thumAppend = [FileAppend fileAppendWithFilePath:imgMessage.thumImagePath name:@"file" fileName:[NSString stringWithFormat:@"thumIMG_%@.jpeg", @([NSDate timeIntervalSinceReferenceDate])] mimeType:@"image/png"];
+        appends = @[append,thumAppend];
+    }
+    else if([message.type isEqualToString:@"video"])
+    {
+        Y2WVideoMessage *videoMessage = (Y2WVideoMessage *)message;
+        append = [FileAppend fileAppendWithFilePath:videoMessage.videoPath name:@"file" fileName:[NSString stringWithFormat:@"video_%@.mp4", @([NSDate timeIntervalSinceReferenceDate])] mimeType:@"video/mp4"];
+        thumAppend = [FileAppend fileAppendWithFilePath:videoMessage.thumImagePath name:@"file" fileName:[NSString stringWithFormat:@"thumIMG_%@.jpeg", @([NSDate timeIntervalSinceReferenceDate])] mimeType:@"image/png"];
+        appends = @[append,thumAppend];
+    }
+    else if ([message.type isEqualToString:@"audio"])
+    {
+        Y2WAudioMessage *audioMessage = (Y2WAudioMessage *)message;
+        append = [FileAppend fileAppendWithFilePath:audioMessage.audioPath name:@"file" fileName:[NSString stringWithFormat:@"audio_%@.aac", @([NSDate timeIntervalSinceReferenceDate])] mimeType:@"audio/mpeg"];
+        appends = @[append];
+    }
+    else if ([message.type isEqualToString:@"location"])
+    {
+        Y2WLocationMessage *locationMessage = (Y2WLocationMessage *)message;
+        thumAppend = [FileAppend fileAppendWithFilePath:locationMessage.thumImagepath name:@"file" fileName:[NSString stringWithFormat:@"thumIMG_%@.jpeg", @([NSDate timeIntervalSinceReferenceDate])] mimeType:@"image/png"];
+        appends = @[thumAppend];
+    }
+    else if ([message.type isEqualToString:@"file"])
+    {
+        Y2WFileMessage *fileMessage = (Y2WFileMessage *)message;
+        append = [FileAppend fileAppendWithFilePath:fileMessage.filePath name:@"file" fileName:[NSString stringWithFormat:@"file_%@", @([NSDate timeIntervalSinceReferenceDate])] mimeType:@"text/html"];
+        appends = @[append];
+    }
+    
+    [self.remote uploadFile:appends progress:^(CGFloat fractionCompleted) {
+        [self sendMessage:message progress:fractionCompleted];
+    } success:^(NSArray *fileArray) {
+//        NSLog(@"file 4.21 : %@",fileArray);
+        if ([message.type isEqualToString:@"image"]) {
+            NSString *src = [URL attachmentsOfContentWithNoHeader:fileArray[0][@"id"]];
+            NSString *thumbnail = [URL attachmentsOfContentWithNoHeader:fileArray[1][@"id"]];
+            message.content = @{@"src":src,
+                                @"thumbnail":thumbnail,
+                                @"width":message.content[@"width"],
+                                @"height":message.content[@"height"]};
+        }
+        if ([message.type isEqualToString:@"video"]) {
+            NSString *src = [URL attachmentsOfContentWithNoHeader:fileArray[0][@"id"]];
+            NSString *thumbnail = [URL attachmentsOfContentWithNoHeader:fileArray[1][@"id"]];
+            message.content = @{@"src":src,
+                                @"thumbnail":thumbnail,
+                                @"width":message.content[@"width"],
+                                @"height":message.content[@"height"]};
+        }
+        if ([message.type isEqualToString:@"location"])
+        {
+            NSString *thumbnail = [URL attachmentsOfContentWithNoHeader:fileArray[0][@"id"]];
+            message.content = @{@"thumbnail":thumbnail,
+                                @"width":message.content[@"width"],
+                                @"height":message.content[@"height"],
+                                @"longitude":message.content[@"longitude"],
+                                @"latitude":message.content[@"latitude"]};
+        }
+        if ([message.type isEqualToString:@"audio"]) {
+            NSString *thumbnail = [URL attachmentsOfContentWithNoHeader:fileArray[0][@"id"]];
+            message.content = @{@"src":thumbnail,
+                                @"second":message.content[@"second"]};
+
+        }
+        if ([message.type isEqualToString:@"file"]) {
+            NSString *thumbnail = [URL attachmentsOfContentWithNoHeader:fileArray[0][@"id"]];
+            message.content = @{@"src":thumbnail,
+                                @"name":message.content[@"name"],
+                                @"size":message.content[@"size"]};
+            
+        }
+        
+        if (success)    success(message);
+        
+    } failure:^(NSError *error) {
+        NSLog(@"error : %@",error);
+    }];
+}
 
 
+- (UIImage *)getThumbnailsOfVideo:(NSString *)videoPath
+{
+    AVURLAsset *asset = [[AVURLAsset alloc] initWithURL:[NSURL fileURLWithPath:videoPath] options:nil];
+    AVAssetImageGenerator *gen = [[AVAssetImageGenerator alloc] initWithAsset:asset];
+    gen.appliesPreferredTrackTransform = YES;
+    CMTime time = CMTimeMakeWithSeconds(0, 60); // 参数( 截取的秒数， 视频每秒多少帧)
+    NSError *error = nil;
+    CMTime actualTime;
+    CGImageRef image = [gen copyCGImageAtTime:time actualTime:&actualTime error:&error];
+    UIImage *thumb = [[UIImage alloc] initWithCGImage:image];
+    CGImageRelease(image);
+    return thumb;
+}
 
+- (NSString *)getThumnailsPath:(UIImage *)image
+{
+    NSString *thumImgName = [NSString stringWithFormat:@"thumIMG_%@.jpeg", @([NSDate timeIntervalSinceReferenceDate])];
+    NSString *thumImgPath = [NSString getDocumentPathInbox:thumImgName];
+    NSData *thumImgData = UIImageJPEGRepresentation(image,0.1);
+    [thumImgData writeToFile:thumImgPath atomically:YES];
+    return thumImgPath;
+}
+
+- (NSString *)storeLocalFileWithPath:(NSString *)filePath type:(NSString *)type
+{
+    NSString *fileName;
+    if ([type isEqualToString:@"audio"]) {
+        fileName = [NSString stringWithFormat:@"audio_%@.aac",@([NSDate timeIntervalSinceReferenceDate])];
+    }
+    NSString *path = [NSString getDocumentPath:fileName Type:type];
+    NSData *data = [NSData dataWithContentsOfFile:filePath];
+    [data writeToFile:path atomically:YES];
+    return path;
+}
 
 #pragma mark - ———— 消息构造 ———— -
 
-- (Y2WMessage *)createMessage:(id)data {
+- (Y2WBaseMessage *)createMessage:(id)data {
     
-    Y2WMessage *message = [[Y2WMessage alloc]init];
+    Y2WBaseMessage *message = [[Y2WBaseMessage alloc]init];
     message.sessionId = self.session.sessionId;
     message.sender = self.session.sessions.user.userId;
     message.type = @"text";
@@ -365,9 +511,9 @@ static dispatch_queue_t message_callback_queue() {
     return message;
 }
 
-- (Y2WMessage *)messageWithText:(NSString *)text {
+- (Y2WTextMessage *)messageWithText:(NSString *)text {
     
-    Y2WMessage *message = [[Y2WMessage alloc]init];
+    Y2WTextMessage *message = [[Y2WTextMessage alloc]init];
     message.sessionId = self.session.sessionId;
     message.sender = self.session.sessions.user.userId;
     message.type = @"text";
@@ -377,12 +523,130 @@ static dispatch_queue_t message_callback_queue() {
     return message;
 }
 
-- (Y2WMessage *)messageWithImage:(UIImage *)image
+- (Y2WImageMessage *)messageWithImage:(UIImage *)image
 {
-    return nil;
+    Y2WImageMessage *message = [[Y2WImageMessage alloc]init];
+    message.sessionId = self.session.sessionId;
+    message.sender = self.session.sessions.user.userId;
+    message.type = @"image";
+    message.status = @"storing";
+//    message.content = @{@"text": text};
+    
+    NSString *imgName = [NSString stringWithFormat:@"IMG_%@.jpeg", @([NSDate timeIntervalSinceReferenceDate])];
+    NSString *imgPath = [NSString getDocumentPathInbox:imgName];
+    NSData *imgData = UIImageJPEGRepresentation(image,0.5);
+    [imgData writeToFile:imgPath atomically:YES];
+    
+    NSString *thumImgName = [NSString stringWithFormat:@"thumIMG_%@.jpeg", @([NSDate timeIntervalSinceReferenceDate])];
+    NSString *thumImgPath = [NSString getDocumentPathInbox:thumImgName];
+    NSData *thumImgData = UIImageJPEGRepresentation(image,0.1);
+    [thumImgData writeToFile:thumImgPath atomically:YES];
+
+    message.imagePath = imgPath;
+    message.thumImagePath = thumImgPath;
+    message.messageId = [NSUUID UUID].UUIDString;
+    message.content = @{@"src":imgPath,
+                        @"thumbnail":thumImgPath,
+                        @"width":[NSString stringWithFormat:@"%lf",image.size.width*0.1],
+                        @"height":[NSString stringWithFormat:@"%lf",image.size.height*0.1]};
+    
+    return message;
 }
 
+- (Y2WVideoMessage *)messageWithVideoPath:(NSString *)videoPath
+{
+    Y2WVideoMessage *message = [[Y2WVideoMessage alloc]init];
+    message.sessionId = self.session.sessionId;
+    message.sender = self.session.sessions.user.userId;
+    message.type = @"video";
+    message.status = @"storing";
+    
+    message.videoPath = videoPath;
+    UIImage *image = [self getThumbnailsOfVideo:videoPath];
+//    if (image == nil) return nil;
+    NSString *thumImgPath = [self getThumnailsPath:image];
 
+    message.thumImagePath = thumImgPath;
+    message.content = @{@"src":videoPath,
+                        @"thumbnail":thumImgPath,
+                        @"width":[NSString stringWithFormat:@"%lf",image.size.width],
+                        @"height":[NSString stringWithFormat:@"%lf",image.size.height]};
+    
+    return message;
+}
+
+- (Y2WFileMessage *)messageWithFilePath:(FileModel *)model
+{
+    Y2WFileMessage *message = [[Y2WFileMessage alloc]init];
+    message.sessionId = self.session.sessionId;
+    message.sender = self.session.sessions.user.userId;
+    message.type = @"file";
+    message.status = @"storing";
+    
+    message.filePath = model.path;
+    NSData *file = [NSData dataWithContentsOfFile:model.path];
+    message.fileSize = file.length;
+    message.content = @{@"src":model.path,
+                        @"name":model.title,
+                        @"size":@(file.length)};
+    
+    return message;
+}
+
+- (Y2WLocationMessage *)messageWithLocationPoint:(LocationPoint *)locationPoint
+{
+    Y2WLocationMessage *message = [[Y2WLocationMessage alloc]init];
+    message.sessionId = self.session.sessionId;
+    message.sender = self.session.sessions.user.userId;
+    message.type = @"location";
+    message.status = @"storing";
+    
+    message.thumImagepath = locationPoint.imagePath;
+    message.longitude = locationPoint.coordinate.longitude;
+    message.latitude = locationPoint.coordinate.latitude;
+    message.title = locationPoint.title;
+    message.content = @{@"thumbnail":message.thumImagepath,
+                        @"width":@(200),
+                        @"height":@(120),
+                        @"longitude":@(locationPoint.coordinate.longitude),
+                        @"latitude":@(locationPoint.coordinate.latitude)};
+    return message;
+}
+
+- (Y2WAudioMessage *)messageWithAudioPath:(NSString *)audioPath timer:(NSInteger)audioTimer
+{
+    
+    Y2WAudioMessage *message = [[Y2WAudioMessage alloc]init];
+    message.sessionId = self.session.sessionId;
+    message.sender = self.session.sessions.user.userId;
+    message.type = @"audio";
+    message.status = @"storing";
+    
+    NSString *path = [self storeLocalFileWithPath:audioPath type:message.type];
+    message.audioPath = path;
+    message.audioTimer = audioTimer;
+    message.content = @{@"src":path,
+                        @"second":@(audioTimer)};
+    return message;
+}
+
+- (Y2WAVCallMessage *)messageWithAVCall:(AVCallModel *)model
+{
+    Y2WAVCallMessage *message = [[Y2WAVCallMessage alloc]init];
+    message.sessionId = self.session.sessionId;
+    message.sender = self.session.sessions.user.userId;
+    message.type = model.avcall;
+    message.status = @"storing";
+    
+    message.content = @{@"type":model.avcall,
+                        @"content":@{@"senderId":model.senderId,
+                                     @"receiversIds":model.receiverIds,
+                                     @"avcalltype":model.type,
+                                     @"channelId":model.channelId,
+                                     @"sessionId":model.sessionId}
+                        };
+    return message;
+}
 @end
 
 
@@ -440,7 +704,7 @@ static dispatch_queue_t message_callback_queue() {
     [HttpRequest GETWithURL:[URL acquireMessages:self.messages.session.sessionId] parameters:@{@"limit":@"20"} success:^(id data) {
         NSMutableArray *messages = [NSMutableArray array];
         for (NSDictionary *dic in data[@"entries"]) {
-            Y2WMessage *message = [[Y2WMessage alloc] initWithValue:dic];
+            Y2WBaseMessage *message = [Y2WBaseMessage createMessageWithDict:dic];
             [messages addObject:message];
         }
         if (success) success(messages);
@@ -482,7 +746,7 @@ static dispatch_queue_t message_callback_queue() {
                         NSUInteger count = [data[@"total_count"] integerValue] - entries.count;
                         
                         for (NSDictionary *dic in entries) {
-                            Y2WMessage *message = [[Y2WMessage alloc]initWithValue:dic];
+                            Y2WBaseMessage *message = [Y2WBaseMessage createMessageWithDict:dic];
                             message.status = @"stored";
                             [messages addObject:message];
                         }
@@ -511,16 +775,16 @@ static dispatch_queue_t message_callback_queue() {
 //                            [self.messages.session]
                         }
                         
-                    } failure:^(id msg) {
+                    } failure:^(NSError *error) {
                         
                         self.synchronizing = NO;
-                        [self.messages messagesRemote:self syncMessages:nil didCompleteWithError:nil];
+                        [self.messages messagesRemote:self syncMessages:nil didCompleteWithError:error];
                     }];
 }
 
 
 
-- (void)storeMessages:(Y2WMessage *)message success:(void (^)(Y2WMessage *message))success failure:(void (^)(NSError *))failure {
+- (void)storeMessages:(Y2WBaseMessage *)message success:(void (^)(Y2WBaseMessage *message))success failure:(void (^)(NSError *))failure {
     
     NSDictionary *parameters = @{@"type":message.type,@"content":[message.content toJsonString],@"sender":message.sender};
     
@@ -535,10 +799,101 @@ static dispatch_queue_t message_callback_queue() {
     } failure:failure];
 }
 
+- (void)storeAVCallMessage:(Y2WBaseMessage *)message
+{
+    NSString *temp_sessionId = [NSString stringWithFormat:@"%@_%@",self.messages.session.type,self.messages.session.sessionId];
+    [[Y2WUsers getInstance].getCurrentUser.bridge updateSessionWithSession:self.messages.session];
+    [[Y2WUsers getInstance].getCurrentUser.bridge sendMessageWithSession:self.messages.session Content:@[@{@"type":@0},@{@"type":@1,@"sessionId":temp_sessionId},message.content]];
+}
 
+- (void)updataMessage:(Y2WBaseMessage *)message success:(void (^)(Y2WBaseMessage *))success failure:(void (^)(NSError *))failure
+{
+//    NSLog(@"message : %@",message);
+//    NSLog(@"url : %@",[URL aboutMessage:message.messageId Session:message.sessionId]);
 
+    [HttpRequest PUTWithURL:[URL aboutMessage:message.messageId Session:message.sessionId] parameters:@{@"sender":message.sender,@"content":message.content,@"type":message.type} success:^(id data) {
+        [self sync];
+//        NSLog(@"update---%@",data);
+    } failure:^(NSError *error) {
+//        NSLog(@"%@",error);
+        if (failure) {
+            failure(error);
+        }
+    }];
+}
 
+- (void)uploadFile:(NSArray *)fileAppends
+          progress:(ProgressBlock)progress
+           success:(void (^)(NSArray *))success
+           failure:(void (^)(NSError *))failure
+{
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
+        dispatch_semaphore_t dispatchSemaphore = dispatch_semaphore_create(0);
+        __block NSMutableArray *fileArray = [NSMutableArray array];
+        __block NSError *failureError = nil;
+        __block CGFloat totleProgress = 0;
+        for (FileAppend *fileAppend in fileAppends) {
 
+            [HttpRequest UPLOADWithURL:[URL attachments] parameters:@{@"fileName":fileAppend.fileName} fileAppend:fileAppend progress:^(CGFloat fractionCompleted) {
+
+                if (totleProgress <= 0.8) {
+                    totleProgress = fractionCompleted*0.8;
+                }
+                else{
+                    totleProgress = 0.8+fractionCompleted*0.2;
+                }
+                progress(totleProgress);
+            } success:^(id data) {
+                [fileArray addObject:data];
+                dispatch_semaphore_signal(dispatchSemaphore);
+                
+            } failure:^(NSError *error) {
+                
+                failureError = error;
+                dispatch_semaphore_signal(dispatchSemaphore);
+            }];
+            
+            dispatch_semaphore_wait(dispatchSemaphore, DISPATCH_TIME_FOREVER);
+            
+            if (failureError) {
+                if (failure) failure(failureError);
+                return;
+            }
+        }
+
+        if (success) success(fileArray);
+    });
+
+    
+}
+
+- (void)downLoadFileWithMessage:(Y2WBaseMessage *)message progress:(ProgressBlock)progress success:(void (^)(Y2WBaseMessage *))success failure:(void (^)(NSError *))failure
+{
+    [HttpRequest DOWNLOADWithURL:[NSString stringWithFormat:@"%@%@?access_token=%@",[URL baseURL],message.content[@"src"],[[Y2WUsers getInstance].getCurrentUser token]] parameters:nil progress:^(CGFloat fractionCompleted) {
+        progress(fractionCompleted);
+        
+    } success:^(NSURL *path) {
+        
+        if ([message.type isEqualToString:@"video"]) {
+            Y2WVideoMessage *videoMessage = (Y2WVideoMessage *)message;
+            NSString *tempPath = [NSString stringWithFormat:@"%@",path];
+            videoMessage.videoPath = [tempPath substringFromIndex:7];
+        }
+        if ([message.type isEqualToString:@"audio"]) {
+            Y2WAudioMessage *audioMessage = (Y2WAudioMessage *)message;
+            NSString *tempPath = [[NSString stringWithFormat:@"%@",path] substringFromIndex:7];
+            NSData *data = [NSData dataWithContentsOfFile:tempPath];
+            NSString *fileName =[NSString stringWithFormat:@"audio_%@.aac",@([NSDate timeIntervalSinceReferenceDate])];
+            NSString *path = [NSString getDocumentPath:fileName Type:audioMessage.type];
+            [data writeToFile:path atomically:YES];
+            audioMessage.audioPath = path;
+        }
+        success(message);
+        
+    } failure:^(NSError *error) {
+        failure(error);
+    }];
+}
 
 #pragma mark - ———— setter ———— -
 

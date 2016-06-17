@@ -16,7 +16,7 @@
 @synthesize rowHeight = _rowHeight;
 @synthesize sortKey = _sortKey;
 @synthesize groupTitle = _groupTitle;
-
+@synthesize label = _label;
 
 
 - (instancetype)initWithUser:(Y2WUser *)user {

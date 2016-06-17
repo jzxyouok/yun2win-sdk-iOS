@@ -9,7 +9,9 @@
 #import "MessageCell.h"
 #import "Y2WUsers.h"
 
-@interface MessageCell ()
+@interface MessageCell (){
+    UILongPressGestureRecognizer *_longPressGesture;
+}
 
 @property (nonatomic, retain) MessageModel *model;
 
@@ -32,8 +34,19 @@
         [self.contentView addSubview:self.retryButton];
         [self.contentView addSubview:self.indicator];
         [self.contentView addSubview:self.bubbleView];
+        [self makeGesture];
     }
     return self;
+}
+
+- (void)dealloc
+{
+    [self removeGestureRecognizer:_longPressGesture];
+}
+
+- (void)makeGesture{
+    _longPressGesture= [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(longGesturePress:)];
+    [self addGestureRecognizer:_longPressGesture];
 }
 
 - (void)layoutSubviews {
@@ -199,17 +212,23 @@
 //    }
 }
 
-- (void)longGesturePress:(UIGestureRecognizer*)gestureRecognizer {
-//    if ([gestureRecognizer isKindOfClass:[UILongPressGestureRecognizer class]] &&
-//        gestureRecognizer.state == UIGestureRecognizerStateBegan) {
-//        if (_messageDelegate && [_messageDelegate respondsToSelector:@selector(onLongPressCell:inView:)]) {
-//            [_messageDelegate onLongPressCell:self.model.message
-//                                       inView:self.bubbleView];
-//        }
-//    }
+- (void)longGesturePress:(UIGestureRecognizer*)gestureRecognizer
+{
+    if ([gestureRecognizer isKindOfClass:[UILongPressGestureRecognizer class]] &&
+        gestureRecognizer.state == UIGestureRecognizerStateBegan) {
+        if (_messageDelegate && [_messageDelegate respondsToSelector:@selector(onLongPressCell:inView:)]) {
+            [_messageDelegate onLongPressCell:self.model.message inView:_bubbleView];
+
+        }
+    }
 }
 
-
+- (void)onTapBubbleView:(id)sender
+{
+    if (_messageDelegate &&[_messageDelegate respondsToSelector:@selector(onTapBubbleView:)]) {
+        [_messageDelegate onTapBubbleView:self.model.message];
+    }
+}
 
 
 
@@ -292,7 +311,33 @@
         _bubbleView = bubbleView;
         [self.contentView addSubview:_bubbleView];
     }
+    UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(onTapBubbleView:)];
+    [_bubbleView addGestureRecognizer:tapGesture];
     return _bubbleView;
+}
+
+- (UIProgressView *)progressView
+{
+    if (!_progressView) {
+        _progressView = [[UIProgressView alloc]initWithProgressViewStyle:UIProgressViewStyleDefault];
+        _progressView.trackTintColor = [UIColor whiteColor];
+        _progressView.tintColor = [UIColor colorWithHexString:@"#ffc950"];
+        _progressView.layer.masksToBounds = YES;
+        _progressView.layer.borderWidth = 0.5;
+        _progressView.layer.borderColor = [UIColor colorWithHexString:@"@c8c8c8c"].CGColor;
+    }
+    return _progressView;
+}
+
+- (UILabel *)progressNumbLabel
+{
+    if (!_progressNumbLabel) {
+        _progressNumbLabel = [[UILabel alloc]init];
+        _progressNumbLabel.font = [UIFont systemFontOfSize:12];
+        _progressNumbLabel.textColor = [UIColor colorWithHexString:@"353535"];
+        _progressNumbLabel.shadowColor = [UIColor colorWithWhite:0.1 alpha:0.5];
+    }
+    return _progressNumbLabel;
 }
 
 @end

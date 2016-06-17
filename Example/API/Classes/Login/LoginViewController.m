@@ -12,7 +12,7 @@
 #import "Y2WUser.h"
 #import "Y2WCurrentUser.h"
 #import "Y2WUsers.h"
-
+#import "EmojiManage.h"
 
 @interface LoginViewController ()<UITextFieldDelegate,LoginViewControllerDelegate>
 
@@ -38,8 +38,8 @@
     self.psdTextField.delegate = self;
     [self.loginButton addTarget:self action:@selector(login) forControlEvents:UIControlEventTouchUpInside];
     
-    self.accountTextField.text = @"qisong";
-    self.psdTextField.text = @"123456";
+    self.accountTextField.text = @"z";
+    self.psdTextField.text = @"z";
     [self login];
 }
 
@@ -53,7 +53,6 @@
 
 - (void)login
 {
-
     [self loginWithAccount:self.accountTextField.text password:self.psdTextField.text];
 }
 
@@ -66,7 +65,7 @@
         [[Y2WUsers getInstance].getCurrentUser.remote syncIMTokenDidCompletion:^(NSError *error) {
             
         }];
-        
+        [[EmojiManage shareEmoji] syncEmoji];
         MainViewController *main = [[MainViewController alloc]init];
         [UIApplication sharedApplication].keyWindow.rootViewController = main;
         

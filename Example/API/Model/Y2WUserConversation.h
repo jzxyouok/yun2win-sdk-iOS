@@ -63,7 +63,7 @@
 /**
  *  最新一条消息
  */
-@property (nonatomic, retain) Y2WMessage *lastMessage;
+@property (nonatomic, retain) Y2WBaseMessage *lastMessage;
 
 /**
  *  如果为YES, 表示服务器已删除了此实体，同步时请在客户端也删除
@@ -135,6 +135,17 @@
  *  @param failure 失败时的回调
  */
 - (void)syncLastMessageForSuccess:(void(^)(id data))success failure:(void(^)(NSString *msg))failure;
+
+
+
+
+
+#pragma mark - ———— 构造方法 ———— -
+
+/**
+ *  转换成REST接口需要的结构,方便请求时调用
+ */
+- (NSDictionary *)toParameters;
 
 @end
 

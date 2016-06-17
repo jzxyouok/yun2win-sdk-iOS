@@ -13,6 +13,7 @@
 #define USERID [Y2WUsers getInstance].getCurrentUser.userId
 #define TOKEN  [Y2WUsers getInstance].getCurrentUser.token
 
+#define IOS8            ([[[UIDevice currentDevice] systemVersion] doubleValue] >= 8.0)
 
 
 #endif /* Import_h */

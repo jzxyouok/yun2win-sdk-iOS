@@ -29,7 +29,7 @@
         
         NSDictionary *messageDict = dict[@"lastMessage"];
         if (messageDict) {
-            _lastMessage    = [[Y2WMessage alloc] initWithValue:messageDict];
+            _lastMessage    = [Y2WBaseMessage createMessageWithDict:messageDict];
         }
     }
     return self;
@@ -126,6 +126,20 @@
 - (BOOL)isEqual:(id)object {
     if (![object isKindOfClass:[Y2WUserConversation class]]) return NO;
     return [self.userConversationId isEqual:[(Y2WUserConversation *)object userConversationId]];
+}
+
+
+
+
+- (NSDictionary *)toParameters {
+    
+    NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
+    parameters[@"targetId"]  = self.targetId;
+    parameters[@"avatarUrl"] = self.avatarUrl;
+    parameters[@"name"]      = self.name;
+    parameters[@"type"]      = self.type;
+    parameters[@"top"]       = @(self.top);
+    return parameters;
 }
 
 @end

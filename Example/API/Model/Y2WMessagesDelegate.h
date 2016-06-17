@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@class Y2WMessages,Y2WMessage,Y2WMessagesPage;
+@class Y2WMessages,Y2WBaseMessage,Y2WMessagesPage;
 @protocol Y2WMessagesDelegate <NSObject>
 
 @optional
@@ -32,7 +32,7 @@ didCompleteWithError:(NSError *)error;
  *  @param message  收到的消息
  */
 - (void)messages:(Y2WMessages *)messages
-   onRecvMessage:(Y2WMessage *)message;
+   onRecvMessage:(Y2WBaseMessage *)message;
 
 
 
@@ -43,7 +43,7 @@ didCompleteWithError:(NSError *)error;
  *  @param message  更新的消息
  */
 - (void)messages:(Y2WMessages *)messages
- onUpdateMessage:(Y2WMessage *)message;
+ onUpdateMessage:(Y2WBaseMessage *)message;
 
 
 
@@ -54,7 +54,7 @@ didCompleteWithError:(NSError *)error;
  *  @param message  发送的消息
  */
 - (void)messages:(Y2WMessages *)messages
- willSendMessage:(Y2WMessage *)message;
+ willSendMessage:(Y2WBaseMessage *)message;
 
 
 
@@ -66,7 +66,7 @@ didCompleteWithError:(NSError *)error;
  *  @param progress 进度
  */
 - (void)messages:(Y2WMessages *)messages
-     sendMessage:(Y2WMessage *)message
+     sendMessage:(Y2WBaseMessage *)message
         progress:(CGFloat)progress;
 
 
@@ -79,7 +79,7 @@ didCompleteWithError:(NSError *)error;
  *  @param error    失败原因,如果发送成功则error为nil
  */
 - (void)messages:(Y2WMessages *)messages
-     sendMessage:(Y2WMessage *)message
+     sendMessage:(Y2WBaseMessage *)message
 didCompleteWithError:(NSError *)error;
 
 
@@ -90,7 +90,7 @@ didCompleteWithError:(NSError *)error;
  *  @param message  当前收取的消息
  *  @param progress 进度
  */
-- (void)fetchMessageAttachment:(Y2WMessage *)message
+- (void)fetchMessageAttachment:(Y2WBaseMessage *)message
                       progress:(CGFloat)progress;
 
 
@@ -101,7 +101,7 @@ didCompleteWithError:(NSError *)error;
  *  @param message 当前收取的消息
  *  @param error   错误返回,如果收取成功,error为nil
  */
-- (void)fetchMessageAttachment:(Y2WMessage *)message
+- (void)fetchMessageAttachment:(Y2WBaseMessage *)message
           didCompleteWithError:(NSError *)error;
 
 

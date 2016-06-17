@@ -25,7 +25,7 @@ typedef NS_ENUM(NSInteger, MessageModelStatus) {
 /**
  *  消息数据
  */
-@property (nonatomic, strong) Y2WMessage *message;
+@property (nonatomic, strong) Y2WBaseMessage *message;
 
 @property (nonatomic, copy) NSString *cellClassName;
 
@@ -55,7 +55,7 @@ typedef NS_ENUM(NSInteger, MessageModelStatus) {
 
 
 
-- (instancetype)initWithMessage:(Y2WMessage *)message;
+- (instancetype)initWithMessage:(Y2WBaseMessage *)message;
 
 - (void)cleanCache;
 

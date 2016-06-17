@@ -9,9 +9,17 @@
 #import <Foundation/Foundation.h>
 #import "Y2WMessagesDelegate.h"
 #import "Y2WMessagesPage.h"
-#import "Y2WBridge.h"
-#import "Y2WMessage.h"
-
+#import "Y2WBaseMessage.h"
+#import "Y2WTextMessage.h"
+#import "Y2WImageMessage.h"
+#import "Y2WVideoMessage.h"
+#import "Y2WFileMessage.h"
+#import "Y2WLocationMessage.h"
+#import "LocationPoint.h"
+#import "Y2WAudioMessage.h"
+#import "Y2WAVCallMessage.h"
+#import "FileModel.h"
+#import "AVCallModel.h"
 @class Y2WSession,Y2WMessagesRemote;
 @interface Y2WMessages : NSObject
 
@@ -79,7 +87,7 @@
  *
  *  @param message 有发送的消息对象
  */
-- (void)sendMessage:(Y2WMessage *)message;
+- (void)sendMessage:(Y2WBaseMessage *)message;
 
 
 
@@ -88,7 +96,7 @@
  *
  *  @param message 要重发的消息对象
  */
-- (void)resendMessage:(Y2WMessage *)message;
+- (void)resendMessage:(Y2WBaseMessage *)message;
 
 
 
@@ -97,9 +105,19 @@
 
 
 
-- (Y2WMessage *)messageWithText:(NSString *)text;
+- (Y2WTextMessage *)messageWithText:(NSString *)text;
 
-- (Y2WMessage *)messageWithImage:(UIImage *)image;
+- (Y2WImageMessage *)messageWithImage:(UIImage *)image;
+
+- (Y2WVideoMessage *)messageWithVideoPath:(NSString *)videoPath;
+
+- (Y2WFileMessage *)messageWithFilePath:(FileModel *)model;
+
+- (Y2WLocationMessage *)messageWithLocationPoint:(LocationPoint *)locationPoint;
+
+- (Y2WAudioMessage *)messageWithAudioPath:(NSString *)audioPath timer:(NSInteger)audioTimer;
+
+- (Y2WAVCallMessage *)messageWithAVCall:(AVCallModel *)model;
 
 @end
 
@@ -135,11 +153,14 @@
  *  @param success 保存成功后更新的消息
  *  @param failure 保存失败的错误回调
  */
-- (void)storeMessages:(Y2WMessage *)message
-              success:(void (^)(Y2WMessage *message))success
+- (void)storeMessages:(Y2WBaseMessage *)message
+              success:(void (^)(Y2WBaseMessage *message))success
               failure:(void (^)(NSError *error))failure;
 
+- (void)storeAVCallMessage:(Y2WBaseMessage *)message;
 
+- (void)updataMessage:(Y2WBaseMessage *)message success:(void (^)(Y2WBaseMessage *message))success
+              failure:(void (^)(NSError *error))failure;
 
 /**
  *  从服务端获取最新的20条消息
@@ -150,4 +171,14 @@
 - (void)getLastMessageDidCompletionBlock:(void (^)(NSArray *messageList))success
                                  failure:(void (^)(NSError *error))failure;
 
+
+- (void)uploadFile:(NSArray *)fileAppends
+               progress:(ProgressBlock)progress
+                success:(void(^)(NSArray *fileArray))success
+                failure:(void(^)(NSError *error))failure;
+
+- (void)downLoadFileWithMessage:(Y2WBaseMessage *)message
+                       progress:(ProgressBlock)progress
+                        success:(void(^)(Y2WBaseMessage *message))success
+                        failure:(void(^)(NSError *error))failure;
 @end

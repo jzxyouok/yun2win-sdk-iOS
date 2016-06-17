@@ -58,6 +58,7 @@
 - (void)removeDelegate:(id<Y2WUserSessionsDelegate>)delegate;
 
 
+- (NSArray *)getUserSessionsWithKey:(NSString *)key;
 
 /**
  *  获取用户群组列表

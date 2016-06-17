@@ -11,6 +11,12 @@
 #import "SettingTableViewUserCell.h"
 #import "SettingTableViewCellModel.h"
 
+#import "GroupVideoCommunicationViewController.h"
+#import <Y2W_RTC_SDK/Y2WRTCManager.h>
+#import "HttpRequest.h"
+#import "AppDelegate.h"
+#import "LoginViewController.h"
+
 @interface SettingViewController ()<UITableViewDataSource,UITableViewDelegate>
 
 @property (nonatomic, retain) UITableView *tableView;
@@ -87,11 +93,53 @@
 
 - (void)clickUserInfo {
     NSLog(@"用户信息");
+    RLMResults *user = [UserBase allObjects];
+    RLMResults *contact = [ContactBase allObjects];
+    RLMResults *userconversation = [UserConversationBase allObjects];
+    NSLog(@"UserBase : %@\nContactBase : %@\nUserConversationBase : %@",user,contact,userconversation);
 }
 
 - (void)clickChangePassword {
     NSLog(@"改密码");
+    
+    [HttpRequest GETWithURL:@"http://192.168.0.109:8080/get" parameters:nil success:^(id data) {
+       
+        Y2WRTCManager *manager = [[Y2WRTCManager alloc] init];
+        manager.channelId = data[@"id"];
+        manager.memberId = [Y2WUsers getInstance].getCurrentUser.userId; //uid
+        manager.token = [Y2WUsers getInstance].getCurrentUser.token; //token
+        [manager getChannel:^(NSError *error, Y2WRTCChannel *channel) {
+            
+            if (error) {
+                // 加入失败，返回错误
+                return;
+            }
+            // 使用channel对象管理连接
+            
+            //            if (self.model.) {
+            
+            //            }
+            AVCallModel *tempModel = [[AVCallModel alloc]init];
+            GroupVideoCommunicationViewController *communication = [[GroupVideoCommunicationViewController alloc]initWithAVCallModel:tempModel withChannel:channel];
+            [self presentViewController:communication animated:YES completion:nil];
+            
+            
+            //            [self.presentingViewController presentViewController:communication animated:YES completion:nil];
+            //
+            //            [self dismissViewControllerAnimated:YES completion:^{
+            //
+            //            }];
+            
+            
+        }];
+    
+    } failure:^(NSError *error) {
+        NSLog(@"error : %@",error);
+    }];
+
+    
 }
+
 
 - (void)clickAbout {
     NSLog(@"关于");
@@ -99,6 +147,16 @@
 
 - (void)clickLogout {
     NSLog(@"退出");
+    [[IMClient shareY2WIMClient] disconnect];
+    AppDelegate *appDelegate = (AppDelegate *)[UIApplication sharedApplication].delegate;
+    LoginViewController * lvc = [[LoginViewController alloc]init];
+    [UIView beginAnimations:nil context:nil];
+    [UIView setAnimationDuration:1];
+    [UIView setAnimationTransition:UIViewAnimationTransitionFlipFromRight forView:appDelegate.window cache:YES];
+    appDelegate.window.rootViewController = [[UINavigationController alloc]initWithRootViewController:lvc];
+    
+    [UIView commitAnimations];
+    [[UIApplication sharedApplication] unregisterForRemoteNotifications];
 }
 
 
