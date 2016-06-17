@@ -587,6 +587,7 @@ static BOOL isTap = NO;
     }
     [self presentViewController:alert animated:YES completion:nil];
 }
+<<<<<<< HEAD
 
 - (void)onTapBubbleView:(Y2WBaseMessage *)message
 {
@@ -685,6 +686,106 @@ static BOOL isTap = NO;
     return self;
 }
 
+=======
+
+- (void)onTapBubbleView:(Y2WBaseMessage *)message
+{
+    if ([message.type isEqualToString:@"image"]) {
+
+    }
+    if ([message.type isEqualToString:@"video"]) {
+        Y2WVideoMessage *videoMessage = (Y2WVideoMessage *)message;
+        if (!videoMessage.videoPath.length) {
+            [self.session.messages.remote downLoadFileWithMessage:message progress:^(CGFloat fractionCompleted) {
+                
+            } success:^(Y2WBaseMessage *message) {
+                
+            } failure:^(NSError *error) {
+                
+            }];
+        }else
+        {
+            NSURL *videoPathURL=[NSURL fileURLWithPath:videoMessage.videoPath];
+            MPMoviePlayerViewController *movie = [[MPMoviePlayerViewController alloc]initWithContentURL:videoPathURL];
+            movie.moviePlayer.shouldAutoplay = YES;
+            movie.moviePlayer.movieSourceType = MPMovieSourceTypeFile;
+            [self presentMoviePlayerViewControllerAnimated:movie];
+        }
+    }
+    if ([message.type isEqualToString:@"location"]) {
+        Y2WLocationMessage *locationMessage = (Y2WLocationMessage *)message;
+        LocationPoint *locationPoint = [[LocationPoint alloc]initWithMessage:locationMessage];
+        LocationViewController *location = [[LocationViewController alloc]initWithLocationPoint:locationPoint];
+        [self.navigationController pushViewController:location animated:YES];
+    }
+    if ([message.type isEqualToString:@"audio"]) {
+        UUAVAudioPlayer *player = [UUAVAudioPlayer sharedInstance];
+        player.delegate = self;
+        Y2WAudioMessage *audioMessage = (Y2WAudioMessage *)message;
+        if (!isTap) {
+            if (!audioMessage.audioPath.length) {
+                [self.session.messages.remote downLoadFileWithMessage:message progress:^(CGFloat fractionCompleted) {
+                    
+                } success:^(Y2WBaseMessage *message) {
+                    Y2WAudioMessage *audioMessage = (Y2WAudioMessage *)message;
+                    NSData *data = [NSData dataWithContentsOfFile:audioMessage.audioPath];
+                    [player playSongWithData:data];
+                } failure:^(NSError *error) {
+                    
+                }];
+            }
+            else
+            {
+                NSData *data = [NSData dataWithContentsOfFile:audioMessage.audioPath];
+                [player playSongWithData:data];
+            }
+        }
+        else
+        {
+            [player stopSound];
+        }
+        
+    }
+    if ([message.type isEqualToString:@"file"]) {
+        NSLog(@"打开文件");
+        Y2WFileMessage *fileMessage = (Y2WFileMessage *)message;
+        if (!fileMessage.filePath.length) {
+            [self.session.messages.remote downLoadFileWithMessage:message progress:^(CGFloat fractionCompleted) {
+                
+            } success:^(Y2WBaseMessage *message) {
+                
+            } failure:^(NSError *error) {
+                
+            }];
+        }else
+        {
+            _docController = [UIDocumentInteractionController interactionControllerWithURL:[NSURL fileURLWithPath:fileMessage.filePath]];//为该对象初始化一个加载路径
+            _docController.delegate =self;//设置代理
+            //直接显示预览
+            //    [_docController presentPreviewAnimated:YES];
+            CGRect navRect =self.navigationController.navigationBar.frame;
+            navRect.size =CGSizeMake(1500.0f,40.0f);
+            //显示包含预览的菜单项
+            [_docController presentOptionsMenuFromRect:navRect inView:self.view animated:YES];
+        }
+
+    }
+}
+
+#pragma mark - ———— FileTransSelectViewControllerDelegate ———— -
+- (void)sendFileModel:(FileModel *)model
+{
+    Y2WFileMessage *message = [self.session.messages messageWithFilePath:model];
+    [self.session.messages sendMessage:message];
+}
+
+#pragma mark - ———— UIDocumentInteractionControllerDelegate ———— -
+-(UIViewController *)documentInteractionControllerViewControllerForPreview:(UIDocumentInteractionController *)controller
+{
+    return self;
+}
+
+>>>>>>> 7b7020d0bed3227d23c9982a2a76306bb10dc107
 - (UIView *)documentInteractionControllerViewForPreview:(UIDocumentInteractionController *)controller
 {
     return self.view;
@@ -715,6 +816,7 @@ static BOOL isTap = NO;
     {
         
     }
+<<<<<<< HEAD
 
 }
 
@@ -792,6 +894,83 @@ static BOOL isTap = NO;
     }];
 }
 
+=======
+
+}
+
+- (void)quoteMessage:(Y2WBaseMessage *)message
+{
+    if (message.text.length) {
+        UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
+        Y2WUser *sender = [[Y2WUsers getInstance] getUserWithUserId:message.sender];
+        NSString *pasteString = [NSString stringWithFormat:@"「%@: %@」\n—————————",sender.name,message.text];
+        [pasteboard setString:pasteString];
+    }
+}
+
+- (void)transmitMessage:(Y2WBaseMessage *)message
+{
+    ContactPickerConfig *config = [[ContactPickerConfig alloc] init];
+    UserPickerViewController *userPickerVC = [[UserPickerViewController alloc] initWithConfig:config];
+    [userPickerVC selectMembersCompletion:^(NSArray<NSObject<MemberModelInterface> *> *members) {
+        for (NSObject<MemberModelInterface> *member in members) {
+            Y2WContact *transmitContact = [[Y2WUsers getInstance].getCurrentUser.contacts getContactWithUID:member.uid];
+            [transmitContact getSessionDidCompletion:^(Y2WSession *session, NSError *error) {
+                Y2WBaseMessage *transmitMessage = [session.messages messageWithText:message.text];
+                [session.messages sendMessage:transmitMessage];
+            }];
+        }
+    } cancel:nil];
+    [self pushViewController:userPickerVC];
+}
+
+- (void)revokeMessage:(Y2WBaseMessage *)message
+{
+    message.sessionId = self.session.sessionId;
+    message.type = @"system";
+    message.content = @{@"text":@"回撤了一条信息"};
+    message.text = @"回撤了一条信息";
+//    message.status = @"storing";
+    [self.session.messages.remote updataMessage:message success:^(Y2WBaseMessage *message) {
+        
+    } failure:^(NSError *error) {
+        NSLog(@"revokeMessage : %@",error);
+    }];
+
+}
+
+- (void)UUAVAudioPlayerBeiginLoadVoice
+{
+    
+}
+- (void)UUAVAudioPlayerBeiginPlay
+{
+    isTap = YES;
+}
+- (void)UUAVAudioPlayerDidFinishPlay
+{
+    isTap = NO;
+
+}
+
+- (void)openRTCForSuccess:(void(^)(Y2WRTCChannel *channel))success failure:(void(^)(NSError *error))failure
+{
+    Y2WRTCManager *manager = [[Y2WRTCManager alloc] init];
+    manager.memberId = [Y2WUsers getInstance].getCurrentUser.userId; //uid
+    manager.token = [Y2WUsers getInstance].getCurrentUser.imToken; //token
+    [manager createChannel:^(NSError *error, Y2WRTCChannel *channel) {
+        if (error) {
+            NSLog(@"%@",error);
+            
+            failure(error);
+            return ;
+        }
+        success(channel);
+        
+    }];
+}
+
+>>>>>>> 7b7020d0bed3227d23c9982a2a76306bb10dc107
 - (NSArray *)getMemberIds:(NSArray *)members
 {
     NSMutableArray *memberIds = [NSMutableArray array];

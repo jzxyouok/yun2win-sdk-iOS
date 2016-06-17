@@ -25,6 +25,7 @@
 {
     AVCallModel *tempModel = [[AVCallModel alloc]initWithMessage:model];
     
+<<<<<<< HEAD
     
     NSLog(@"%d",[self estimateWithAVCallModel:tempModel]);
     
@@ -33,6 +34,20 @@
         [[self getCurrentVC] presentViewController:receive animated:YES completion:nil];
     }
 
+=======
+    ReceiveCommunicationViewController *receive = [[ReceiveCommunicationViewController alloc]initWithModel:tempModel IsSender:NO];
+    [[self getCurrentVC] presentViewController:receive animated:YES completion:nil];
+//    if ([model[@"avcalltype"] isEqualToString:@"audio"]) {
+//        ReceiveCommunicationViewController *receive = [[ReceiveCommunicationViewController alloc]initWithCommunicationType:Communication_Audio IsSender:NO];
+//        [[self getCurrentVC] presentViewController:receive animated:YES completion:nil];
+//    }
+//    else
+//    {
+//        ReceiveCommunicationViewController *receive = [[ReceiveCommunicationViewController alloc]initWithCommunicationType:Communication_Video IsSender:NO];
+//        [[self getCurrentVC] presentViewController:receive animated:YES completion:nil];
+//
+//    }
+>>>>>>> 7b7020d0bed3227d23c9982a2a76306bb10dc107
 }
 
 //- (UIViewController *)getPresentedViewController
@@ -46,6 +61,7 @@
 //    return topVC;
 //}
 
+<<<<<<< HEAD
 - (BOOL)estimateWithAVCallModel:(AVCallModel *)tempModel
 {
     NSString *currentUserId = [Y2WUsers getInstance].getCurrentUser.userId;
@@ -57,6 +73,8 @@
     return NO;
 }
 
+=======
+>>>>>>> 7b7020d0bed3227d23c9982a2a76306bb10dc107
 - (UIViewController *)getCurrentVC
 {
     UIViewController *result = nil;

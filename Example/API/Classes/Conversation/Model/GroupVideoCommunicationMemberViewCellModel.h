@@ -15,6 +15,9 @@
 
 @property (nonatomic, weak) Y2WRTCMember *member;
 
+<<<<<<< HEAD
 @property (nonatomic, assign) BOOL isScreen;
 
+=======
+>>>>>>> 7b7020d0bed3227d23c9982a2a76306bb10dc107
 @end

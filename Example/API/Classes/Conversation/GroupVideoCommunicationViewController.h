@@ -16,8 +16,11 @@
 
 @interface GroupVideoCommunicationViewController : UIViewController
 
+<<<<<<< HEAD
 - (instancetype)initWithChannel:(Y2WRTCChannel *)channel SessionId:(NSString *)sessionId;
 
+=======
+>>>>>>> 7b7020d0bed3227d23c9982a2a76306bb10dc107
 - (instancetype)initWithChannel:(Y2WRTCChannel *)channel SessionId:(NSString *)sessionId commType:(CommType)commtype;
 
 - (instancetype)initWithAVCallModel:(AVCallModel *)model withChannel:(Y2WRTCChannel *)channel;
