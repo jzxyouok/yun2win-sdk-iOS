@@ -13,7 +13,6 @@
 #import "Y2WCurrentUser.h"
 #import "Y2WUsers.h"
 #import "EmojiManage.h"
-
 @interface LoginViewController ()<UITextFieldDelegate,LoginViewControllerDelegate>
 
 @property (weak, nonatomic) IBOutlet UITextField *accountTextField;
@@ -40,7 +39,7 @@
     
     self.accountTextField.text = @"a";
     self.psdTextField.text = @"a";
-    [self login];
+//    [self login];
 }
 
 - (IBAction)registration:(UIButton *)sender {
@@ -66,6 +65,7 @@
             
         }];
         [[EmojiManage shareEmoji] syncEmoji];
+        
         MainViewController *main = [[MainViewController alloc]init];
         [UIApplication sharedApplication].keyWindow.rootViewController = main;
         

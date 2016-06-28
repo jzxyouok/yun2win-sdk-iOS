@@ -27,6 +27,7 @@
 #import "CommunicationViewController.h"
 #import "GroupVideoCommunicationViewController.h"
 #import "ReceiveCommunicationViewController.h"
+#import "ImageShowViewController.h"
 #import <Y2W_RTC_SDK/Y2WRTCManager.h>
 #import <Y2W_RTC_SDK/Y2WNetWork.h>
 #import "AVCallModel.h"
@@ -40,6 +41,7 @@ InputViewMoreDelegate,
 UINavigationControllerDelegate,
 UIImagePickerControllerDelegate,
 Y2WMessagesDelegate,
+Y2WSessionMembersDelegate,
 MessageCellDelegate,
 LocationViewControllerDelegate,
 UUAVAudioPlayerDelegate,
@@ -98,6 +100,8 @@ static BOOL isTap = NO;
     
     [self.session.messages addDelegate:self];
     [self.session.messages loadMessageWithPage:nil];
+    [self.session.members addDelegate:self];
+    [self.session.members.remote sync];
 }
 
 - (void)viewDidLayoutSubviews {
@@ -238,6 +242,9 @@ static BOOL isTap = NO;
         NSIndexPath *indexPath = [NSIndexPath indexPathForRow:[self.messages indexOfObject:model] inSection:0];
         dispatch_async(dispatch_get_main_queue(), ^{
             
+            MessageCell<MessageCellModelInterface> *cell = [self.tableView dequeueReusableCellWithIdentifier:model.cellClassName];
+            [cell.progressView setProgress:progress animated:YES];
+            
             [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
         });
         return;
@@ -286,8 +293,69 @@ static BOOL isTap = NO;
     });
 }
 
+#pragma mark - ———— Y2WSessionMembersDelegate ———— -
+/**
+ *  会话成员增加的回调
+ *
+ *  @param sessionMembers 会话成员管理对象
+ *  @param sessionMember  添加的会话成员
+ */
+- (void)sessionMembers:(Y2WSessionMembers *)sessionMembers
+    onAddSessionMember:(Y2WSessionMember *)sessionMember
+{
+     NSLog(@"%@",sessionMembers);
+}
 
 
+
+/**
+ *  会话成员删除的回调
+ *
+ *  @param sessionMembers 会话成员管理对象
+ *  @param sessionMember  删除的会话成员
+ */
+- (void)sessionMembers:(Y2WSessionMembers *)sessionMembers
+ onDeleteSessionMember:(Y2WSessionMember *)sessionMember
+{
+     NSLog(@"%@",sessionMembers);
+}
+
+
+/**
+ *  会话成员更新的回调
+ *
+ *  @param sessionMembers 会话成员管理对象
+ *  @param sessionMember  更新的会话成员
+ */
+- (void)sessionMembers:(Y2WSessionMembers *)sessionMembers
+ onUpdateSessionMember:(Y2WSessionMember *)sessionMember
+{
+     NSLog(@"%@",sessionMembers);
+}
+
+
+
+/**
+ *  会话成员将要变化的回调
+ *
+ *  @param sessionMembers 会话成员管理对象
+ */
+- (void)sessionMembersWillChangeContent:(Y2WSessionMembers *)sessionMembers
+{
+     NSLog(@"%@",sessionMembers);
+}
+
+
+
+/**
+ *  会话成员变化完成的回调
+ *
+ *  @param sessionMembers 会话成员管理对象
+ */
+- (void)sessionMembersDidChangeContent:(Y2WSessionMembers *)sessionMembers
+{
+    NSLog(@"%@",sessionMembers);
+}
 
 #pragma mark - ———— UITableViewDataSource ———— -
 
@@ -591,6 +659,35 @@ static BOOL isTap = NO;
 - (void)onTapBubbleView:(Y2WBaseMessage *)message
 {
     if ([message.type isEqualToString:@"image"]) {
+        Y2WImageMessage *imgMessage = (Y2WImageMessage *)message;
+        
+        UIView *backView = [[UIView alloc]initWithFrame:self.view.bounds];
+        backView.backgroundColor = [UIColor colorWithRed:0/255 green:0/255 blue:0/255 alpha:0.667];;
+        [self.view addSubview:backView];
+        
+        UIProgressView  *progressView = [[UIProgressView alloc]initWithProgressViewStyle:UIProgressViewStyleDefault];
+        progressView.frame = CGRectMake(backView.centerX-100, backView.centerY, 200, 100);
+        progressView.trackTintColor = [UIColor whiteColor];
+        progressView.transform = CGAffineTransformMakeScale(1.0f, 2.0f);
+        progressView.tintColor = [UIColor colorWithHexString:@"#ffc950"];
+        progressView.layer.masksToBounds = YES;
+        progressView.layer.borderWidth = 0.5;
+        progressView.layer.borderColor = [UIColor colorWithHexString:@"@c8c8c8c"].CGColor;
+        [backView addSubview:progressView];
+
+        [self.session.messages.remote downLoadFileWithMessage:imgMessage progress:^(CGFloat fractionCompleted) {
+            
+            [progressView setProgress:fractionCompleted animated:YES];
+            
+        } success:^(Y2WBaseMessage *message) {
+            [progressView removeFromSuperview];
+            [backView removeFromSuperview];
+            ImageShowViewController *imgshow = [[ImageShowViewController alloc]initWithMessage:(Y2WImageMessage *)message];
+            [self.navigationController pushViewController:imgshow animated:YES];
+            
+        } failure:^(NSError *error) {
+            
+        }];
 
     }
     if ([message.type isEqualToString:@"video"]) {
@@ -657,7 +754,8 @@ static BOOL isTap = NO;
             } failure:^(NSError *error) {
                 
             }];
-        }else
+        }
+        else
         {
             _docController = [UIDocumentInteractionController interactionControllerWithURL:[NSURL fileURLWithPath:fileMessage.filePath]];//为该对象初始化一个加载路径
             _docController.delegate =self;//设置代理
@@ -834,11 +932,11 @@ static BOOL isTap = NO;
         
         MoreItem *item_camera = [[MoreItem alloc]init];
         item_camera.title = @"拍照";
-        item_camera.image = [UIImage imageNamed:@"输入框-图片"];
+        item_camera.image = [UIImage imageNamed:@"输入框-拍照"];
         
         MoreItem *item1 = [[MoreItem alloc] init];
         item1.title = @"小视频";
-        item1.image = [UIImage imageNamed:@"输入框-图片"];
+        item1.image = [UIImage imageNamed:@"输入框-小视频"];
         
         MoreItem *item2 = [[MoreItem alloc] init];
         item2.title = @"位置";

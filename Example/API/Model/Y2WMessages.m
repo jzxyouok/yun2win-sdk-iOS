@@ -748,7 +748,7 @@ static dispatch_queue_t message_callback_queue() {
                         for (NSDictionary *dic in entries) {
                             Y2WBaseMessage *message = [Y2WBaseMessage createMessageWithDict:dic];
                             message.status = @"stored";
-                            if (message != nil) [messages addObject:message];
+                            if (message != nil) [messages addObject:message] ;
                         }
                         
                         [messages sortUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"createdAt" ascending:YES]]];
@@ -807,18 +807,16 @@ static dispatch_queue_t message_callback_queue() {
 }
 
 - (void)updataMessage:(Y2WBaseMessage *)message session:(Y2WSession *)session success:(void (^)(Y2WBaseMessage *))success failure:(void (^)(NSError *))failure
-
 {
-//    NSLog(@"message : %@",message);
-//    NSLog(@"url : %@",[URL aboutMessage:message.messageId Session:message.sessionId]);
-
+//    NSLog(@"%@\n%@",[URL aboutMessage:message.messageId Session:message.sessionId],@{@"sender":message.sender,@"content":message.text,@"type":message.type});
     [HttpRequest PUTWithURL:[URL aboutMessage:message.messageId Session:message.sessionId] parameters:@{@"sender":message.sender,@"content":message.text,@"type":message.type} success:^(id data) {
+        
         [self sync];
         NSString *temp_sessionId = [NSString stringWithFormat:@"%@_%@",session.type,session.sessionId];
         [[Y2WUsers getInstance].getCurrentUser.bridge updateSessionWithSession:session];
         [[Y2WUsers getInstance].getCurrentUser.bridge sendMessageWithSession:session Content:@[@{@"type":@0},@{@"type":@1,@"sessionId":temp_sessionId}]];
+        
     } failure:^(NSError *error) {
-//        NSLog(@"%@",error);
         if (failure) {
             failure(error);
         }
@@ -876,6 +874,13 @@ static dispatch_queue_t message_callback_queue() {
         progress(fractionCompleted);
         
     } success:^(NSURL *path) {
+        
+        if ([message.type isEqualToString:@"image"]) {
+            Y2WImageMessage *imgMessage = (Y2WImageMessage *)message;
+            imgMessage.imagePath = [[NSString stringWithFormat:@"%@",path] substringFromIndex:7];
+//            NSData *data = [NSData dataWithContentsOfFile:tempPath];
+
+        }
         
         if ([message.type isEqualToString:@"video"]) {
             Y2WVideoMessage *videoMessage = (Y2WVideoMessage *)message;

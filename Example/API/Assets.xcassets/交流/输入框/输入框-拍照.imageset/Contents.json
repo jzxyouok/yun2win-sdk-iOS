@@ -6,11 +6,12 @@
     },
     {
       "idiom" : "universal",
-      "filename" : "message_file_audio.png",
+      "filename" : "拍照_@2x.png",
       "scale" : "2x"
     },
     {
       "idiom" : "universal",
+      "filename" : "拍照_@3x.png",
       "scale" : "3x"
     }
   ],

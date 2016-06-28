@@ -19,7 +19,7 @@
     if ([content isKindOfClass:[NSDictionary class]]) {
         self.content = content;
     }
-    self.fileUrl = [NSString stringWithFormat:@"/%@%@?access_token=%@",[URL baseURL],content[@"src"],[[Y2WUsers getInstance].getCurrentUser token]];
+    self.fileUrl = [NSString stringWithFormat:@"%@%@?access_token=%@",[URL baseURL],content[@"src"],[[Y2WUsers getInstance].getCurrentUser token]];
     self.filePath = content[@"size"];
     self.text = @"[文件]";
 }

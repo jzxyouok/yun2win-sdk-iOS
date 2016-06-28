@@ -6,7 +6,7 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.ExceptionBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "No"
+            shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             scope = "0"
@@ -16,16 +16,16 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "No"
+            shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "API/Common/Category/NSString+Attributed.m"
-            timestampString = "484131503.815152"
+            filePath = "API/Classes/Conversation/ConversationViewController.m"
+            timestampString = "488788620.538128"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "40"
-            endingLineNumber = "40"
-            landmarkName = "-stringForAttributedString"
+            startingLineNumber = "748"
+            endingLineNumber = "748"
+            landmarkName = "-onTapBubbleView:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

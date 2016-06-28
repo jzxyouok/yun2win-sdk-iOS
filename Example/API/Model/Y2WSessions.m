@@ -30,7 +30,7 @@
 
 
 - (void)getSessionWithTargetId:(NSString *)targetId type:(NSString *)type success:(void (^)(Y2WSession *))success failure:(void (^)(NSError *))failure {
-    if (!success) return;;
+    if (!success) return;
     
     Y2WSession *session = [self getSessionWithTargetId:targetId type:type];
     
@@ -43,7 +43,7 @@
         session.targetID = targetId;
         [self addSession:session];
         
-        [session.members.remote sync];
+//        [session.members.remote sync];
         success(session);
         
     } failure:failure];
@@ -59,7 +59,7 @@
 }
 
 - (Y2WSession *)getSessionWithTargetId:(NSString *)targetId type:(NSString *)type {
-#warning 本地存储的Session具有属性sessionId&type两个属性吗？
+//#warning 本地存储的Session具有属性sessionId&type两个属性吗？
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"targetID LIKE[CD] %@ AND type LIKE[CD] %@",targetId,type];
     NSSet *sessions = [self.sessionList filteredSetUsingPredicate:predicate];
     if (sessions.count) return sessions.anyObject;

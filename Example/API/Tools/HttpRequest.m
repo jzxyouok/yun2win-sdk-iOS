@@ -277,22 +277,41 @@
     
     NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:url]];
     
-    NSURLSessionDownloadTask *downloadTask = [manager downloadTaskWithRequest:request progress:nil destination:^NSURL *(NSURL *targetPath, NSURLResponse *response) {
+    NSURLSessionDownloadTask *downloadTask = [manager downloadTaskWithRequest:request progress:^(NSProgress * _Nonnull downloadProgress) {
+        
+        progress(downloadProgress.fractionCompleted);
+        
+    } destination:^NSURL * _Nonnull(NSURL * _Nonnull targetPath, NSURLResponse * _Nonnull response) {
         
         NSURL *documentsDirectoryURL = [[NSFileManager defaultManager] URLForDirectory:NSDocumentDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:NO error:nil];
         return [documentsDirectoryURL URLByAppendingPathComponent:[response suggestedFilename]];
+
         
-//        NSString *path = [NSString getDocumentPathInbox:[NSString stringWithFormat:@"file_%@",@([NSDate timeIntervalSinceReferenceDate])]];
-//        return [NSURL URLWithString:path];
-    } completionHandler:^(NSURLResponse *response, NSURL *filePath, NSError *error) {
-//        NSLog(@"File downloaded to: %@", filePath);
+    } completionHandler:^(NSURLResponse * _Nonnull response, NSURL * _Nullable filePath, NSError * _Nullable error) {
+        
         if (!error) {
             success(filePath);
         }
         else{
             failure(error);
         }
+
+        
     }];
+    
+//    NSURLSessionDownloadTask *downloadTask = [manager downloadTaskWithRequest:request progress:nil destination:^NSURL *(NSURL *targetPath, NSURLResponse *response) {
+//        
+//        NSURL *documentsDirectoryURL = [[NSFileManager defaultManager] URLForDirectory:NSDocumentDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:NO error:nil];
+//        return [documentsDirectoryURL URLByAppendingPathComponent:[response suggestedFilename]];
+//
+//    } completionHandler:^(NSURLResponse *response, NSURL *filePath, NSError *error) {
+//        if (!error) {
+//            success(filePath);
+//        }
+//        else{
+//            failure(error);
+//        }
+//    }];
     [downloadTask resume];
 }
 

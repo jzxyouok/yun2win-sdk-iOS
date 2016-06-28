@@ -20,6 +20,8 @@
 
 @property (nonatomic, strong) IMClient *imClient;
 
+@property (nonatomic, strong) Y2WSession *tempSession;
+
 @end
 
 @implementation Y2WBridge
@@ -49,31 +51,31 @@
 }
 
 
-- (void)connectBeforeCheck:(Y2WBridge *)opts
-{
-    //    self.uid = opts.userId;
-    //    self.token = opts.token;
-    if (!opts.appKey.length) {
-        [opts.statusChanged onConnectionStatusChangedWithConnectionStatus:disconnected connectionReturn:appKeyIsInvalid];
-        return;
-    }
-    if (!opts.token.length) {
-        [opts.statusChanged onConnectionStatusChangedWithConnectionStatus:disconnected connectionReturn:tokenIsInvalid];
-        return;
-    }
-    if (!opts.userId.length) {
-        [opts.statusChanged onConnectionStatusChangedWithConnectionStatus:disconnected connectionReturn:uidIsInvalid];
-        return;
-    }
-    [opts.statusChanged onConnectionStatusChangedWithConnectionStatus:connecting connectionReturn:0];
-    
-}
+//- (void)connectBeforeCheck:(Y2WBridge *)opts
+//{
+//    //    self.uid = opts.userId;
+//    //    self.token = opts.token;
+//    if (!opts.appKey.length) {
+//        [opts.statusChanged onConnectionStatusChangedWithConnectionStatus:disconnected connectionReturn:appKeyIsInvalid];
+//        return;
+//    }
+//    if (!opts.token.length) {
+//        [opts.statusChanged onConnectionStatusChangedWithConnectionStatus:disconnected connectionReturn:tokenIsInvalid];
+//        return;
+//    }
+//    if (!opts.userId.length) {
+//        [opts.statusChanged onConnectionStatusChangedWithConnectionStatus:disconnected connectionReturn:uidIsInvalid];
+//        return;
+//    }
+//    [opts.statusChanged onConnectionStatusChangedWithConnectionStatus:connecting connectionReturn:0];
+//    
+//}
 
 - (void)sendMessageWithSession:(Y2WSession *)session Content:(NSArray *)content
 {
+    self.tempSession = session;
     IMSession *imSession = [[IMSession alloc]initWithSession:session];
     NSDictionary *syncTypeDict = @{@"syncs":content};
-//    IMMessage *imMessage = [[IMMessage alloc]initWithCommand:@"sendMessage" Mts:imSession.mts Message:syncTypeDict];
     IMMessage *imMessage = [[IMMessage alloc]initWithMts:imSession.mts Message:syncTypeDict];
 //    NSLog(@"send-----%@",imMessage.y2wMessageId);
 
@@ -91,7 +93,6 @@
                               @"isDel":@(member.isDelete)};
         [content addObject:dic];
     }
-//    IMMessage *imMessage = [[IMMessage alloc]initWithCommand:@"updateSession" Mts:imSession.mts Message:content];
     IMMessage *imMessage = [[IMMessage alloc]initWithMts:imSession.mts Message:content];
 //    NSLog(@"update-----%@",imMessage.y2wMessageId);
 
@@ -138,7 +139,6 @@
 
 - (void)sendMessageListWithIMSession:(IMSession *)session IMMessage:(IMMessage *)message
 {
-//    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
     [self.sendMessageList addObject:@{@"imSession":session,
                                       @"imMessage":message}];
         dispatch_async(self.dispath_send_queue, ^{
@@ -161,7 +161,6 @@
             }
             [self.sendMessageList removeObject:self.sendMessageList.firstObject];
         });
-//    });
 }
 
 - (void)getReceiptMessage:(NSDictionary *)receiptMessage
@@ -185,6 +184,7 @@
  */
 - (void)getReturnCodeMessage:(NSDictionary *)receiptMessage
 {
+//    NSLog(@"receiptMessage -- %@",receiptMessage);
     switch ([receiptMessage[@"returnCode"] integerValue]) {
         case 20:
         {
@@ -226,15 +226,13 @@
             break;
         case 27:
         {
-            //            IMSession *temp_session = self.sendMessageList.firstObject[@"imSession"];
-            //            NSDictionary *imSessionDict = [self getSessionIdAndType:temp_session];
-            //            [[Y2WUsers getInstance].getCurrentUser.sessions getSessionWithTargetId:imSessionDict[@"sessionId"] type:imSessionDict[@"sessionType"] success:^(Y2WSession *session) {
-            //
-            //                [[Y2WUsers getInstance].getCurrentUser.bridge updateSessionWithSession:session];
-            //
-            //            } failure:^(NSError *error) {
-            //
-            //            }];
+        
+//            [[Y2WUsers getInstance].getCurrentUser.sessions getSessionWithTargetId:[self onGetSessionTargetId:self.tempSession] type:self.tempSession.type success:^(Y2WSession *session) {
+//                NSLog(@"%@",session);
+//            } failure:^(NSError *error) {
+//                
+//            }];
+            [self.tempSession.members.remote sync];
         }
             break;
         case 28:
@@ -297,6 +295,41 @@
     return imSessionDic;
 }
 
+- (NSString *)onGetSessionTargetId:(Y2WSession *)session
+{
+    if ([session.type isEqualToString:@"group"]) {
+        return session.sessionId;
+    }
+    else{
+        return session.targetID;
+    }
+}
+
+- (void)reachability
+{
+    // 1.获得网络监控的管理者
+    AFNetworkReachabilityManager *mgr = [AFNetworkReachabilityManager sharedManager];
+    // 2.设置网络状态改变后的处理
+    [mgr setReachabilityStatusChangeBlock:^(AFNetworkReachabilityStatus status) {
+        // 当网络状态改变了, 就会调用这个block
+        switch (status) {
+            case AFNetworkReachabilityStatusUnknown: // 未知网络
+                NSLog(@"未知网络");
+                break;
+            case AFNetworkReachabilityStatusNotReachable: // 没有网络(断网)
+                NSLog(@"没有网络(断网)");
+                break;
+            case AFNetworkReachabilityStatusReachableViaWWAN: // 手机自带网络
+                NSLog(@"手机自带网络");
+                break;
+            case AFNetworkReachabilityStatusReachableViaWiFi: // WIFI
+                NSLog(@"WIFI");
+                break;
+        }
+    }];
+    // 3.开始监控
+    [mgr startMonitoring];
+}
 
 #pragma mark - Set And Get
 - (NSMutableArray *)sendMessageList
@@ -307,14 +340,13 @@
     return _sendMessageList;
 }
 
-//- (IMClient *)imClient
-//{
-//    if (!_imClient) {
-//        _imClient = [IMClient shareY2WIMClient];
-//        _imClient.receiptDelegate = self;
-//    }
-//    return _imClient;
-//}
+- (Y2WSession *)tempSession
+{
+    if (!_tempSession) {
+        _tempSession = [[Y2WSession alloc]init];
+    }
+    return _tempSession;
+}
 
 @end
 

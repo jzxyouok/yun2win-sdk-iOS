@@ -115,15 +115,6 @@
 {
     if (sender.tag == 101) {
         //挂断
-//        Y2WRTCManager *manager = [[Y2WRTCManager alloc] init];
-//        NSLog(@"%@",self.model);
-//        manager.channelId = self.model.channelId;
-//        manager.memberId = [Y2WUsers getInstance].getCurrentUser.userId; //uid
-//        manager.token = [Y2WUsers getInstance].getCurrentUser.imToken; //token
-//        [manager getChannel:^(NSError *error, Y2WRTCChannel *channel) {
-//            [channel leave];
-//
-//        }];
         [self dismissViewControllerAnimated:YES completion:nil];
 
     }

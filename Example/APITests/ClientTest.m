@@ -16,7 +16,6 @@
 #import "Y2WUserConversations.h"
 #import "Y2WSession.h"
 #import "Y2WSessions.h"
-#import "Y2WMessage.h"
 #import "Y2WMessages.h"
 
 

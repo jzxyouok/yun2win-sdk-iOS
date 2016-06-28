@@ -60,8 +60,20 @@
     view.subTitleLabel.height = 15;
     view.subTitleLabel.width = 50;
     [view addSubview:view.subTitleLabel];
-//    view.progressView
     
+//    view.progressView = [[UIProgressView alloc]initWithProgressViewStyle:UIProgressViewStyleDefault];
+//    view.progressView.trackTintColor = [UIColor whiteColor];
+//    view.progressView.transform = CGAffineTransformMakeScale(1.0f, 2.0f);
+//    view.progressView.tintColor = [UIColor colorWithHexString:@"#ffc950"];
+//    view.progressView.layer.masksToBounds = YES;
+//    view.progressView.layer.borderWidth = 0.5;
+//    view.progressView.layer.borderColor = [UIColor colorWithHexString:@"@c8c8c8c"].CGColor;
+//    view.progressView.left = 10;
+//    view.progressView.right = view.width - 10;
+//    view.progressView.height = 5;
+//    view.progressView.bottom = view.height - 5;
+//    [view addSubview:view.progressView];
+
     return view;
 }
 

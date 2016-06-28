@@ -42,6 +42,7 @@
 - (void)syncEmoji
 {
     [HttpRequest GETWithURL:[URL emojis] timeStamp:self.timeStamp parameters:@{@"limit":@(100)} success:^(id data) {
+        
         dispatch_async(self.dispath_queue_background, ^{
             NSArray *tempArr = data[@"entries"];
             NSInteger totalCount = [data[@"total_count"] integerValue];
@@ -56,8 +57,6 @@
                 [self syncEmoji];
             }
         });
-
-    
     } failure:^(NSError *error) {
         
     }];
