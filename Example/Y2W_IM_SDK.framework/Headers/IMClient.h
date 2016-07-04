@@ -11,6 +11,10 @@
 #import "StatusDefine.h"
 #import "IMClientProtocol.h"
 
+
+/**
+ *  Y2W_IM_SDK连接状态回调
+ */
 @protocol IMClientOnConnectionStatusChanged <NSObject>
 
 - (void)onConnectionStatusChangedWithConnectionStatus:(ConnectionStatus)connectionStatus;
@@ -20,30 +24,44 @@
 
 @end
 
+/**
+ *  Y2W_IM_SDK接收消息的回调
+ */
 @protocol IMClientReceiveMessageDelegate <NSObject>
 
 /**
  *  传递发送消息后的回执信息
  *
  *  @param receiptMessage 回执信息
+ *  废弃
  */
 - (void)getReceiptMessage:(NSDictionary *)receiptMessage;
+
+/**
+ *  接收消息的回调
+ *
+ *  @param receiveMessage 消息体
+ */
+- (void)receiveMessage:(NSDictionary *)receiveMessage;
+
+@end
+
+/**
+ *  Y2W_IM_SDK发送消息回执的回调
+ */
+@protocol IMClientReceiptMessageDelegate <NSObject>
+
+- (void)gotReceiptMessageWithSendReturnCode:(SendReturnCode)returnCode IMSession:(id<IMSessionProtocol>)session IMMessage:(id<IMMessageProtocol>)message;
 
 @end
 
 @interface IMClient : NSObject
 
-/**
- *  连接协议
- */
 @property (nonatomic, weak) id<IMClientOnConnectionStatusChanged> onConnectionDelegate;
 
-/**
- *  接受消息协议
- */
-@property (nonatomic, weak) id<IMClientReceiveMessageDelegate> receiptDelegate;
+@property (nonatomic, weak) id<IMClientReceiveMessageDelegate> receiveMessageDelegate;
 
-
+@property (nonatomic, weak) id<IMClientReceiptMessageDelegate> receiptMessageDelegate;
 /**
  *  获取yun2winIMSDK的核心类
  *
@@ -98,6 +116,9 @@
  */
 - (void)updateSessionWithSession:(id<IMSessionProtocol>)session Message:(id<IMMessageProtocol>)message;
 
+#pragma mark - 公众服务
+
+#pragma mark - 推送业务数据统计
 
 #pragma mark - 工具类方法
 /**

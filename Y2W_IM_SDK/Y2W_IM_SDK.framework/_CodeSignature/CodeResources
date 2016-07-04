@@ -6,15 +6,15 @@
 	<dict>
 		<key>Headers/IMClient.h</key>
 		<data>
-		o3e6ZwzQO8gINdwcSbNF4OXUJ2k=
+		keLIJXmyYjwUgpsP9qLDUgmVQys=
 		</data>
 		<key>Headers/IMClientProtocol.h</key>
 		<data>
-		5aD6JTRgrIL13GqMYpw1eWgc5fo=
+		UuDXYrRgrTwc8WnO2ZgU366YNUE=
 		</data>
 		<key>Headers/StatusDefine.h</key>
 		<data>
-		X+xIjpHLGFXdIUMPERkTRKntN7A=
+		bNXhElyNK06A7tKSCnQWrl45taA=
 		</data>
 		<key>Headers/Y2W_IM_SDK.h</key>
 		<data>
@@ -35,33 +35,33 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			o3e6ZwzQO8gINdwcSbNF4OXUJ2k=
+			keLIJXmyYjwUgpsP9qLDUgmVQys=
 			</data>
 			<key>hash2</key>
 			<data>
-			w7BZ07ppeTbfSTbn6V8UD6lgzzhyG0ZsMilDTjSW44A=
+			3adMYKxV7DfUH6iS/htECGC6jmkffR3248A/BOE8jYM=
 			</data>
 		</dict>
 		<key>Headers/IMClientProtocol.h</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			5aD6JTRgrIL13GqMYpw1eWgc5fo=
+			UuDXYrRgrTwc8WnO2ZgU366YNUE=
 			</data>
 			<key>hash2</key>
 			<data>
-			OWhXSAaVi9XE505la1TeWm9X23qFkvwfXMPdmiW+SK4=
+			PMlBniQfU5gUAET47mbB77EDeDhXgDIk2FTOMpNi7ZU=
 			</data>
 		</dict>
 		<key>Headers/StatusDefine.h</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			X+xIjpHLGFXdIUMPERkTRKntN7A=
+			bNXhElyNK06A7tKSCnQWrl45taA=
 			</data>
 			<key>hash2</key>
 			<data>
-			XkAkj3GhkFbpANhvbnkp8KI2wg9ig6BQr8USf3ecZV8=
+			Sov2aflSvpIEIdWvXK2DG73YY+AljHNR7/qxIEM7IpI=
 			</data>
 		</dict>
 		<key>Headers/Y2W_IM_SDK.h</key>

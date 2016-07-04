@@ -791,7 +791,7 @@ static dispatch_queue_t message_callback_queue() {
     [HttpRequest POSTWithURL:[URL acquireMessages:message.sessionId] parameters:parameters success:^(id data) {
         [message updateWithDict:data];
         NSString *temp_sessionId = [NSString stringWithFormat:@"%@_%@",self.messages.session.type,self.messages.session.sessionId];
-        [[Y2WUsers getInstance].getCurrentUser.bridge updateSessionWithSession:self.messages.session];
+//        [[Y2WUsers getInstance].getCurrentUser.bridge updateSessionWithSession:self.messages.session];
         [[Y2WUsers getInstance].getCurrentUser.bridge sendMessageWithSession:self.messages.session Content:@[@{@"type":@0},@{@"type":@1,@"sessionId":temp_sessionId}]];
 
         if (success) success(message);
@@ -802,7 +802,7 @@ static dispatch_queue_t message_callback_queue() {
 - (void)storeAVCallMessage:(Y2WBaseMessage *)message
 {
     NSString *temp_sessionId = [NSString stringWithFormat:@"%@_%@",self.messages.session.type,self.messages.session.sessionId];
-    [[Y2WUsers getInstance].getCurrentUser.bridge updateSessionWithSession:self.messages.session];
+//    [[Y2WUsers getInstance].getCurrentUser.bridge updateSessionWithSession:self.messages.session];
     [[Y2WUsers getInstance].getCurrentUser.bridge sendMessageWithSession:self.messages.session Content:@[@{@"type":@0},@{@"type":@1,@"sessionId":temp_sessionId},message.content]];
 }
 
@@ -813,7 +813,7 @@ static dispatch_queue_t message_callback_queue() {
         
         [self sync];
         NSString *temp_sessionId = [NSString stringWithFormat:@"%@_%@",session.type,session.sessionId];
-        [[Y2WUsers getInstance].getCurrentUser.bridge updateSessionWithSession:session];
+//        [[Y2WUsers getInstance].getCurrentUser.bridge updateSessionWithSession:session];
         [[Y2WUsers getInstance].getCurrentUser.bridge sendMessageWithSession:session Content:@[@{@"type":@0},@{@"type":@1,@"sessionId":temp_sessionId}]];
         
     } failure:^(NSError *error) {
