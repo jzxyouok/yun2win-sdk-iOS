@@ -1,5 +1,5 @@
 [![LOGO](http://8225117.s21i-8.faiusr.com/4/ABUIABAEGAAg5o3ztwUoivKDrgQwuAE4Mg.png)](http://www.yun2win.com)
-# yun2win-sdk-iOS V_0.0.1
+# yun2win-sdk-iOS V_1.0.0
 
 ### 编译环境
 编译环境：Xcode-Version 7.2.1 (7C1002)
