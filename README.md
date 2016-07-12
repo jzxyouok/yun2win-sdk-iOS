@@ -1,5 +1,7 @@
 [![LOGO](http://8225117.s21i-8.faiusr.com/4/ABUIABAEGAAg5o3ztwUoivKDrgQwuAE4Mg.png)](http://www.yun2win.com)
 # yun2win-sdk-iOS V_1.0.0
+ 
+ Yun2win为企业和开发者提供最安全的即时通讯(IM)云服务和基于Web RTC下的融合通讯云服务，通过yun2win的SDK及API，快速拥有instant messaging、实时音视频（Audio and video Communication）、屏幕共享（Screen sharing）、电子白板（whiteboard）通讯能力。
 
 ### 编译环境
 编译环境：Xcode-Version 7.2.1 (7C1002)
