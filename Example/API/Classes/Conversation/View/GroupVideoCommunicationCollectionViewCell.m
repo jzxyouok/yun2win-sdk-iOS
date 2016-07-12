@@ -43,7 +43,8 @@
     _model = model;
     [self.avatarImageView setBackgroundImageForState:UIControlStateNormal withURL:[NSURL URLWithString:_model.sessionMember.avatarUrl] placeholderImage:[UIImage imageNamed:@"默认个人头像"]];
 //    [self.avatarImageView setImage:[UIImage imageNamed:@"File_audio"] forState:UIControlStateNormal];
-    self.videoView.videoTrack = _model.isScreen ? model.member.screenTrack : model.member.videoTrack;
+//    self.videoView.videoTrack = _model.isScreen ? model.member.screenTrack : model.member.videoTrack;
+    self.videoView.videoTrack = model.member.videoTrack;
 }
 
 - (UIButton *)avatarImageView

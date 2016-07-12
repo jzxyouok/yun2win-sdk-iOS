@@ -22,7 +22,8 @@
 
 
 
-#pragma mark - ———— 频道 ———— -
+
+#pragma mark - ———— Base ———— -
 
 /**
  *  获取频道内的当前成员
@@ -45,7 +46,7 @@
 
 
 
-#pragma mark - ———— 音频 ———— -
+#pragma mark - ———— Audio ———— -
 
 /**
  *  开启音频功能
@@ -92,7 +93,7 @@
 
 
 
-#pragma mark - ———— 视频 ———— -
+#pragma mark - ———— Video ———— -
 
 /**
  *  开启视频功能
@@ -100,7 +101,7 @@
 - (void)openVideo;
 
 /**
- *  关闭视频功能
+ *  关闭视频功能（关闭后无法发送和接受视频）
  */
 - (void)closeVideo;
 
@@ -118,22 +119,5 @@
  *  @return YES为后置摄像头，NO为前置摄像头
  */
 - (BOOL)isUseBackCamera;
-
-
-
-
-
-
-//#pragma mark - ———— 屏幕共享 ———— -
-//
-///**
-// *  开启屏幕共享
-// */
-//- (void)openScreen;
-//
-///**
-// *  关闭屏幕共享
-// */
-//- (void)closeScreen;
 
 @end

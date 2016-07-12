@@ -80,37 +80,19 @@
 - (void)channel:(Y2WRTCChannel *)channel didCloseVideoOfMember:(Y2WRTCMember *)member;
 
 /**
+ *  有成员关闭或开启了摄像头
+ *
+ *  @param channel 频道对象
+ *  @param member  成员对象
+ */
+- (void)channel:(Y2WRTCChannel *)channel didSwitchVideoMuteOfMember:(Y2WRTCMember *)member;
+
+/**
  *  视频连接出现错误
  *
  *  @param channel 频道对象
  *  @param error   错误对象
  */
 - (void)channel:(Y2WRTCChannel *)channel onVideoError:(NSError *)error;
-
-
-
-/**
- *  有成员开启了屏幕共享
- *
- *  @param channel 频道对象
- *  @param member  成员对象
- */
-- (void)channel:(Y2WRTCChannel *)channel didOpenScreenOfMember:(Y2WRTCMember *)member;
-
-/**
- *  有成员关闭了屏幕共享
- *
- *  @param channel 频道对象
- *  @param member  成员对象
- */
-- (void)channel:(Y2WRTCChannel *)channel didCloseScreenOfMember:(Y2WRTCMember *)member;
-
-/**
- *  屏幕共享连接出现错误
- *
- *  @param channel 频道对象
- *  @param error   错误对象
- */
-- (void)channel:(Y2WRTCChannel *)channel onScreenError:(NSError *)error;
 
 @end

@@ -16,11 +16,8 @@
 @property (nonatomic, copy) NSString *avatarUrl;                            // 用户头像
 
 @property (nonatomic, retain, readonly) Y2WRTCVideoTrack *videoTrack;       // 视频数据流
-@property (nonatomic, retain, readonly) Y2WRTCVideoTrack *screenTrack;      // 屏幕数据流
-
 @property (nonatomic, assign, readonly) BOOL audioOpened;                   // 是否开启了音频连接
 @property (nonatomic, assign, readonly) BOOL audioMuted;                    // 是否开启了静音（关闭麦克风）
 @property (nonatomic, assign, readonly) BOOL videoOpened;                   // 是否开启了视频连接
-@property (nonatomic, assign, readonly) BOOL screenOpened;                  // 是否开启了屏幕共享连接
 
 @end

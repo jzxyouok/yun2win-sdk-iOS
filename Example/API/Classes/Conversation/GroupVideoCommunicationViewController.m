@@ -125,7 +125,7 @@ GroupVideoChatSideBarDelegate>
         NSMutableArray *tempArray = [NSMutableArray array];
         
         for (Y2WRTCMember *member in self.channel.getMembers) {
-            if (!member.screenOpened) continue;
+//            if (!member.screenOpened) continue;
             
             GroupVideoCommunicationMemberViewCellModel *model = [[GroupVideoCommunicationMemberViewCellModel alloc]init];
             model.isScreen = YES;
@@ -134,15 +134,7 @@ GroupVideoChatSideBarDelegate>
             model.sessionMember = sessionMember;
             [tempArray addObject:model];
         }
-        
-        for (Y2WRTCMember *member in self.channel.getMembers) {
-            GroupVideoCommunicationMemberViewCellModel *model = [[GroupVideoCommunicationMemberViewCellModel alloc]init];
-            model.member = member;
-            Y2WSessionMember *sessionMember = [self.session.members getMemberWithUserId:member.uid];
-            model.sessionMember = sessionMember;
-            [tempArray addObject:model];
-        }
-        
+                
         self.models = tempArray;
         
         GroupVideoCommunicationMemberViewCellModel *model = self.models.firstObject;
@@ -166,7 +158,7 @@ GroupVideoChatSideBarDelegate>
 
 - (void)channel:(Y2WRTCChannel *)channel didJoinMember:(Y2WRTCMember *)member {
     [self reloadData];
-    NSLog(@"%@",member);
+//    NSLog(@"%@",member);
 }
 
 - (void)channel:(Y2WRTCChannel *)channel didLeaveMember:(Y2WRTCMember *)member {
@@ -186,13 +178,13 @@ GroupVideoChatSideBarDelegate>
 }
 
 - (void)channel:(Y2WRTCChannel *)channel onAudioError:(NSError *)error {
-    NSLog(@"%@",error);
+//    NSLog(@"%@",error);
 }
 
 - (void)channel:(Y2WRTCChannel *)channel didOpenVideoOfMember:(Y2WRTCMember *)member {
     [self reloadData];
     self.mainVideoView.hidden = NO;
-    NSLog(@"%@",member);
+//    NSLog(@"%@",member);
 }
 
 - (void)channel:(Y2WRTCChannel *)channel didCloseVideoOfMember:(Y2WRTCMember *)member {
@@ -221,7 +213,7 @@ GroupVideoChatSideBarDelegate>
     GroupVideoCommunicationMemberViewCellModel *model = self.models[indexPath.row];
     if (model.isScreen) {
         if(model.member.videoOpened) self.mainVideoView.hidden = NO;
-        self.mainVideoView.videoTrack = model.member.screenTrack;
+//        self.mainVideoView.videoTrack = model.member.screenTrack;
         
     }else {
         if(model.member.videoOpened) self.mainVideoView.hidden = NO;
