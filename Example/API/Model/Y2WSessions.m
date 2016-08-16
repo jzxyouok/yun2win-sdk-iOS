@@ -59,7 +59,6 @@
 }
 
 - (Y2WSession *)getSessionWithTargetId:(NSString *)targetId type:(NSString *)type {
-//#warning 本地存储的Session具有属性sessionId&type两个属性吗？
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"targetID LIKE[CD] %@ AND type LIKE[CD] %@",targetId,type];
     NSSet *sessions = [self.sessionList filteredSetUsingPredicate:predicate];
     if (sessions.count) return sessions.anyObject;

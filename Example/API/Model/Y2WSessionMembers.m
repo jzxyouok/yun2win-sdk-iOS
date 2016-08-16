@@ -160,17 +160,6 @@
 
 - (void)sync
 {
-
-#warning 同步流程，每个member.user不是直接从服务器取得的，而是本地的。如果本地没有，根据目前取下来的member的userid,name，头像生成用户.
-    /*
-     同步机制流程
-     1,获得本地时间戳(如果没有,定为1900年1月1日 0时0分0秒)
-     2,以此时间戳访问业务服务器取得数据
-     3,将取得数据更新至本地(有三种情况:新增的,修改的,删除的)
-     4,取此数据最大的updatedAt时间为新的本地时间戳,保存这个时间戳.
-     5,判断是否取完,如果没有,重回第1步
-     
-     */
     NSString *timeStamp = self.members.session.updateMTS;
     if (!timeStamp.length) {
         timeStamp = @"1990-01-01T00:00:00";

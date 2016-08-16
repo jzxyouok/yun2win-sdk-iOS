@@ -94,7 +94,6 @@
         }
         else if([self.message.type isEqualToString:@"file"])
         {
-#warning FIle
             contentSize.width = 250;
             contentSize.height = 90;
         }

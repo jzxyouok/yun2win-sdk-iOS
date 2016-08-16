@@ -57,8 +57,6 @@
     
 
     if ([self.type isEqualToString:@"p2p"]) {
-
-        #warning p2p用户会话名称显示规则：如果有联系人，优先用联系人title,无则用联系人name,如果没联系人则使用用户会话的name 风险10000
         Y2WContact *contact = [[Y2WUsers getInstance].getCurrentUser.contacts getContactWithUID:self.targetId];
         if (contact.title.length) return contact.title;
         return self.name;
@@ -74,7 +72,6 @@
 {
     if ([self.type isEqualToString:@"p2p"]) {
         
-        #warning 用户会话头像显示规则：查看有无此用户，如有，则使用用户的头像，否则使用用户会话头像。
 //        RLMResults *model = [Y2WUser objectsWithPredicate:[NSPredicate predicateWithFormat:@"userId = %@",self.targetId]];
 //        if (model.count) {
 //            Y2WUser *user = [model objectAtIndex:0];

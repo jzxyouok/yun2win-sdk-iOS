@@ -70,7 +70,6 @@
         self.currentUser.imToken = data[@"access_token"];
         
         [[IMClient shareY2WIMClient] registerWithToken:self.currentUser.imToken UID:self.currentUser.userId Appkey:self.currentUser.appKey];
-#warning IMClient要取消单态，一个CurrentUser一个IMClient, 多用户间才不会出错。
     } failure:block];
 }
 

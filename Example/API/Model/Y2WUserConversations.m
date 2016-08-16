@@ -114,7 +114,6 @@
     if (self.userConversationList.count)
         return self.userConversationList;
     else
-#warning 从数据库获取
         return nil;
 }
 

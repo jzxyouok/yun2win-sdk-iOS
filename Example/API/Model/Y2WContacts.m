@@ -111,11 +111,6 @@
     }
     if (temp_contacts.count) return temp_contacts.firstObject;
     return nil;
-    //    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"contactId LIKE[cd] %@",contactId];
-    //    NSArray *contacts = [self.contactList filteredArrayUsingPredicate:predicate];
-    //    NSLog(@"contacts :%@",predicate);
-    //    if (contacts.count) return contacts.firstObject;
-    //    return nil;
 }
 
 - (NSArray *)getContactWithKey:(NSString *)key
@@ -130,7 +125,6 @@
     if (self.contactList.count)
         return self.contactList;
     else
-#warning 从数据库获取
         return nil;
 }
 
@@ -222,19 +216,6 @@
                     [self.contacts addContact:contact];
                 }
                 
-#warning 每同步一个联系都取一下用户，对性能有很大的影响。如果本地无此用户，可由其userid,name,头像直接用户用户保存。由用户在界面访问用户卡片时同步此用户的信息。
-                //                    [HttpRequest GETWithURL:[URL aboutUser:contact.userId] timeStamp:timeStamp parameters:nil success:^(id data) {
-                //                        Y2WUser *us = [[Y2WUser alloc]initWithValue:data];
-                //                        contact.user = us;
-                //
-                //                        if (!contact.isDelete)
-                //                        {
-                //                            [[Y2WUsers getInstance] addUser:us];
-                //                        }
-                //
-                //                    } failure:^(id msg) {
-                //
-                //                    }];
             }
             
             // 通知contacts变化结果

@@ -11,7 +11,6 @@
 @implementation Y2WServiceConfig
 
 + (NSString *)domain {
-//    return @"http://192.168.0.151:18080/";
     return @"http://112.74.210.208:8080/";
 }
 
