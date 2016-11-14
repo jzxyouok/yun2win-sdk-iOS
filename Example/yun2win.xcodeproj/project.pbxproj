@@ -25,7 +25,6 @@
 		521AFD871D914B970038B710 /* VideoToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 521AFD861D914B970038B710 /* VideoToolbox.framework */; };
 		521AFD891D914BA30038B710 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 521AFD881D914BA30038B710 /* AudioToolbox.framework */; };
 		521AFD901D914DA90038B710 /* AgoraRtcEngineKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 521AFD8F1D914DA90038B710 /* AgoraRtcEngineKit.framework */; };
-		522651EE1DA75F8E00E7BC81 /* Y2WNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 522651ED1DA75F8E00E7BC81 /* Y2WNavigationController.m */; };
 		522651F11DAB661600E7BC81 /* AttachmentBase.m in Sources */ = {isa = PBXBuildFile; fileRef = 522651F01DAB661600E7BC81 /* AttachmentBase.m */; };
 		522651F51DAB777400E7BC81 /* LocationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 522651F41DAB777400E7BC81 /* LocationViewController.m */; };
 		522651F81DAB779B00E7BC81 /* LocationPoint.m in Sources */ = {isa = PBXBuildFile; fileRef = 522651F71DAB779B00E7BC81 /* LocationPoint.m */; };
@@ -264,8 +263,6 @@
 		521AFD861D914B970038B710 /* VideoToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = VideoToolbox.framework; path = System/Library/Frameworks/VideoToolbox.framework; sourceTree = SDKROOT; };
 		521AFD881D914BA30038B710 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		521AFD8F1D914DA90038B710 /* AgoraRtcEngineKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AgoraRtcEngineKit.framework; path = yun2win/Resource/AgoraRtcEngineKit.framework; sourceTree = "<group>"; };
-		522651EC1DA75F8E00E7BC81 /* Y2WNavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Y2WNavigationController.h; sourceTree = "<group>"; };
-		522651ED1DA75F8E00E7BC81 /* Y2WNavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Y2WNavigationController.m; sourceTree = "<group>"; };
 		522651EF1DAB661600E7BC81 /* AttachmentBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AttachmentBase.h; sourceTree = "<group>"; };
 		522651F01DAB661600E7BC81 /* AttachmentBase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AttachmentBase.m; sourceTree = "<group>"; };
 		522651F31DAB777400E7BC81 /* LocationViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocationViewController.h; sourceTree = "<group>"; };
@@ -725,15 +722,6 @@
 				521594A41D92A5BA0028C265 /* Y2WLocationManger.m */,
 			);
 			path = LocationManager;
-			sourceTree = "<group>";
-		};
-		522651EB1DA75F7500E7BC81 /* Base */ = {
-			isa = PBXGroup;
-			children = (
-				522651EC1DA75F8E00E7BC81 /* Y2WNavigationController.h */,
-				522651ED1DA75F8E00E7BC81 /* Y2WNavigationController.m */,
-			);
-			path = Base;
 			sourceTree = "<group>";
 		};
 		522651F21DAB775C00E7BC81 /* LocationViewController */ = {
@@ -1241,7 +1229,6 @@
 				528790AE1D8E4A0B0037E96A /* DB */,
 				528790BF1D8E4A0B0037E96A /* Tool */,
 				528790D61D8E4A0B0037E96A /* Util */,
-				522651EB1DA75F7500E7BC81 /* Base */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -1952,7 +1939,6 @@
 				528791881D8E4A0C0037E96A /* NSDictionary+Json.m in Sources */,
 				5261EF421D96727400156ED7 /* MembersReadMessagePageController.m in Sources */,
 				5261EF771D98AE8E00156ED7 /* Y2WBreadCrumbViewCell.m in Sources */,
-				522651EE1DA75F8E00E7BC81 /* Y2WNavigationController.m in Sources */,
 				528791D31D8E4A0C0037E96A /* Y2WUsers.m in Sources */,
 				61DA58881D9D19EF00165CB7 /* VideoDisabledView.m in Sources */,
 				528791701D8E4A0C0037E96A /* LoginViewController.m in Sources */,

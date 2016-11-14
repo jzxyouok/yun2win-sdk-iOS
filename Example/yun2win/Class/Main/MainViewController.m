@@ -7,7 +7,6 @@
 //
 
 #import "MainViewController.h"
-#import "Y2WNavigationController.h"
 #import "ConversationListViewController.h"
 #import "ContactsViewController.h"
 #import "SettingViewController.h"
@@ -93,7 +92,7 @@
                                                                               target:nil
                                                                               action:nil];
         vc.hidesBottomBarWhenPushed = NO;
-        Y2WNavigationController *nav = [[Y2WNavigationController alloc] initWithRootViewController:vc];
+        UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
         nav.tabBarItem = [[UITabBarItem alloc] initWithTitle:title
                                                        image:[UIImage y2w_imageNamed:imageName]
                                                selectedImage:[UIImage y2w_imageNamed:imageSelected]];
@@ -148,7 +147,7 @@
         num += tempConver.unRead;
     }
     
-    for (Y2WNavigationController *tempNav in self.viewControllers) {
+    for (UINavigationController *tempNav in self.viewControllers) {
         if ([tempNav.tabBarItem.title isEqualToString:@"交流"]) {
             NSString *badgeStr = (num > 99) ? @"99+" : [NSString stringWithFormat:@"%zd",num];
             tempNav.tabBarItem.badgeValue = (num > 0) ? badgeStr : nil;
