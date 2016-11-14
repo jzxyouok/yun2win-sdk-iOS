@@ -1,38 +1,67 @@
 PODS:
-  - AFNetworking (3.0.4):
-    - AFNetworking/NSURLSession (= 3.0.4)
-    - AFNetworking/Reachability (= 3.0.4)
-    - AFNetworking/Security (= 3.0.4)
-    - AFNetworking/Serialization (= 3.0.4)
-    - AFNetworking/UIKit (= 3.0.4)
-  - AFNetworking/NSURLSession (3.0.4):
+  - AFNetworking (3.1.0):
+    - AFNetworking/NSURLSession (= 3.1.0)
+    - AFNetworking/Reachability (= 3.1.0)
+    - AFNetworking/Security (= 3.1.0)
+    - AFNetworking/Serialization (= 3.1.0)
+    - AFNetworking/UIKit (= 3.1.0)
+  - AFNetworking/NSURLSession (3.1.0):
     - AFNetworking/Reachability
     - AFNetworking/Security
     - AFNetworking/Serialization
-  - AFNetworking/Reachability (3.0.4)
-  - AFNetworking/Security (3.0.4)
-  - AFNetworking/Serialization (3.0.4)
-  - AFNetworking/UIKit (3.0.4):
+  - AFNetworking/Reachability (3.1.0)
+  - AFNetworking/Security (3.1.0)
+  - AFNetworking/Serialization (3.1.0)
+  - AFNetworking/UIKit (3.1.0):
     - AFNetworking/NSURLSession
+  - Bugrpt (1.1.7.2)
+  - DACircularProgress (2.3.1)
   - DateTools (1.7.0)
-  - Kiwi (2.4.0)
-  - Masonry (1.0.0)
-  - Realm (0.101.0):
-    - Realm/Headers (= 0.101.0)
-  - Realm/Headers (0.101.0)
+  - IDMPhotoBrowser (1.9.1):
+    - DACircularProgress
+    - pop
+    - SDWebImage
+  - INTULocationManager (4.2.0)
+  - JTSImageViewController (1.5.1)
+  - Masonry (1.0.2)
+  - MBProgressHUD (1.0.0)
+  - pop (1.0.9)
+  - Realm (1.1.0):
+    - Realm/Headers (= 1.1.0)
+  - Realm/Headers (1.1.0)
+  - SDWebImage (3.8.2):
+    - SDWebImage/Core (= 3.8.2)
+  - SDWebImage/Core (3.8.2)
+  - UIViewController+Swizzled (1.4)
 
 DEPENDENCIES:
-  - AFNetworking (~> 3.0.4)
+  - AFNetworking
+  - Bugrpt
   - DateTools
-  - Kiwi
+  - IDMPhotoBrowser
+  - INTULocationManager
+  - JTSImageViewController
   - Masonry
-  - Realm
+  - MBProgressHUD
+  - Realm (~> 1.1.0)
+  - SDWebImage
+  - UIViewController+Swizzled
 
 SPEC CHECKSUMS:
-  AFNetworking: a0075feb321559dc78d9d85b55d11caa19eabb93
+  AFNetworking: 5e0e199f73d8626b11e79750991f5d173d1f8b67
+  Bugrpt: 73f1cf6c820e202650c208e64d4a7f739544285e
+  DACircularProgress: 4dd437c0fc3da5161cb289e07ac449493d41db71
   DateTools: 53288ee8b905fdc75897a1e6b5cc0144b14cba60
-  Kiwi: f49c9d54b28917df5928fe44968a39ed198cb8a8
-  Masonry: b529bb169217897b6354d4b56b1fada6d475b13d
-  Realm: b21596d6d7e1c054f6fae967d27263d2593ca309
+  IDMPhotoBrowser: 35e8ba559a88f2a8be4ae04d7fd424665344ba06
+  INTULocationManager: 73f8254b3d05c897c56bb13c190e5b7c648c0998
+  JTSImageViewController: 1f8ce1cc93dab0d0af8e53badeea7528560cfec9
+  Masonry: 7c429b56da9d4ee0bbb3ed77a5ea710d6a5df39e
+  MBProgressHUD: 4890f671c94e8a0f3cf959aa731e9de2f036d71a
+  pop: f667631a5108a2e60d9e8797c9b32ddaf2080bce
+  Realm: ceecf1a4540c4ce9efe196fe73fa9855bce05bd8
+  SDWebImage: 098e97e6176540799c27e804c96653ee0833d13c
+  UIViewController+Swizzled: 1cd9397598ede6930f94fbcac4b43d63c7aa0dbb
 
-COCOAPODS: 0.39.0
+PODFILE CHECKSUM: a26e6f71e0b42009d819f739b5d48330b5280b34
+
+COCOAPODS: 1.1.1

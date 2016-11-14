@@ -1,0 +1,67 @@
+//
+//  PrefixHeader.pch
+//  API
+//
+//  Created by ShingHo on 16/1/27.
+//  Copyright © 2016年 yun2win. All rights reserved.
+//
+
+#ifndef PrefixHeader_pch
+#define PrefixHeader_pch
+
+#define 测试 NO
+
+
+
+#define KagoraAppKey @"257f282434f344ce92da4d18a58f92c7"
+
+#define KvideoRejectNot   @"KvideoRejectNot"
+#define kPushVideoNot     @"kPushVideoNot"
+
+/*当前app的全局请求*/
+#define CurAppDelegate ((AppDelegate*)[[UIApplication sharedApplication] delegate])
+
+#import "AppDelegate.h"
+#import "HttpRequest.h"
+#import "RequestManager.h"
+#import "URL.h"
+#import "Y2WUsers.h"
+
+#import "UserBase.h"
+#import "ContactBase.h"
+#import "UserConversationBase.h"
+#import "SessionBase.h"
+#import "SessionMemberBase.h"
+
+#import "ConversationViewController.h"
+#import "UserPickerViewController.h"
+#import "ContactPickerConfig.h"
+#import "ContactModel.h"
+
+#import "CategoryHeader.h"
+#import "MulticastDelegate.h"
+#import "DocumentViewController.h"
+#import "Y2WImagePickerController.h"
+#import "Y2WDatePickerController.h"
+#import "Y2WLocationManger.h"
+#import "ThemeManager.h"
+#import "Y2WLog.h"
+#import "Y2WDataPickerController.h"
+#import "LoadingPageView.h"
+#import "Y2WAudioPlayer.h"
+#import "Y2WCallManager.h"
+
+#import <Bugrpt/NTESCrashReporter.h>
+
+@import AFNetworking;
+@import SDWebImage;
+@import Realm;
+@import Masonry;
+@import DateTools;
+@import MBProgressHUD;
+@import IDMPhotoBrowser;
+@import JTSImageViewController;
+@import UIViewController_Swizzled;
+@import Y2W_IM_SDK;
+
+#endif /* PrefixHeader_pch */

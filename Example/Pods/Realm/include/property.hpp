@@ -22,19 +22,21 @@
 #include <string>
 
 namespace realm {
-    enum class PropertyType {
+    enum class PropertyType : unsigned char {
         Int    = 0,
         Bool   = 1,
         Float  = 9,
         Double = 10,
         String = 2,
         Data   = 4,
-        Any    = 6, // Deprecated and will be removed in the future
+        Any    = 6, // deprecated and will be removed in the future
         Date   = 8,
         Object = 12,
         Array  = 13,
-        LinkingObjects = 14,
+        LinkingObjects  = 14,
     };
+
+    static const char *string_for_property_type(PropertyType type);
 
     struct Property {
         std::string name;
@@ -47,15 +49,73 @@ namespace realm {
 
         size_t table_column = -1;
         bool requires_index() const { return is_primary || is_indexed; }
-        bool is_indexable() const {
+
+        bool is_indexable() const
+        {
             return type == PropertyType::Int
                 || type == PropertyType::Bool
-                || type == PropertyType::String
-                || type == PropertyType::Date;
+                || type == PropertyType::Date
+                || type == PropertyType::String;
         }
+
+        bool type_is_nullable() const
+        {
+            return type == PropertyType::Int
+                || type == PropertyType::Bool
+                || type == PropertyType::Float
+                || type == PropertyType::Double
+                || type == PropertyType::Date
+                || type == PropertyType::String
+                || type == PropertyType::Data
+                || type == PropertyType::Object;
+        }
+
+        std::string type_string() const
+        {
+            switch (type) {
+                case PropertyType::Object:
+                    return "<" + object_type + ">";
+                case PropertyType::Array:
+                    return "array<" + object_type + ">";
+                case PropertyType::LinkingObjects:
+                    return "linking objects<" + object_type + ">";
+                default:
+                    return string_for_property_type(type);
+            }
+        }
+
+#if __GNUC__ < 5
+        // GCC 4.9 does not support C++14 braced-init with NSDMIs
+        Property(std::string name="", PropertyType type=PropertyType::Int,
+                 std::string object_type="", std::string link_origin_property_name="",
+                 bool is_primary=false, bool is_indexed=false, bool is_nullable=false)
+        : name(std::move(name))
+        , type(type)
+        , object_type(std::move(object_type))
+        , link_origin_property_name(std::move(link_origin_property_name))
+        , is_primary(is_primary)
+        , is_indexed(is_indexed)
+        , is_nullable(is_nullable)
+        {
+        }
+#endif
     };
 
-    static inline const char *string_for_property_type(PropertyType type) {
+    inline bool operator==(Property const& lft, Property const& rgt)
+    {
+        // note: not checking table_column
+        // ordered roughly by the cost of the check
+        return lft.type == rgt.type
+            && lft.is_primary == rgt.is_primary
+            && lft.is_nullable == rgt.is_nullable
+            && lft.requires_index() == rgt.requires_index()
+            && lft.name == rgt.name
+            && lft.object_type == rgt.object_type
+            && lft.link_origin_property_name == rgt.link_origin_property_name;
+    }
+
+    static const char *string_for_property_type(PropertyType type)
+    {
         switch (type) {
             case PropertyType::String:
                 return "string";
@@ -79,6 +139,10 @@ namespace realm {
                 return "array";
             case PropertyType::LinkingObjects:
                 return "linking objects";
+#if __GNUC__
+            default:
+                __builtin_unreachable();
+#endif
         }
     }
 }

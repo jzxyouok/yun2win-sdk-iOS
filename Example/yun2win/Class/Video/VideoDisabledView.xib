@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="11201" systemVersion="15F34" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11161"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB" customClass="VideoDisabledView">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="音视频_背景图" translatesAutoresizingMaskIntoConstraints="NO" id="7G7-ro-1we"/>
+                <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="n0q-hW-BhL">
+                    <subviews>
+                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="WNG-9V-1EV">
+                            <constraints>
+                                <constraint firstAttribute="height" constant="155" id="4mG-ba-PuL"/>
+                                <constraint firstAttribute="width" constant="155" id="KMq-n8-ePa"/>
+                            </constraints>
+                        </imageView>
+                    </subviews>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="180" id="2K5-ui-s4l"/>
+                        <constraint firstItem="WNG-9V-1EV" firstAttribute="centerX" secondItem="n0q-hW-BhL" secondAttribute="centerX" id="3hY-vn-gGf"/>
+                        <constraint firstItem="WNG-9V-1EV" firstAttribute="centerY" secondItem="n0q-hW-BhL" secondAttribute="centerY" id="TUN-GT-ntp"/>
+                        <constraint firstAttribute="height" constant="180" id="s40-f8-R2e"/>
+                    </constraints>
+                </view>
+                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="音视频_提示图_视频模式" translatesAutoresizingMaskIntoConstraints="NO" id="fMV-C4-Ooi">
+                    <constraints>
+                        <constraint firstAttribute="height" constant="86" id="I5P-cI-Yd0"/>
+                        <constraint firstAttribute="width" constant="201" id="gwP-G6-OQj"/>
+                    </constraints>
+                </imageView>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="IjX-9f-tKE" userLabel="nickNameLabel">
+                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="29" id="E5Z-9t-47h"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" pointSize="23"/>
+                    <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    <nil key="highlightedColor"/>
+                </label>
+            </subviews>
+            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <constraints>
+                <constraint firstAttribute="trailing" secondItem="7G7-ro-1we" secondAttribute="trailing" id="3av-qc-V51"/>
+                <constraint firstItem="IjX-9f-tKE" firstAttribute="top" secondItem="n0q-hW-BhL" secondAttribute="bottom" constant="8" id="6Yi-Le-CCT"/>
+                <constraint firstItem="fMV-C4-Ooi" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="Kky-iI-DBB"/>
+                <constraint firstItem="IjX-9f-tKE" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="Qv7-8S-DFL"/>
+                <constraint firstItem="n0q-hW-BhL" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="UET-n5-ba5"/>
+                <constraint firstItem="fMV-C4-Ooi" firstAttribute="top" secondItem="IjX-9f-tKE" secondAttribute="bottom" constant="50" id="dQw-fC-uvR"/>
+                <constraint firstItem="7G7-ro-1we" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="epI-Ur-q0R"/>
+                <constraint firstItem="7G7-ro-1we" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="nC0-hP-IWA"/>
+                <constraint firstAttribute="trailing" secondItem="IjX-9f-tKE" secondAttribute="trailing" id="oXn-Ke-oC4"/>
+                <constraint firstAttribute="bottom" secondItem="7G7-ro-1we" secondAttribute="bottom" id="oe2-MY-nEx"/>
+                <constraint firstItem="n0q-hW-BhL" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="75" id="uU8-YC-KEV"/>
+            </constraints>
+            <nil key="simulatedStatusBarMetrics"/>
+            <nil key="simulatedTopBarMetrics"/>
+            <nil key="simulatedBottomBarMetrics"/>
+            <connections>
+                <outlet property="avatarImage" destination="WNG-9V-1EV" id="Ssr-6T-0oE"/>
+                <outlet property="avatarView" destination="n0q-hW-BhL" id="F3J-xm-Xf1"/>
+                <outlet property="nickNameLabel" destination="IjX-9f-tKE" id="hzd-DZ-sup"/>
+            </connections>
+            <point key="canvasLocation" x="-288.5" y="-2.5"/>
+        </view>
+    </objects>
+    <resources>
+        <image name="音视频_提示图_视频模式" width="192" height="74"/>
+        <image name="音视频_背景图" width="375" height="667"/>
+    </resources>
+</document>
