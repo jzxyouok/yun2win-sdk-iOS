@@ -42,58 +42,46 @@ Yun2win为企业和开发者提供最安全的即时通讯(IM)云服务和基于
 直接把SDK拷贝到项目中，选择项目TARGETS，点击"Build Phases"选项，点击"+"号添加"Copy Files"，点击"Copy Files"中"+"号选项添加SDK。
 
 #### 使用即时通讯SDK
-在需要使用Y2W_IM_SDK的代码中引用头文件。 
+* 导入头文件。 
 ```objective-c
 #import <Y2W_IM_SDK/Y2W_IM_SDK.h>
 ```
 * 初始化Y2W_IM_SDK对象实例 
-
 ```objective-c
 - (instancetype)initWithDelegate:(id<Y2WIMClientDelegate>)delegate;
 ```
 
-* 设置获取到的Token、UID和Appkey
-
+* 创建连接配置对象
 ```objective-c
-- (void)registerWithToken:(NSString *)token UID:(NSString *)uid Appkey:(NSString *)appkey;
+- (instancetype)initWithAppkey:(NSString *)appkey uid:(NSString *)uid token:(NSString *)token;
 ```
 
-* 与yun2win推送服务器建立连接
-
+* 传入配置对象,开始连接
 ```objective-c
-/**
- *  与yun2win服务器建立连接
- */
-- (void)connect;
-
-/**
- *  与yun2win服务器重新建立连接
- */
-- (void)reconnect; 
+- (void)connectWithConfig:(Y2WIMClientConfig *)config ;
 ```
 
-* 推送消息
-
+* 如需使用APNs,在AppDelegate的- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken调用
 ```objective-c
-/**
- *  推送消息
- *
- *  @param session 会话
- *  @param message 推送消息体
- */
-- (void)sendMessageWithSession:(id<IMSessionProtocol>)session Message:(id<IMMessageProtocol>)message;
++ (void)setDeviceToken:(NSData *)deviceToken;
 ```
 
-* 推送更新会话消息
+* 如果开启了APNs,需要在退出登录时调用
+```objective-c
+- (void)closePush;
+```
+
+
+* 发送消息
 
 ```objective-c
-/**
- *  推送更新会话消息
- *
- *  @param session 对象IMSession
- *  @param message 对象IMMessage
- */
-- (void)updateSessionWithSession:(id<IMSessionProtocol>)session Message:(id<IMMessageProtocol>)message;
+- (void)sendMessage:(NSDictionary *)message toSession:(id<Y2WIMSession>)session;
+```
+
+* 更新会话
+
+```objective-c
+- (void)sendUpdateMessage:(NSDictionary *)message toSession:(id<Y2WIMSession>)session;
 ```
 
 
