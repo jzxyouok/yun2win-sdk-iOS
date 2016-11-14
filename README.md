@@ -39,13 +39,20 @@ Yun2win为企业和开发者提供最安全的即时通讯(IM)云服务和基于
 -
 ### SDK使用说明
 #### 添加项目文件
-直接把SDK拷贝到项目中，选择项目TARGETS，点击"Build Phases"选项，点击"+"号添加"Copy Files"，点击"Copy Files"中"+"号选项添加SDK。
 
 #### 使用即时通讯SDK
-* 导入头文件。 
+
+* 嵌入SDK
+```objective-c
+1.直接把SDK拷贝到项目中，选择项目TARGETS，点击"Build Phases"选项，点击"+"号添加"Copy Files"，点击"Copy Files"中"+"号选项添加SDK。
+2.在Embedded Binaries加入
+```
+
+* 导入头文件
 ```objective-c
 #import <Y2W_IM_SDK/Y2W_IM_SDK.h>
 ```
+
 * 初始化Y2W_IM_SDK对象实例 
 ```objective-c
 - (instancetype)initWithDelegate:(id<Y2WIMClientDelegate>)delegate;
