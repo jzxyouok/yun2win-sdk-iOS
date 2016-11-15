@@ -888,13 +888,6 @@ didReloadIndexPaths:(NSArray<NSIndexPath *> *)reloadIndexPaths {
         item.title = @"视频通话";
         item.image = [UIImage y2w_imageNamed:@"输入框-视频通话"];
         [items addObject:item];
-
-        if (![[Y2WUsers getInstance].getCurrentUser.role isEqualToString:@"customer"]) {
-            item = [[MoreItem alloc] init];
-            item.title = @"快速任务";
-            item.image = [UIImage y2w_imageNamed:@"功能键盘_快速任务"];
-            [items addObject:item];
-        }
         
         _inputView.moreInputView.items = items;
     }

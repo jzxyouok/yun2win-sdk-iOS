@@ -42,9 +42,9 @@
     dic[@"session"] = sessionid;
     dic[@"channel"] = channelId;
     dic[@"sender"] = formUid;
+    dic[@"type"] = chatType;
     
     if (actionType == VideoActionTypeCall) {
-        dic[@"type"] = chatType;
         dic[@"mode"] = (mediaType == VideoDataTypeAudio) ? @"A" : @"AV";
         dic[@"members"] = uids;
     }
@@ -53,12 +53,12 @@
 }
 
 //发送操作数据
-+ (void)sendChannelId:(NSString *)channelId mediaType:(VideoDataType)mediaType videoActionType:(VideoActionType)actionType formUid:(NSString *)formUid toUids:(NSArray<NSString *> *)uids sessionId:(NSString *)sessionid
++ (void)sendChannelId:(NSString *)channelId mediaType:(VideoDataType)mediaType videoActionType:(VideoActionType)actionType formUid:(NSString *)formUid toUids:(NSArray<NSString *> *)uids sessionId:(NSString *)sessionid videoChatType:(NSString *)type
 {
     Y2WUser *targetUser = [[Y2WUsers getInstance] getUserById:formUid];
      NSString *curUser = [Y2WUsers getInstance].getCurrentUser.ID;
     [targetUser getSession:^(NSError *error, Y2WSession *session) {
-        NSDictionary *messageDic = [self sendChannelId:channelId sessionId:sessionid mediaType:mediaType videoActionType:actionType videoChatType:session.type formUid:curUser toUids:uids];
+        NSDictionary *messageDic = [self sendChannelId:channelId sessionId:sessionid mediaType:mediaType videoActionType:actionType videoChatType:type formUid:curUser toUids:uids];
         
         IMSession *imSession = [[IMSession alloc] initWithSession:session];
         [session.sessions.user.bridge sendMessages:nil pushMessage:nil callMessage:messageDic toSession:imSession];

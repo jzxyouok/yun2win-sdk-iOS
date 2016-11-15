@@ -62,6 +62,5 @@
 @import IDMPhotoBrowser;
 @import JTSImageViewController;
 @import UIViewController_Swizzled;
-@import Y2W_IM_SDK;
 
 #endif /* PrefixHeader_pch */

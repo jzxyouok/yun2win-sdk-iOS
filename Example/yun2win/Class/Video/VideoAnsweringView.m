@@ -14,9 +14,10 @@
     AVAudioPlayer *_ringPlayer;
 }
 
-@property (weak, nonatomic) IBOutlet UIView *avatarView;
-@property (weak, nonatomic) IBOutlet UIImageView *avatarImage;
-@property (weak, nonatomic) IBOutlet UILabel *nickNameLabel;
+@property (weak, nonatomic) IBOutlet UIView         *avatarView;
+@property (weak, nonatomic) IBOutlet UIImageView    *avatarImage;
+@property (weak, nonatomic) IBOutlet UILabel        *nickNameLabel;
+@property (weak, nonatomic) IBOutlet UILabel        *promptLabel;
 
 @end
 
@@ -35,6 +36,9 @@
 - (void)setInfoDic:(NSDictionary *)infoDic
 {
     _infoDic = infoDic;
+    NSString *dataTypeStr = [infoDic objectForKey:@"mode"];
+    self.promptLabel.text = [dataTypeStr isEqualToString:@"A"] ? @"邀请您语音通话..." : @"邀请您视频通话...";
+    
     NSString *senderStr = [infoDic objectForKey:@"sender"];
     Y2WUser *userModel = [[Y2WUsers getInstance] getUserById:senderStr];
     NSString *avatarUrl = userModel.avatarUrl;

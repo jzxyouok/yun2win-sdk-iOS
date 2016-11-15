@@ -228,6 +228,8 @@
     NSString *actionStr = [avDic objectForKey:@"action"];
     NSString *channelId = [avDic objectForKey:@"channel"];
     NSString *type = [avDic objectForKey:@"type"];
+    NSString *sender = [avDic objectForKey:@"sender"];
+    NSString *user_cur = [Y2WUsers getInstance].currentUser.ID;
     
     if ([actionStr isEqualToString:@"call"]) {
         if (CurAppDelegate.isOpenVideo) {   //表示当前已在视频或者正在呼叫别人，所以这里发送忙的信令
@@ -258,10 +260,18 @@
             __weak typeof(self) weakSelf = self;
             [promptBox show:^{
                 [weakSelf.videoAnsweringView removeFromSuperview];
-                CurAppDelegate.isOpenVideo = NO;
-                CurAppDelegate.curVideoUserId = nil;
                 [weakSelf.videoAnsweringView stopMusic];
             }];
+        
+        if ([type isEqualToString:@"p2p"]) {
+            CurAppDelegate.isOpenVideo = NO;
+            CurAppDelegate.curVideoUserId = nil;
+        }else{
+            if ([user_cur isEqualToString:sender] || !CurAppDelegate.curVideoUserId) {
+                CurAppDelegate.isOpenVideo = NO;
+                CurAppDelegate.curVideoUserId = nil;
+            }
+        }
     }
 }
 
@@ -274,6 +284,8 @@
     NSString *senderStr = [infoDic objectForKey:@"sender"];
     NSArray  *tempArray = [infoDic objectForKey:@"members"];
     NSString *dataTypeStr = [infoDic objectForKey:@"mode"];
+    NSString *type = [infoDic objectForKey:@"type"];
+    
     NSString *session = (actionType == VideoActionTypeBusy) ? self.lastSessionId : [infoDic objectForKey:@"session"];
     
     VideoDataType dataType = ([dataTypeStr isEqualToString:@"A"]) ? VideoDataTypeAudio : VideoDataTypeVideo;
@@ -288,7 +300,7 @@
             continue;
         }
         
-        [VideoStatusManager sendChannelId:channelStr mediaType:dataType videoActionType:actionType formUid:uid toUids:membersArray sessionId:session];
+        [VideoStatusManager sendChannelId:channelStr mediaType:dataType videoActionType:actionType formUid:uid toUids:membersArray sessionId:session videoChatType:type];
     }
 }
 

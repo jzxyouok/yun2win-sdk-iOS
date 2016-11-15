@@ -72,6 +72,7 @@
     if (userModel.dataType == AVMemberTypeAudio) {
         self.videoView.hidden = YES;
         self.audioImageView.hidden = NO;
+        
     }else if (userModel.dataType == AVMemberTypeVideo) {
         if (userModel.AVStatus == AVMemberStatusAnswered) {
             self.videoView.hidden = NO;
@@ -80,6 +81,7 @@
             self.videoView.hidden = YES;
             self.audioImageView.hidden = NO;
         }
+        
     }else {
         self.videoView.hidden = YES;
         self.audioImageView.hidden = NO;

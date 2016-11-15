@@ -287,7 +287,7 @@
     
     //1000(表示等待对方接听的挂断按钮)
     if (sender.tag == 1000) {
-        [VideoStatusManager sendChannelId:self.channelId mediaType:VideoDataTypeVideo videoActionType:VideoActionTypeCancel formUid:self.targetUserModel.ID toUids:@[self.targetUserModel.ID] sessionId:self.sessionId];
+        [VideoStatusManager sendChannelId:self.channelId mediaType:VideoDataTypeVideo videoActionType:VideoActionTypeCancel formUid:self.targetUserModel.ID toUids:@[self.targetUserModel.ID] sessionId:self.sessionId videoChatType:@"p2p"];
     }
     
     if (sender) {

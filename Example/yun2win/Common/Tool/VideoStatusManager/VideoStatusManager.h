@@ -31,7 +31,8 @@ typedef NS_ENUM(NSInteger, VideoDataType) {
 + (NSDictionary *)sendChannelId:(NSString *)channelId sessionId:(NSString *)sessionid mediaType:(VideoDataType)mediaType videoActionType:(VideoActionType)actionType videoChatType:(NSString *)chatType formUid:(NSString *)formUid toUids:(NSArray<NSString *> *)uids;
 
 //发送操作数据
-+ (void)sendChannelId:(NSString *)channelId mediaType:(VideoDataType)mediaType videoActionType:(VideoActionType)actionType formUid:(NSString *)formUid toUids:(NSArray<NSString *> *)uids sessionId:(NSString *)sessionid;
++ (void)sendChannelId:(NSString *)channelId mediaType:(VideoDataType)mediaType videoActionType:(VideoActionType)actionType formUid:(NSString *)formUid toUids:(NSArray<NSString *> *)uids sessionId:(NSString *)sessionid videoChatType:(NSString *)type;
+
 
 //发送页面消息数据
 + (void)sendMessageTargetUserId:(NSString *)uid mediaType:(VideoDataType)mediaType messageText:(NSString *)text;

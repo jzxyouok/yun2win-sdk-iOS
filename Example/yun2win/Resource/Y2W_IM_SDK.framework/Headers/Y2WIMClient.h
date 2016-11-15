@@ -25,11 +25,12 @@ typedef NS_ENUM(NSInteger, Y2WIMConnectionStatus) {
  *  消息推送返回码
  */
 typedef NS_ENUM(NSInteger, Y2WIMConnectionReturnCode) {
+    Y2WIMConnectionReturnCodeIdentifierRejected          = 2,  // clientId不合法
     Y2WIMConnectionReturnCodeUnacceptableProtocolVersion = 3,  // 协议错误
     Y2WIMConnectionReturnCodeUidIsInvalid                = 4,  // 用户ID无效
     Y2WIMConnectionReturnCodeTokenIsInvalid              = 5,  // imToken无效
     Y2WIMConnectionReturnCodeTokenHasExpired             = 6,  // imToken过期
-    Y2WIMConnectionReturnCodeAppKeyIsInvalid             = 7,  // appkey无效
+    Y2WIMConnectionReturnCodeAuthenticationServerError   = 7,  // 鉴权服务器出错
     Y2WIMConnectionReturnCodeKicked                      = 10, // 被踢出，同类型设备重复登录时，之前设备收到提出信息
     Y2WIMConnectionReturnCodeAcceptConnect               = 11, // 允许连接
     Y2WIMConnectionReturnCodeServerUnavailable           = 99, // 服务器不可达
@@ -71,6 +72,8 @@ typedef NS_ENUM(NSInteger, Y2WIMSendReturnCode) {
 @end
 
 
+
+
 @protocol Y2WIMSession <NSObject>
 
 @property (nonatomic, copy) NSString *ID;
@@ -90,7 +93,7 @@ typedef NS_ENUM(NSInteger, Y2WIMSendReturnCode) {
 
 
 @protocol Y2WIMClientDelegate <NSObject>
-// 连接状态变化
+// 网络状态变化
 - (void)im_client:(Y2WIMClient *)client
 didChangeOnlineStatus:(BOOL)isOnline;
 // 连接状态变化
@@ -124,7 +127,8 @@ didSendUpdateMessage:(NSDictionary *)message
 
 
 - (instancetype)initWithDelegate:(id<Y2WIMClientDelegate>)delegate;
-- (void)connectWithConfig:(Y2WIMClientConfig *)config ;
+- (void)connectWithConfig:(Y2WIMClientConfig *)config;
+- (void)reconnectWithToken:(NSString *)token;
 - (void)disconnect;
 - (void)closePush;
 

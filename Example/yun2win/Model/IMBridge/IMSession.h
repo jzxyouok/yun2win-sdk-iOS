@@ -8,7 +8,6 @@
 
 #import <Foundation/Foundation.h>
 #import <Y2W_IM_SDK/Y2W_IM_SDK.h>
-
 @class Y2WSession;
 
 @interface Y2WIMSessionMember : NSObject<Y2WIMSessionMember>

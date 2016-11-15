@@ -134,7 +134,7 @@ NSErrorDomain const Y2WCurrentUserErrorDomain = @"Y2WCurrentUserErrorDomain";
             [self.currentUser updateWithBase:base];
         }];
 
-#warning 通知其它设备
+#warning Todo 通知其它设备
 //        [self.currentUser.bridge sendOtherDeviceMessages:@[@{@"type":@4}]];
 
         

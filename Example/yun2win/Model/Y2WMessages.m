@@ -403,8 +403,7 @@
     if (needSendSyncMemberMessage) {
         [self.messages.session.userConversation.userConversations.remote sync];
         IMSession *imSession = [[IMSession alloc] initWithSession:self.messages.session];
-        [self.messages.session.sessions.user.bridge sendMessages:@[@{@"type":@(Y2WSyncTypeSessionMember), @"sessionId": imSession.ID}]
-                                                       toSession:imSession];
+        [self.messages.session.sessions.user.bridge sendMessages:@[@{@"type":@(Y2WSyncTypeSessionMember), @"sessionId": imSession.ID}] toSession:imSession];
     }
 }
 
@@ -423,32 +422,23 @@
     NSDictionary *parameters = @{@"type":message.type,@"content":[message.content toJsonString],@"sender":message.sender};
     [HttpRequest POSTWithURL:[URL acquireMessages:self.messages.session.ID] parameters:parameters success:^(id data) {
         IMSession *imSession = [[IMSession alloc] initWithSession:self.messages.session];
-        NSDictionary *pns = @{@"msg": [NSString stringWithFormat:@"来自%@的一条消息",[Y2WUsers getInstance].getCurrentUser.name]};
         [self.messages.session.sessions.user.bridge sendMessages:@[@{@"type":@(Y2WSyncTypeUserConversation)},
                                                                    @{@"type":@(Y2WSyncTypeMessage), @"sessionId": imSession.ID}]
-                                                     pushMessage:pns
+                                                     pushMessage:@{@"msg": @"您有一条新消息"}
                                                        toSession:imSession];
-        
         if (success) success(message);
-        
     } failure:failure];
 }
 
-- (void)updataMessage:(Y2WBaseMessage *)message session:(Y2WSession *)session success:(void (^)(Y2WBaseMessage *))success failure:(void (^)(NSError *))failure
-{
+- (void)updataMessage:(Y2WBaseMessage *)message session:(Y2WSession *)session success:(void (^)(Y2WBaseMessage *))success failure:(void (^)(NSError *))failure {
     [HttpRequest PUTWithURL:[URL aboutMessage:message.ID Session:message.sessionId] parameters:@{@"sender":message.sender,@"content":message.text,@"type":message.type} success:^(id data) {
         
         [self sync];
         
         IMSession *imSession = [[IMSession alloc] initWithSession:self.messages.session];
-        [self.messages.session.sessions.user.bridge sendMessages:@[@{@"type":@(Y2WSyncTypeMessage), @"sessionId": imSession.ID}]
-                                                       toSession:imSession];
-        
-    } failure:^(NSError *error) {
-        if (failure) {
-            failure(error);
-        }
-    }];
+        [self.messages.session.sessions.user.bridge sendMessages:@[@{@"type":@(Y2WSyncTypeMessage), @"sessionId": imSession.ID}] toSession:imSession];
+
+    } failure:failure];
 }
 
 - (void)uploadFile:(NSArray *)fileAppends

@@ -74,7 +74,7 @@ NSTimeInterval const Y2W_IM_APPT_YPE_MTS = 1264953600000;
             });
             return;
         }
-        [self connect];
+        [self.client reconnectWithToken:self.user.imToken];
     }];
 }
 
@@ -158,9 +158,6 @@ NSTimeInterval const Y2W_IM_APPT_YPE_MTS = 1264953600000;
     switch (code) {
         case Y2WIMConnectionReturnCodeTokenIsInvalid:
         case Y2WIMConnectionReturnCodeTokenHasExpired:
-        case Y2WIMConnectionReturnCodeAppKeyIsInvalid:
-        case Y2WIMConnectionReturnCodeUidIsInvalid:
-        case Y2WIMConnectionReturnCodeRequestGateError:
             [self reconnect];
             break;
 
@@ -168,6 +165,10 @@ NSTimeInterval const Y2W_IM_APPT_YPE_MTS = 1264953600000;
             [self logoutWithMessage:@"您的账号在其它地方登陆，请重新登录"];
             break;
             
+        case Y2WIMConnectionReturnCodeRequestGateError:
+        case Y2WIMConnectionReturnCodeUidIsInvalid:
+        case Y2WIMConnectionReturnCodeIdentifierRejected:
+        case Y2WIMConnectionReturnCodeAuthenticationServerError:
         case Y2WIMConnectionReturnCodeServerInternalError:
         case Y2WIMConnectionReturnCodeServerUnavailable:
         case Y2WIMConnectionReturnCodeUnacceptableProtocolVersion:

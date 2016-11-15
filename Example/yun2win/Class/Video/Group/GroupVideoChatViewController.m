@@ -186,7 +186,9 @@
                 }
             });
         } failure:nil];
-        [self sendChannelId:self.channelId withMode:VideoDataTypeVideo actionType:VideoActionTypeCall toUids:[self getMemberIdsFromMembers:members]];
+        
+        VideoDataType mediaType = (self.mediaType == GroupVideoChatMediaTypeVideo) ? VideoDataTypeVideo : VideoDataTypeAudio;
+        [self sendChannelId:self.channelId withMode:mediaType actionType:VideoActionTypeCall toUids:[self getMemberIdsFromMembers:members]];
     } cancel:nil];
     
     [self.navigationController pushViewController:userPickerVC animated:YES];
@@ -271,12 +273,9 @@
 
 - (void)setUpMianVideo
 {
-    (self.mediaType == GroupVideoChatMediaTypeVideo) ? [self.agoraKit enableVideo] : [self.agoraKit disableVideo];
-    
-    [self.agoraKit enableLocalVideo:(self.mediaType == GroupVideoChatMediaTypeVideo)];
-    
+    [self.agoraKit enableVideo];
+    [self.agoraKit muteLocalVideoStream:(self.mediaType == GroupVideoChatMediaTypeAudio)];
     [self creteMemberModel:[Y2WUsers getInstance].getCurrentUser.ID.integerValue isAdd:NO];
-    
     [self switchVideoCellIndexPath:nil];
 }
 
@@ -287,7 +286,9 @@
         AVMemberModel *model = [[AVMemberModel alloc] init];
         model.user = [[Y2WUsers getInstance] getUserById:@(uid).stringValue];
         model.dataType = (self.mediaType == GroupVideoChatMediaTypeVideo) ? AVMemberTypeVideo : AVMemberTypeAudio;
+        model.isEnableVideo = (self.mediaType == GroupVideoChatMediaTypeVideo);
         
+        //把所有的model都置为AVMemberTypeNone状态
         if (self.actionType == GroupVideoChatActionTypeCall) {
             model.dataType = (uid  == [[Y2WUsers getInstance].getCurrentUser.ID integerValue]) ? : AVMemberTypeNone;
         }
@@ -446,7 +447,7 @@
     
     [[Y2WUsers getInstance].currentUser.sessions getSessionWithTargetId:targetUid type:@"p2p" success:^(Y2WSession *session) {
         
-        [VideoStatusManager sendChannelId:self.channelId mediaType:VideoDataTypeVideo videoActionType:VideoActionTypeCancel formUid:targetUid toUids:@[targetUid] sessionId:session.ID];
+        [VideoStatusManager sendChannelId:self.channelId mediaType:VideoDataTypeVideo videoActionType:VideoActionTypeCancel formUid:targetUid toUids:@[targetUid] sessionId:session.ID videoChatType:@"group"];
         
     } failure:^(NSError *error) {
         
@@ -470,27 +471,17 @@
 - (void)rtcEngine:(AgoraRtcEngineKit *)engine didJoinedOfUid:(NSUInteger)uid elapsed:(NSInteger)elapsed
 {
     __weak typeof(self) weakSelf = self;
-    if (self.actionType == GroupVideoChatActionTypeCall) {
-        NSInteger index = [self findMemberModel:uid];
-        if (index != -1 && index < self.cellMemberArray.count) {
-            AVMemberModel *tempModel = self.cellMemberArray[index];
-            tempModel.dataType = AVMemberTypeVideo;
-            tempModel.AVStatus = AVMemberStatusAnswered;
-            [weakSelf.collectionView reloadData];
-        }
-    }else {
-        NSInteger index = [self findMemberModel:uid];
-        if (index != -1 && index < self.cellMemberArray.count) {
-            AVMemberModel *tempModel = self.cellMemberArray[index];
-            tempModel.dataType = AVMemberTypeVideo;
-            tempModel.AVStatus = AVMemberStatusAnswered;
-            [weakSelf.collectionView reloadData];
-            
-        }else if (index == -1) {
-            [self creteMemberModel:uid isAdd:NO];
-            [weakSelf.collectionView reloadData];
-        }
+    NSInteger index = [self findMemberModel:uid];
+    if (index == -1) {
+        [self creteMemberModel:uid isAdd:NO];
     }
+    
+    NSInteger index2 = [self findMemberModel:uid];
+    AVMemberModel *tempModel = self.cellMemberArray[index2];
+    tempModel.dataType = tempModel.isEnableVideo ? AVMemberTypeVideo : AVMemberTypeAudio;
+    tempModel.AVStatus = AVMemberStatusAnswered;
+    
+    [weakSelf.collectionView reloadData];
 }
 
 - (void)rtcEngine:(AgoraRtcEngineKit *)engine didOfflineOfUid:(NSUInteger)uid reason:(AgoraRtcUserOfflineReason)reason
@@ -506,12 +497,13 @@
 - (void)rtcEngine:(AgoraRtcEngineKit *)engine didVideoMuted:(BOOL)muted byUid:(NSUInteger)uid
 {
     __weak typeof(self) weakSelf = self;
-    NSUInteger index = [self findMemberModel:uid];
+    NSInteger index = [self findMemberModel:uid];
     if (index != -1 && index < self.cellMemberArray.count) {
         AVMemberModel *tempModel = self.cellMemberArray[index];
+        tempModel.isEnableVideo = !muted;
         tempModel.dataType = muted ? AVMemberTypeAudio : AVMemberTypeVideo;
-        [weakSelf.collectionView reloadData];
     }
+    [weakSelf.collectionView reloadData];
 }
 
 - (void)rtcEngine:(AgoraRtcEngineKit *)engine didOccurError:(AgoraRtcErrorCode)errorCode
@@ -537,11 +529,7 @@
         
     }else if ([item.title isEqualToString:@"摄像头"]) {
         if (item.selected) {
-            [self.agoraKit startPreview];
-            if (self.mediaType == GroupVideoChatMediaTypeVideo) {
-                [self.agoraKit muteLocalVideoStream:NO];
-            }
-            [self.agoraKit enableLocalVideo:YES];
+            [self.agoraKit muteLocalVideoStream:NO];
             self.disabledView.hidden = YES;
             
             AVMemberModel *model = [self getCurrentModel];
@@ -551,11 +539,7 @@
             [self.collectionView reloadData];
             
         }else {
-            [self.agoraKit stopPreview];
-            if (self.mediaType == GroupVideoChatMediaTypeVideo) {
-                [self.agoraKit muteLocalVideoStream:YES];
-            }
-            [self.agoraKit enableLocalVideo:NO];
+            [self.agoraKit muteLocalVideoStream:YES];
             self.disabledView.hidden = !self.mainMemberModel.isLocalVideo;
             
             AVMemberModel *model = [self getCurrentModel];
@@ -585,7 +569,7 @@
         
         [[Y2WUsers getInstance].currentUser.sessions getSessionWithTargetId:targetUid type:@"p2p" success:^(Y2WSession *session) {
             
-            [VideoStatusManager sendChannelId:self.channelId mediaType:VideoDataTypeVideo videoActionType:VideoActionTypeCancel formUid:targetUid toUids:@[targetUid] sessionId:session.ID];
+            [VideoStatusManager sendChannelId:self.channelId mediaType:VideoDataTypeVideo videoActionType:VideoActionTypeCancel formUid:targetUid toUids:@[targetUid] sessionId:session.ID videoChatType:@"group"];
             
         } failure:^(NSError *error) {
             

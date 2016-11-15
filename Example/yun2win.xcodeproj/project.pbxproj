@@ -8,8 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		06E02EF30F87BCF37243B330 /* Pods_yun2win.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FD62D9511A96B5380869A91A /* Pods_yun2win.framework */; };
-		5207372D1DD552B3004B1C45 /* Y2W_IM_SDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5261EF2D1D95201300156ED7 /* Y2W_IM_SDK.framework */; };
-		5207372E1DD552B3004B1C45 /* Y2W_IM_SDK.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 5261EF2D1D95201300156ED7 /* Y2W_IM_SDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		520DA8BC1DBDAA6F00B7114B /* CLPlacemark+Addtion.m in Sources */ = {isa = PBXBuildFile; fileRef = 520DA8BB1DBDAA6F00B7114B /* CLPlacemark+Addtion.m */; };
 		520DA8C41DBDE54B00B7114B /* Y2WAudioPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 520DA8C31DBDE54B00B7114B /* Y2WAudioPlayer.m */; };
 		521594951D925C560028C265 /* RequestManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 521594941D925C560028C265 /* RequestManager.m */; };
@@ -30,6 +28,9 @@
 		522651F81DAB779B00E7BC81 /* LocationPoint.m in Sources */ = {isa = PBXBuildFile; fileRef = 522651F71DAB779B00E7BC81 /* LocationPoint.m */; };
 		52324C6B1DA655B500D186E7 /* DocumentViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 52324C6A1DA655B500D186E7 /* DocumentViewController.m */; };
 		52324C6E1DA663C900D186E7 /* DocumentItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 52324C6D1DA663C900D186E7 /* DocumentItem.m */; };
+		523B60DB1DD9C65B00D9107B /* Y2W_IM_SDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5261EF2D1D95201300156ED7 /* Y2W_IM_SDK.framework */; };
+		523B60DC1DD9C65B00D9107B /* Y2W_IM_SDK.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 5261EF2D1D95201300156ED7 /* Y2W_IM_SDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		523B61311DD9E5A700D9107B /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 523B61301DD9E5A700D9107B /* CoreData.framework */; };
 		523FFD791D92392600B0ACD9 /* GroupVideoChatViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 523FFD721D92392600B0ACD9 /* GroupVideoChatViewController.m */; };
 		523FFD7A1D92392600B0ACD9 /* GroupVideoChatViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 523FFD731D92392600B0ACD9 /* GroupVideoChatViewController.xib */; };
 		523FFD7B1D92392600B0ACD9 /* P2PAVChatViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 523FFD761D92392600B0ACD9 /* P2PAVChatViewController.m */; };
@@ -226,13 +227,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		5207372C1DD47A3C004B1C45 /* Embed Frameworks */ = {
+		523B60DD1DD9C65B00D9107B /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				5207372E1DD552B3004B1C45 /* Y2W_IM_SDK.framework in Embed Frameworks */,
+				523B60DC1DD9C65B00D9107B /* Y2W_IM_SDK.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -273,6 +274,7 @@
 		52324C6A1DA655B500D186E7 /* DocumentViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DocumentViewController.m; sourceTree = "<group>"; };
 		52324C6C1DA663C900D186E7 /* DocumentItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocumentItem.h; sourceTree = "<group>"; };
 		52324C6D1DA663C900D186E7 /* DocumentItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DocumentItem.m; sourceTree = "<group>"; };
+		523B61301DD9E5A700D9107B /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		523FFD711D92392600B0ACD9 /* GroupVideoChatViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GroupVideoChatViewController.h; sourceTree = "<group>"; };
 		523FFD721D92392600B0ACD9 /* GroupVideoChatViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GroupVideoChatViewController.m; sourceTree = "<group>"; };
 		523FFD731D92392600B0ACD9 /* GroupVideoChatViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = GroupVideoChatViewController.xib; sourceTree = "<group>"; };
@@ -654,9 +656,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				523B60DB1DD9C65B00D9107B /* Y2W_IM_SDK.framework in Frameworks */,
+				523B61311DD9E5A700D9107B /* CoreData.framework in Frameworks */,
 				521AFD891D914BA30038B710 /* AudioToolbox.framework in Frameworks */,
 				521AFD871D914B970038B710 /* VideoToolbox.framework in Frameworks */,
-				5207372D1DD552B3004B1C45 /* Y2W_IM_SDK.framework in Frameworks */,
 				B927E7CD1CC07DB100AB08F5 /* AVFoundation.framework in Frameworks */,
 				521AFD851D914B860038B710 /* CoreMedia.framework in Frameworks */,
 				521AFD831D914B7C0038B710 /* CoreTelephony.framework in Frameworks */,
@@ -958,10 +961,10 @@
 				5287902F1D8E4A0B0037E96A /* ConversationList */,
 				52878FE81D8E4A0B0037E96A /* Conversation */,
 				52878FB31D8E4A0B0037E96A /* Contact */,
-				5287904A1D8E4A0B0037E96A /* Setting */,
 				528790411D8E4A0B0037E96A /* Search */,
 				521594961D927A9D0028C265 /* Profile */,
 				523FFD6D1D92392600B0ACD9 /* Video */,
+				5287904A1D8E4A0B0037E96A /* Setting */,
 			);
 			path = Class;
 			sourceTree = "<group>";
@@ -1660,8 +1663,9 @@
 		6514EBC8533F754A32622E45 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				5261EF291D9506AA00156ED7 /* libc++abi.tbd */,
+				523B61301DD9E5A700D9107B /* CoreData.framework */,
 				5261EF2D1D95201300156ED7 /* Y2W_IM_SDK.framework */,
+				5261EF291D9506AA00156ED7 /* libc++abi.tbd */,
 				521AFD8F1D914DA90038B710 /* AgoraRtcEngineKit.framework */,
 				521AFD881D914BA30038B710 /* AudioToolbox.framework */,
 				521AFD861D914B970038B710 /* VideoToolbox.framework */,
@@ -1700,7 +1704,7 @@
 				596FA8DC1C32344D00599FB1 /* Resources */,
 				3AFAD240972563F9424EC69A /* [CP] Embed Pods Frameworks */,
 				3F199A22C74FC2634E094B4F /* [CP] Copy Pods Resources */,
-				5207372C1DD47A3C004B1C45 /* Embed Frameworks */,
+				523B60DD1DD9C65B00D9107B /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -2140,6 +2144,7 @@
 				CODE_SIGN_ENTITLEMENTS = yun2win/yun2win.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 7GY5FVN28H;
 				EMBED_ASSET_PACKS_IN_PRODUCT_BUNDLE = NO;
 				ENABLE_BITCODE = NO;
@@ -2161,8 +2166,10 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.liyueyun.yun2win;
 				PRODUCT_NAME = yun2win;
 				PROVISIONING_PROFILE = "";
+				REEXPORTED_FRAMEWORK_NAMES = "";
 				TARGETED_DEVICE_FAMILY = 1;
 				USER_HEADER_SEARCH_PATHS = "$(PODS_ROOT)";
+				VALID_ARCHS = "arm64 armv7";
 			};
 			name = Debug;
 		};
@@ -2174,6 +2181,8 @@
 				CODE_SIGN_ENTITLEMENTS = yun2win/yun2win.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 7GY5FVN28H;
 				EMBED_ASSET_PACKS_IN_PRODUCT_BUNDLE = NO;
 				ENABLE_BITCODE = NO;
@@ -2183,6 +2192,7 @@
 					"$(PROJECT_DIR)",
 					"$(PROJECT_DIR)/yun2win/Resource",
 				);
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				INFOPLIST_FILE = "yun2win/Resource/yun2win-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -2190,12 +2200,14 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/yun2win/Class/Conversation/View/InputView/VoiceLib",
 				);
-				ONLY_ACTIVE_ARCH = NO;
+				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.liyueyun.yun2win;
 				PRODUCT_NAME = yun2win;
 				PROVISIONING_PROFILE = "";
+				REEXPORTED_FRAMEWORK_NAMES = "";
 				TARGETED_DEVICE_FAMILY = 1;
 				USER_HEADER_SEARCH_PATHS = "$(PODS_ROOT)";
+				VALID_ARCHS = "arm64 armv7";
 			};
 			name = Release;
 		};

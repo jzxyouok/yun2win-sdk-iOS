@@ -68,29 +68,4 @@
     }];
 }
 
-
-#warning 联系人需要有获得名称和获取消息的方法。 名称优先title，再次user.name, 最后是name; 头像优先user.avatarUrl, 最后avatarUrl。
-/*人名和头像客户端显示规则
- 
- 联系人显示规则
- 名字：优先显示title，其次使用user.name
- 头像：使用user.avatarUrl
- 
- 用户会话(group)、群显示规则
- 名字 userConversation.name或userSession.name
- 头像 userConversation.avatarUrl或userSession.avatarUrl
- 
- 群成员显示规则：
- 名字：sessionMember.name
- 头像：使用user.avatarUrl
- 
- 修改联系人title时，必须修改userconversation.name
- 修改群内自己昵称时，修改sessionmember.name，并根据需要（假设群默认名字为前5个人姓名之和）修改session.name
- 
- 
- 进入会话时
- p2p:标题及聊天相对方，依据联系人规则显示
- group:标题显示userConversation.name，聊天相对方依据群成员规则显示
- */
-
 @end

@@ -34,6 +34,7 @@ typedef NS_ENUM(NSInteger, AVMemberStatus) {
 @property (assign, nonatomic) NSInteger                  uid;           //视频uid
 @property (assign, nonatomic) AVMemberType               dataType;      //数据类型
 @property (assign, nonatomic) BOOL                       isLocalVideo;  //是否为本地视频
+@property (assign, nonatomic) BOOL                       isEnableVideo; //是否开启视频
 @property (assign, nonatomic) AVMemberStatus             AVStatus;      //状态
 @property (strong, nonatomic) Y2WUser                    *user;          //用户model
 @property (assign, nonatomic) BOOL                       isInvitation;   //是否属于被邀请的
