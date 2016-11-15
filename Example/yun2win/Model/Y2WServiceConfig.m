@@ -11,7 +11,7 @@
 @implementation Y2WServiceConfig
 
 + (NSString *)domain {
-    return @"http://112.74.210.208:8080/";
+    return @"http://console.yun2win.com:8080";
 }
 
 + (NSString *)version {
