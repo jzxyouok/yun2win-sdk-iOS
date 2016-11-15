@@ -138,39 +138,34 @@ Y2WMessagesPageDelegate
 #pragma mark - Business
 
 - (void)openAVWithMode:(VideoDataType)mediaType {
-    
+    NSString *channelId = [NSUUID UUID].UUIDString;
     Y2WUser *targetUserModel = [[Y2WUsers getInstance] getUserById:self.session.targetId];
     
-    [RequestManager createChannelCompletion:^(NSString *channelId) {
-        if ([self.session.type isEqualToString:@"p2p"]) {
+    if ([self.session.type isEqualToString:@"p2p"]) {
+        MainViewController *mainVc = (MainViewController *)self.tabBarController;
+        [mainVc openAVp2p:targetUserModel channel:channelId session:self.session.ID isVideo:(mediaType == VideoDataTypeVideo) success:^(BOOL isSuccess) {
+            if (isSuccess) {
+                [self sendChannelId:channelId withMode:mediaType actionType:VideoActionTypeCall toUids:@[self.session.targetId]];
+            }
+        }];
+    }
+    else {
+        SessionMemberPickerConfig *config = [[SessionMemberPickerConfig alloc]initWithSession:self.session];
+        config.filterIds = @[[Y2WUsers getInstance].currentUser.ID];
+        UserPickerViewController *userPickerVC = [[UserPickerViewController alloc] initWithConfig:config];
+        [userPickerVC selectMembersCompletion:^(NSArray<NSObject<MemberModelInterface> *> *members) {
+            
+            NSArray *memberIds = [members qs_map:^id(NSObject<MemberModelInterface> *member, NSUInteger index) { return member.uid; }];
             MainViewController *mainVc = (MainViewController *)self.tabBarController;
-            [mainVc openAVp2p:targetUserModel channel:channelId session:self.session.ID isVideo:(mediaType == VideoDataTypeVideo) success:^(BOOL isSuccess) {
+            [mainVc openAV:memberIds channel:channelId session:self.session.ID isVideo:(mediaType == VideoDataTypeVideo) success:^(BOOL isSuccess) {
                 if (isSuccess) {
-                     [self sendChannelId:channelId withMode:mediaType actionType:VideoActionTypeCall toUids:@[self.session.targetId]];
+                    [self sendChannelId:channelId withMode:mediaType actionType:VideoActionTypeCall toUids:memberIds];
                 }
             }];
-        }
-        else {
-            SessionMemberPickerConfig *config = [[SessionMemberPickerConfig alloc]initWithSession:self.session];
-            config.filterIds = @[[Y2WUsers getInstance].currentUser.ID];
-            UserPickerViewController *userPickerVC = [[UserPickerViewController alloc] initWithConfig:config];
-            [userPickerVC selectMembersCompletion:^(NSArray<NSObject<MemberModelInterface> *> *members) {
-                
-                NSArray *memberIds = [members qs_map:^id(NSObject<MemberModelInterface> *member, NSUInteger index) { return member.uid; }];
-                MainViewController *mainVc = (MainViewController *)self.tabBarController;
-                [mainVc openAV:memberIds channel:channelId session:self.session.ID isVideo:(mediaType == VideoDataTypeVideo) success:^(BOOL isSuccess) {
-                    if (isSuccess) {
-                       [self sendChannelId:channelId withMode:mediaType actionType:VideoActionTypeCall toUids:memberIds];
-                    }
-                }];
-            } cancel:nil];
-            
-            [self.navigationController pushViewController:userPickerVC animated:YES];
-        }
+        } cancel:nil];
         
-    } failure:^(NSError *error) {
-        [UIAlertView showTitle:nil message:error.message];
-    }];
+        [self.navigationController pushViewController:userPickerVC animated:YES];
+    }
 }
 
 - (void)sendChannelId:(NSString *)channelId withMode:(VideoDataType)mediaType actionType:(VideoActionType)actionType toUids:(NSArray<NSString *> *)uids
